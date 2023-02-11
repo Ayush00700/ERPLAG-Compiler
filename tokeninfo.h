@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-typedef enum token_type{ID,NUM,RNUM,
+typedef enum token_type{ERROR,ID,NUM,RNUM,
 AND,OR,TRUE,FALSE,
 PLUS,MINUS,MUL,DIV,
 LT,LE,GE,GT,EQ,NE,
@@ -26,4 +26,9 @@ typedef struct token_info{
     char* lexeme[20];
     data values;
 }token_info;
+
+typedef struct token_node{
+    token_info* token;
+    token_node* next_token; 
+}token_node;
 
