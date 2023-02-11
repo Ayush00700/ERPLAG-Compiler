@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
-typedef enum token_type{ERROR,ID,NUM,RNUM,
+typedef enum token_type{ //TODO Quotation marks
+ERROR,ID,NUM,RNUM,
 AND,OR,TRUE,FALSE,
 PLUS,MINUS,MUL,DIV,
 LT,LE,GE,GT,EQ,NE,
@@ -13,7 +14,8 @@ ARRAY,START,END,END,DECLARE,
 MODULE,DRIVER,PROGRAM,GET_VALUE,
 PRINT,USE,WITH,PARAMETERS,TAKES,
 INPUT,RETURNS,FOR,IN,SWITCH,
-CASE,BREAK,DEFAULT,WHILE}token_type;
+CASE,BREAK,DEFAULT,WHILE
+}token_type;
 
 typedef union data{
     int num;
