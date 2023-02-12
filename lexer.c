@@ -7,19 +7,22 @@ int line_no = 1;
 
 token_node* ll_node; //LINKED-LIST 
 token_node* stack_head; //STACK FOR ERRORS 
-token_node* current; //LAST NODE THAT WAS ADDED 
+token_node* current; //LAST NODE THAT WAS ADDED
+
+void printtokens(){
+    token_node* temp = ll_node;
+    int i=1;
+    while(temp!=NULL){
+        printf("token no. %d is %s .. lexeme is .. %s\n",i,arr_keywords[temp->token->type],temp->token->lexeme);
+        temp = temp->next_token;
+        i++;
+    }
+}
 
 void populate(char* buffer,FILE* fp,int bufsize){
     if(fp!=NULL){
         fread(buffer,sizeof(char),bufsize,fp);
     }
-}
-
-void print_charbuffer(size_t size, char* buffer){
-    for ( int i =0;i <size; i++){
-        printf("%c",buffer[i]);
-    }
-    printf("\n");
 }
 
 void add_error_token(token_info* tk){
@@ -39,12 +42,25 @@ void pop_error_tokens(){
     token_node* temp;
     temp = stack_head;
     while(temp!=NULL){
-        printf("Error in line number :%d, Couldn't tokenize the keyword ", temp->token->line_no);
-        print_charbuffer(20,temp->token->lexeme);
+        printf("Error in line number :%d, Couldn't tokenize the keyword %s\n", temp->token->line_no,temp->token->lexeme);
         temp = temp->next_token;
     }
-        // printf("Error in line number :%d, Couldn't tokenize the keyword", temp->token->line_no);
-        // print_charbuffer(20,temp->token->lexeme);
+}
+
+token_type lookup(char* lexeme){
+    int val = arr_keywords_size;
+    for(int i=0;i<arr_keywords_size;i++){
+        if(strcmp(arr_keywords[i],lexeme)){
+            val = i;
+            break;
+        }
+    }
+    if(val == arr_keywords_size){
+        return ID;
+    }
+    else{
+        return val;
+    }
 }
 
 void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char* buf2,int bufsize){
@@ -52,20 +68,24 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
     char* lexeme;
     if(b1==bufsize && f1==bufsize){ //reading from buffer 2 
         size = f2-b2;
+        size++;
         lexeme = (char *)malloc(sizeof(char)*size);
         for(int i=b2;i<f2;i++){
             lexeme[i-b2] = buf2[i];
         }
+        lexeme[f2-b2] = '\0';
     }
     else if(b2==bufsize && f2==bufsize){ //reading from buffer 1
         size = f1-b1;
+        size++;
         lexeme = (char *)malloc(sizeof(char)*size);
         for(int i=b1;i<f1;i++){
             lexeme[i-b1] = buf1[i];
         }
+        lexeme[f1-b1] = '\0';
     }
     else if(b2==bufsize && f1==bufsize){ //first buffer 1 and then buffer 2
-        size = 0;
+        size = 1;
         size += f2;
         size += bufsize-b1;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -75,9 +95,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
         for(int i=0;i<f2;i++){
             lexeme[bufsize-b1+i] = buf2[i];
         }
+        lexeme[bufsize-b1+f2] = '\0';
     }
     else{ //first buffer 2 then buffer 1
-        size = 0;
+        size = 1;
         size += f1;
         size += bufsize-b2;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -87,6 +108,7 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
         for(int i=0;i<f1;i++){
             lexeme[bufsize-b2+i] = buf1[i];
         }
+        lexeme[bufsize-b2+f1] = '\0';
     }
     token_info* tk ;
     if(message==ERROR){
@@ -109,11 +131,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
             tk->values.rnum = (double)atof(tk->lexeme);
         }
         if(message==ID){
-            //TODO implement lookup 
+            //TODO implement lookup --> DONE
+            message = lookup(lexeme);
         }
-        else{
-            tk->type = message; //TODO Resolve --> DONE
-        }
+        tk->type = message; //TODO Resolve --> DONE
     }
     if(tk->type==ERROR){
         add_error_token(tk);
@@ -153,7 +174,7 @@ void call_lexer(FILE* fp,int bufsize){
     int hold = 0; //hold if 1 then hold the current forward pointer
     int enter = 0;
     int ender = 0;
-    while(!ender){ //TODO Ends when?
+    while(!ender){ //TODO Ends when? --> DONE
         if(hold == 0 && enter==1){
             if(f1 == bufsize){
                 f2++;
@@ -525,8 +546,8 @@ int main(){
     FILE* fp;
     fp = fopen("code.txt","r");
     call_lexer(fp,20);
-
+    printf("TOKENS ARE .... (first to last) \n");
+    printtokens();
+    printf("ERRORS ARE .... (last to first) \n");
     pop_error_tokens();
-    
-    printf("END");
 }
