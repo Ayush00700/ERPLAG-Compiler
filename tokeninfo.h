@@ -11,12 +11,12 @@ char* arr_keywords[58] = {
 "COLON","RANGEOP","SEMICOL","COMMA",
 "ASSIGNOP","SQBO","SQBC","BO","BC",
 "COMMENTMARK",
-"INTEGER","REAL","BOOLEAN","OF",
-"ARRAY","START","END","DECLARE",
-"MODULE","DRIVER","PROGRAM","GET_VALUE",
-"PRINT","USE","WITH","PARAMETERS","TAKES",
-"INPUT","RETURNS","FOR","IN","SWITCH",
-"CASE","BREAK","DEFAULT","WHILE"
+"integer","real","boolean","of",
+"array","start","end","declare",
+"module","driver","program","get_value",
+"print","use","with","parameters","takes",
+"input","returns","for","in","switch",
+"case","break","default","while"
 };
 
 typedef enum token_type{ //TODO Quotation marks

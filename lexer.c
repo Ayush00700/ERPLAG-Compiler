@@ -11,8 +11,9 @@ token_node* current; //LAST NODE THAT WAS ADDED
 
 void printtokens(){
     token_node* temp = ll_node;
-    int i=1;
+    int i=1; //token_number
     while(temp!=NULL){
+        printf("%d line number ",temp->token->line_no);
         printf("token no. %d is %s .. lexeme is .. %s\n",i,arr_keywords[temp->token->type],temp->token->lexeme);
         temp = temp->next_token;
         i++;
@@ -50,7 +51,7 @@ void pop_error_tokens(){
 token_type lookup(char* lexeme){
     int val = arr_keywords_size;
     for(int i=0;i<arr_keywords_size;i++){
-        if(strcmp(arr_keywords[i],lexeme)){
+        if(!strcmp(arr_keywords[i],lexeme)){
             val = i;
             break;
         }
@@ -64,11 +65,11 @@ token_type lookup(char* lexeme){
 }
 
 void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char* buf2,int bufsize){
-    int size;
+    int size; //size of the string should be one more than the required because of '\0' character
     char* lexeme;
     if(b1==bufsize && f1==bufsize){ //reading from buffer 2 
         size = f2-b2;
-        size++;
+        size++; //accounting for endline character 
         lexeme = (char *)malloc(sizeof(char)*size);
         for(int i=b2;i<f2;i++){
             lexeme[i-b2] = buf2[i];
@@ -86,8 +87,7 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
     }
     else if(b2==bufsize && f1==bufsize){ //first buffer 1 and then buffer 2
         size = 1;
-        size += f2;
-        size += bufsize-b1;
+        size += f2 + bufsize-b1;
         lexeme = (char *)malloc(sizeof(char)*size);
         for(int i=b1;i<bufsize;i++){
             lexeme[i-b1] = buf1[i];
@@ -99,8 +99,7 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
     }
     else{ //first buffer 2 then buffer 1
         size = 1;
-        size += f1;
-        size += bufsize-b2;
+        size += f1+bufsize-b2;
         lexeme = (char *)malloc(sizeof(char)*size);
         for(int i=b2;i<bufsize;i++){
             lexeme[i-b2] = buf2[i];
@@ -232,7 +231,7 @@ void call_lexer(FILE* fp,int bufsize){
                 else if(c == '(') state=23;     
                 else if(c == ')') state=24;
                 else if(c == '.') state=25;
-                else if(c == ' ' || c == '\t') state=27;
+                else if(c == ' ' || c == '\t' || c == '\r') state=27;
                 else if((c>=65 && c<=90) || (c>=97 && c<=122) || c==95) state=28;
                 else if(c>='0' && c<='9') state=29;
                 else if(c == '*') state=36;
@@ -404,14 +403,14 @@ void call_lexer(FILE* fp,int bufsize){
                     b2 = bufsize;
                     b1 = f1;
                 }
-                if(c==' '||c=='\t') state = 27;
+                if(c==' '||c=='\t' || c=='\r') state = 27;
                 else{
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 28:
-                if((c>=65 && c<=90) || (c>=61 && c<=122) || c==95 || (c>='0'&&c<='9')) state=28;
+                if((c>=65 && c<=90) || (c>=97 && c<=122) || c==95 || (c>='0'&&c<='9')) state=28;
                 else{
                     copy2lexeme(f1,f2,b1,b2,ID,buf1,buf2,bufsize);
                     state = 1;
@@ -544,8 +543,13 @@ void call_lexer(FILE* fp,int bufsize){
 
 int main(){
     FILE* fp;
-    fp = fopen("code.txt","r");
-    call_lexer(fp,20);
+    fp = fopen("code_test_case2.txt","r");
+
+    // char* source;
+    // source = "   abc:=b/5+c;";
+    // if(source[3]==' ') printf("s%cs s",source[0]);
+
+    call_lexer(fp,4096);
     printf("TOKENS ARE .... (first to last) \n");
     printtokens();
     printf("ERRORS ARE .... (last to first) \n");
