@@ -6,7 +6,8 @@ int noOfLines(FILE* fptr){
     char buffer[100];
     strtok_result = strtok(buffer, "\n");
     while(strtok_result!=NULL){
-        strtok_result = strtok(buffer,"\n");
+        strtok_result = strtok(buffer,"\r\n");
+        printf("%s\n",buffer);
         linecount++;
     }
     return linecount;
