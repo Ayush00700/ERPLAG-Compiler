@@ -83,7 +83,54 @@
 <term>-<factor><N7>
 <N7>-<op2><factor><N7>
 <N7>-eps
-<factor>-BO <arithExp> BC
-<factor>-<id_num_rnum>
+<factor>-BO <arithOrboolExp> BC
+<factor>-NUM
+<factor>-RNUM
 <factor>-<boolconst>
-<factor>-<arr_element>
+<factor>-ID <N_11>
+<N_11>-SQBO <element_index_with_expressions> SQBC
+<N_11>-eps
+<arr_element>-ID SQBO <element_index_with_expressions> SQBC
+<element_index_with_expressions>-<sign><N_10>
+<element_index_with_expressions>-<arrExpr>
+<N_10>-<new_index>
+<N_10>-BO <arrExpr>BC
+<arrExpr>-<arrTerm><arr_N4>
+<arr_N4>-<op1><arrTerm><arr_N4>
+<arr_N4>-eps
+<arrTerm>-<arrFactor><arr_N5>
+<arr_N5>-<op2><arrFactor><arr_N5>
+<arr_N5>-eps
+<arrFactor>-<id_num_rnum>
+<arrFactor>-<boolconst>
+<arrFactor>-BO <arrExpr> BC
+<op1>-PLUS
+<op1>-MINUS
+<op2>-MUL
+<op2>-DIV
+<logOp>-AND
+<logOp>-OR
+<relationalOP>-LT
+<relationalOP>-LE
+<relationalOP>-GT
+<relationalOP>-GE
+<relationalOP>-EQ
+<relationalOP>-NE
+<declarestmt>-DECLARE <idList> COLON <dataType> SEMICOL
+<condstmt>-SWITCH BO ID BC START <caseStmts><default> END
+<caseStmts>-CASE<value> COLON <stmts> BREAK SEMICOL <N9>
+<N9>-CASE<value> COLON <stmts> BREAK SEMICOL <N9>
+<N9>-eps
+<value>-NUM
+<value>-TRUE
+<value>-FALSE
+<default>-DEFAULT COLON <stmts> BREAK SEMICOL
+<default>-eps
+<iterstmt>-FOR BO ID IN <range_forloop> BC START <stmts>END
+<iterstmt>-WHILE BO <arithOrboolExp> BC START <stmts> END
+<range_forloop>-<index_forloop> RANGEOP <index_forloop>
+<index_forloop>-<sign_forloop><new_index_forloop>
+<new_index_forloop>-NUM
+<sign_forloop>-PLUS
+<sign_forloop>-MINUS
+<sign_forloop>-eps
