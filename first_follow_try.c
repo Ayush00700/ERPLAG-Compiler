@@ -1,13 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "parser.h"
+#include "tokeninfo.h"
 
-struct rule
-{
-    char label;
-    char tornt;
-    struct rule* next;
-};
+NonT N[sizeof(arr_NonT)];
 
 int belong(char a, char* arr)
 /*Returns 1 if the element a belongs to arr else 0*/
@@ -25,14 +21,24 @@ int belong(char a, char* arr)
     return -1;
 }
 
-ruleNode first(ruleNode node)
-{
-    // If it is a terminal then return the node
-    if(node.isTerminal)
-    {
-        return node;
-    }
-}
+// FirstSet first(ruleNode node)
+// {
+//     // If it is a terminal then return the node
+//     if(node.isTerminal)
+//     {
+//         FirstSet f;
+//         f.type = node.nodeInfo->type;
+//         f.next = NULL;
+
+//         return f;
+//     }
+
+//     // // If it is a nonterminal
+//     // else
+//     // {
+//     //     if
+//     // }
+// }
 
 char* follow(FILE *fp)
 {
@@ -69,6 +75,12 @@ int main()
     test_belong();
 
     f = fopen("sample_grammar.txt","r");
+
+    for(int i=0; i<sizeof(arr_NonT); i++)
+    {
+        N[i].label = arr_NonT[i];
+        // N[i].Fi = 
+    }
 
     // if(f == NULL)
     //     printf("Couldn't open file!");

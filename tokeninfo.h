@@ -2,7 +2,7 @@
 
 int arr_keywords_size = 58;
 
-char* arr_keywords[58] = {
+char* arr_keywords[59] = {
 "ERROR","ID","NUM","RNUM",
 "AND","OR","TRUE","FALSE",
 "PLUS","MINUS","MUL","DIV",
@@ -16,7 +16,7 @@ char* arr_keywords[58] = {
 "module","driver","program","get_value",
 "print","use","with","parameters","takes",
 "input","returns","for","in","switch",
-"case","break","default","while"
+"case","break","default","while","eps"
 };
 
 typedef enum token_type{ //TODO Quotation marks
@@ -33,7 +33,7 @@ ARRAY,START,END,DECLARE,
 MODULE,DRIVER,PROGRAM,GET_VALUE,
 PRINT,USE,WITH,PARAMETERS,TAKES,
 INPUT,RETURNS,FOR,IN,SWITCH,
-CASE,BREAK,DEFAULT,WHILE
+CASE,BREAK,DEFAULT,WHILE,EPS
 }token_type;
 
 typedef union data{
