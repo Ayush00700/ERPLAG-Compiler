@@ -60,3 +60,30 @@
 <modReusestmt>-<optional> USE MODULE ID WITH PARAMETERS <idList> SEMICOL
 <optional>-SQBO <idList> SQBC ASSIGNOP
 <optional>-eps
+<idList>-ID <N3>
+<N3>-COMMA ID <N3>
+<N3>-eps
+<exp>-<arithOrboolExp>
+<exp>-<U>
+<U>-<unary_op><new_NT>
+<unary_op>-PLUS
+<unary_op>-MINUS
+<new_NT>-BO <arithExp> BC
+<new_NT>-<id_num_rnum>
+<arithOrboolExp>-<AnyTerm><N4>
+<N4>-<logOp><AnyTerm><N4>
+<N4>-eps
+<AnyTerm>-<arithExp><N5>
+<AnyTerm>-<boolconst>
+<N5>-<relOp><arithExp>
+<N5>-eps
+<arithExp>-<term><N6>
+<N6>-<op1><term><N6>
+<N6>-eps
+<term>-<factor><N7>
+<N7>-<op2><factor><N7>
+<N7>-eps
+<factor>-BO <arithExp> BC
+<factor>-<id_num_rnum>
+<factor>-<boolconst>
+<factor>-<arr_element>
