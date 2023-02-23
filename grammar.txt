@@ -101,7 +101,8 @@
 <arrTerm>-<arrFactor><arr_N5>
 <arr_N5>-<op2><arrFactor><arr_N5>
 <arr_N5>-eps
-<arrFactor>-<id_num_rnum>
+<arrFactor>-ID
+<arrFactor>-NUM
 <arrFactor>-<boolconst>
 <arrFactor>-BO <arrExpr> BC
 <op1>-PLUS

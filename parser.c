@@ -18,7 +18,7 @@ int noOfLines(FILE* fptr){
     return linecount;
 }
 
-void populateGrammar(FILE* fptr,ruleLL rules[]){
+void populateGrammar(FILE* fptr,rule rules[]){
     char* strtok_result;
     int linecount = 0;
     fseek (fptr , 0 , SEEK_END);
@@ -40,6 +40,14 @@ void printArray(rule rules[],int noOfRules){
     }
 }
 
+FirstSet join(FirstSet f1, FirstSet f2)
+{
+    f1.tail.next = &f2;
+    f1.tail = f2.tail;
+
+    return f1;
+}
+
 int belong(char a, char* arr)
 /*Returns 1 if the element a belongs to arr else 0*/
 {
@@ -57,7 +65,7 @@ int belong(char a, char* arr)
 }
 
 /*----------------------------------------FIRST SET COMPUTATION----------------------------------------*/
-FirstSet first_of_rule(rule r, rule rules[], NonT nt[])
+FirstSet first_of_rule(rule r, NonT nt[])
 {
     // If first symbol in RHS of rule r is a terminal
     // Just return the symbol
@@ -65,7 +73,7 @@ FirstSet first_of_rule(rule r, rule rules[], NonT nt[])
     {
         FirstSet f;
         // Single node
-        f.head.type = f.tail.type = r.head.nodeInfo->type;
+        f.head.type = f.tail.type = r.head.nextNode->nodeInfo->type;
         f.head.next = f.tail.next = NULL;
 
         return f;
@@ -73,7 +81,8 @@ FirstSet first_of_rule(rule r, rule rules[], NonT nt[])
 
     // If first symbol in RHS of rule r is a nonterminal
     else
-    {
+    {       
+        
         // Find the first set of this non-terminal
         FirstSet f =  first_of_nt(r.head.nextNode, nt);
 
@@ -83,7 +92,23 @@ FirstSet first_of_rule(rule r, rule rules[], NonT nt[])
             // Add symbols in the follow set of this symbol
             FollowSet f1 = follow(r.head.nextNode, nt);
             FirstSet f2;
+
+            FollowSetNode* F = &f1.head;
+            f2.head.type = f2.tail.type = F->type;
+            f2.head.next = f2.tail.next = NULL;
+
+            while(F->next != NULL)
+            {
+                F = F->next;
+                FirstSetNode F1;
+                F1.type = F->type;
+                F1.next = NULL;
+                f2.tail.next = &F1;
+                f2.tail = F1;
+            }
+
             
+            f = join(f,f2);
         }
 
         return f;
