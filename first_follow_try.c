@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+#include "parser.h"
+#include "tokeninfo.h"
 
-struct rule
-{
-    char label;
-    char tornt;
-    struct rule* next;
-};
+NonT N[sizeof(arr_NonT)];
 
 int belong(char a, char* arr)
 /*Returns 1 if the element a belongs to arr else 0*/
@@ -17,17 +14,31 @@ int belong(char a, char* arr)
         if(arr[i] == a)
         {
             flag=1;
-            return flag;
+            return i;
         }
     }
 
-    return flag;
+    return -1;
 }
 
-char* first(FILE *fp)
-{
+// FirstSet first(ruleNode node)
+// {
+//     // If it is a terminal then return the node
+//     if(node.isTerminal)
+//     {
+//         FirstSet f;
+//         f.type = node.nodeInfo->type;
+//         f.next = NULL;
 
-}
+//         return f;
+//     }
+
+//     // // If it is a nonterminal
+//     // else
+//     // {
+//     //     if
+//     // }
+// }
 
 char* follow(FILE *fp)
 {
@@ -40,16 +51,16 @@ void test_belong()
     char nonterminal[] = {'S','A','B'};
 
     int x = belong('a',terminal);
-    (x>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (x != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
-    int y = belong('a',nonterminal);
-    (y>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    int y = belong('x',nonterminal);
+    (y != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
     int x1 = belong('A',terminal);
-    (x1>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (x1 != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
     int y1 = belong('A',nonterminal);
-    (y1>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (y1 != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
 }
 
@@ -64,6 +75,12 @@ int main()
     test_belong();
 
     f = fopen("sample_grammar.txt","r");
+
+    for(int i=0; i<sizeof(arr_NonT); i++)
+    {
+        N[i].label = arr_NonT[i];
+        // N[i].Fi = 
+    }
 
     // if(f == NULL)
     //     printf("Couldn't open file!");
