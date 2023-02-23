@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "parser.h"
 
 struct rule
 {
@@ -17,16 +18,20 @@ int belong(char a, char* arr)
         if(arr[i] == a)
         {
             flag=1;
-            return flag;
+            return i;
         }
     }
 
-    return flag;
+    return -1;
 }
 
-char* first(FILE *fp)
+ruleNode first(ruleNode node)
 {
-
+    // If it is a terminal then return the node
+    if(node.isTerminal)
+    {
+        return node;
+    }
 }
 
 char* follow(FILE *fp)
@@ -40,16 +45,16 @@ void test_belong()
     char nonterminal[] = {'S','A','B'};
 
     int x = belong('a',terminal);
-    (x>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (x != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
-    int y = belong('a',nonterminal);
-    (y>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    int y = belong('x',nonterminal);
+    (y != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
     int x1 = belong('A',terminal);
-    (x1>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (x1 != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
     int y1 = belong('A',nonterminal);
-    (y1>0)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
+    (y1 != -1)? printf("Yes it belongs!\n"):printf("No it isn't there!\n");
 
 }
 
