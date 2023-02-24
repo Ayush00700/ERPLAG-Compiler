@@ -110,12 +110,12 @@
 <op2>-DIV
 <logOp>-AND
 <logOp>-OR
-<relationalOP>-LT
-<relationalOP>-LE
-<relationalOP>-GT
-<relationalOP>-GE
-<relationalOP>-EQ
-<relationalOP>-NE
+<relOp>-LT
+<relOp>-LE
+<relOp>-GT
+<relOp>-GE
+<relOp>-EQ
+<relOp>-NE
 <declarestmt>-DECLARE <idList> COLON <dataType> SEMICOL
 <condstmt>-SWITCH BO ID BC START <caseStmts><default> END
 <caseStmts>-CASE<value> COLON <stmts> BREAK SEMICOL <N9>
