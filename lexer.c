@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+int populate_count = 1;
 int line_no = 1;
 
 token_node* ll_node; //LINKED-LIST 
@@ -16,16 +16,17 @@ void printtokens()
     int i=1; //token_number
     while(temp!=NULL){
         printf("%d line number ",temp->token->line_no);
-        printf("token no. %d is %s .. lexeme is .. %s\n",i,arr_keywords[temp->token->type],temp->token->lexeme);
+        printf("token no. %d is %s .. lexeme is .. %s\n",i,temp->token->type,temp->token->lexeme);
         temp = temp->next_token;
         i++;
     }
 }
 
-void populate(char* buffer,FILE* fp,int bufsize)
-/*This function populates the buffer with the data from file in order to tokenize*/
-{
+void populate(char* buffer,FILE* fp,int bufsize){
+    printf("We populated the buffer here %dth time\n",populate_count);
+    populate_count++;
     if(fp!=NULL){
+        memset(buffer, 0, bufsize);
         fread(buffer,sizeof(char),bufsize,fp);
     }
 }
@@ -56,23 +57,78 @@ void pop_error_tokens()
     }
 }
 
-token_type lookup(char* lexeme){
-    int val = arr_keywords_size;
-    for(int i=0;i<arr_keywords_size;i++){
-        if(!strcmp(arr_keywords[i],lexeme)){
-            val = i;
-            break;
-        }
+hash_table_contents* hash_table[TABLE_SIZE];
+
+hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
+    hash_table_contents* h = (hash_table_contents*)malloc(sizeof(hash_table_contents));
+    // h->lexeme = lexeme;h->tk_type = (token_type)hash(lexeme);
+    h->lexeme = lexeme;
+    h->tk_type = tk;
+    return h;
+}
+
+
+size_t hash(char *lexeme){
+
+    int length = strnlen(lexeme, MAX_LEN);
+    size_t  hash_value = 0;
+    for (int i =0;i<length;i++){
+        hash_value += lexeme[i];
+        hash_value = (hash_value*lexeme[i])%97;
     }
-    if(val == arr_keywords_size){
-        return ID;
-    }
-    else{
-        return val;
+
+    return hash_value;
+}
+
+void init_hash_table(){
+    for(int i=0;i<TABLE_SIZE;i++){
+        hash_table[i] = NULL;
     }
 }
 
-void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char* buf2,int bufsize){
+void print_hash_table(){
+    for (int i=0;i<TABLE_SIZE;i++){
+        if(hash_table[i]==NULL){
+            printf("\t%d\t---\n",i);
+        }else {
+            printf("\t%i\t%s\t%s\n", i ,hash_table[i]->lexeme, hash_table[i]->tk_type);
+        }
+    }
+}
+
+
+int hash_table_insert(char* lexeme, char* tk){
+    if(lexeme==NULL) return 0;
+    int index = hash(lexeme);
+    if(hash_table[index]!=NULL){
+        printf("Element already existing at index %d\n",index);
+        return 1;
+    }else{
+    hash_table_contents* h = create_hash_table_content(lexeme, tk);
+    hash_table[index] = h;
+    return index;
+    }
+}
+
+void populate_hash_table(){
+    init_hash_table();
+    for(int i=0;i<26;i++){
+
+        hash_table_insert(arr_keywords[i],arr_keywords_upper[i]);
+    
+    }
+}
+
+char* lookup(char* lexeme){
+    size_t hash_value = hash(lexeme);
+    if (hash_value >= TABLE_SIZE || hash_table[hash_value]==NULL) return "ID";
+    if(hash_table[hash_value]!=NULL){
+        // printf("Found lexeme : %s\n", hash_table[hash_value]->tk_type);
+        return hash_table[hash_value]->tk_type;
+    }
+}
+
+void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize){
     int size; //size of the string should be one more than the required because of '\0' character
     char* lexeme;
     if(b1==bufsize && f1==bufsize){ //reading from buffer 2 
@@ -118,32 +174,34 @@ void copy2lexeme(int f1,int f2,int b1,int b2,token_type message,char* buf1,char*
         lexeme[bufsize-b2+f1] = '\0';
     }
     token_info* tk ;
-    if(message==ERROR){
+    if(!strcmp(message,"ERROR")){
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
         strncpy(tk->lexeme,lexeme,size);
         tk->line_no = line_no;
-        tk->type = ERROR;
+        memset(tk->type,'\0',20*sizeof(char));
+        strcpy(tk->type,"ERROR");
     }
     else{
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
         strncpy(tk->lexeme,lexeme,size);
         tk->line_no = line_no;
-        if(message==NUM){
+        if(!strcmp(message,"NUM")){
             tk->values.num = atoi(tk->lexeme);
         }
-        if(message==RNUM){
+        if(!strcmp(message,"RNUM")){
             double value = (double)atof(lexeme);
             tk->values.rnum = (double)atof(tk->lexeme);
         }
-        if(message==ID){
+        if(!strcmp(message,"ID")){
             //TODO implement lookup --> DONE
             message = lookup(lexeme);
         }
-        tk->type = message; //TODO Resolve --> DONE
+        memset(tk->type,'\0',20*sizeof(char));
+        strcpy(tk->type,message);
     }
-    if(tk->type==ERROR){
+    if(!strcmp(tk->type,"ERROR")){
         add_error_token(tk);
     }
     else if(ll_node == NULL){
@@ -248,7 +306,7 @@ void call_lexer(FILE* fp,int bufsize){
                 }
                 break;
             case 2:
-                copy2lexeme(f1,f2,b1,b2,PLUS,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"PLUS",buf1,buf2,bufsize);
                 state = 1; //going back to the start state
                 hold = 1; 
                 /*     '+'   
@@ -257,12 +315,12 @@ void call_lexer(FILE* fp,int bufsize){
                 */
                break;
             case 3:
-                copy2lexeme(f1,f2,b1,b2,MINUS,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"MINUS",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 4:
-                copy2lexeme(f1,f2,b1,b2,DIV,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"DIV",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
@@ -270,26 +328,26 @@ void call_lexer(FILE* fp,int bufsize){
                 if(c == '=') state=6;
                 else if(c == '<') state=7;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,LT,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"LT",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 6:
-                copy2lexeme(f1,f2,b1,b2,LE,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"LE",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 7:
                 if(c == '<') state = 8;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,DEF,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"DEF",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 8:
-                copy2lexeme(f1,f2,b1,b2,DRIVERDEF,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"DRIVERDEF",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
@@ -297,108 +355,108 @@ void call_lexer(FILE* fp,int bufsize){
                 if(c=='>') state=11;
                 else if(c=='=') state=10;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,GT,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"GT",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 10:
-                copy2lexeme(f1,f2,b1,b2,GE,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"GE",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 11:
                 if(c=='>') state=12;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ENDDEF,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ENDDEF",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1; 
                 }
                 break;
             case 12:
-                copy2lexeme(f1,f2,b1,b2,DRIVERENDDEF,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"DRIVERENDDEF",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 13:
                 if(c == '=') state = 14;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 14:
-                copy2lexeme(f1,f2,b1,b2,EQ,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"EQ",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 15:
                 if(c == '=') state = 16;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 16:
-                copy2lexeme(f1,f2,b1,b2,NE,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"NE",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 17:
                 if(c=='=') state = 18;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,COLON,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"COLON",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 18:
-                copy2lexeme(f1,f2,b1,b2,ASSIGNOP,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"ASSIGNOP",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 19:
-                copy2lexeme(f1,f2,b1,b2,SEMICOL,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"SEMICOL",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 20:
-                copy2lexeme(f1,f2,b1,b2,COMMA,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"COMMA",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 21:
-                copy2lexeme(f1,f2,b1,b2,SQBO,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"SQBO",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 22:
-                copy2lexeme(f1,f2,b1,b2,SQBC,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"SQBC",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 23:
-                copy2lexeme(f1,f2,b1,b2,BO,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"BO",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 24:
-                copy2lexeme(f1,f2,b1,b2,BC,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"BC",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
             case 25:
                 if(c == '.') state = 26;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
                 break;
             case 26:
-                copy2lexeme(f1,f2,b1,b2,RANGEOP,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"RANGEOP",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
                 break;
@@ -420,7 +478,7 @@ void call_lexer(FILE* fp,int bufsize){
             case 28:
                 if((c>=65 && c<=90) || (c>=97 && c<=122) || c==95 || (c>='0'&&c<='9')) state=28;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ID,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ID",buf1,buf2,bufsize);
                     state = 1;
                     hold=1;
                 }
@@ -429,7 +487,7 @@ void call_lexer(FILE* fp,int bufsize){
                 if(c>='0'&&c<='9') state = 29;
                 else if(c == '.') state = 30;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,NUM,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"NUM",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -441,7 +499,7 @@ void call_lexer(FILE* fp,int bufsize){
                 }
                 else if(c>='0'&&c<='9') state = 32;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -451,13 +509,13 @@ void call_lexer(FILE* fp,int bufsize){
                     if(f2==0){
                         f2 = bufsize;
                         f1 = bufsize-1;
-                        copy2lexeme(f1,f2,b1,b2,NUM,buf1,buf2,bufsize);
+                        copy2lexeme(f1,f2,b1,b2,"NUM",buf1,buf2,bufsize);
                         state = 1;
                         hold = 1;
                     }
                     else{
                         f2--;
-                        copy2lexeme(f1,f2,b1,b2,NUM,buf1,buf2,bufsize);
+                        copy2lexeme(f1,f2,b1,b2,"NUM",buf1,buf2,bufsize);
                         state = 1;
                         hold = 1;
                     }
@@ -466,13 +524,13 @@ void call_lexer(FILE* fp,int bufsize){
                     if(f1==0){
                         f1 = bufsize;
                         f2 = bufsize-1;
-                        copy2lexeme(f1,f2,b1,b2,NUM,buf1,buf2,bufsize);
+                        copy2lexeme(f1,f2,b1,b2,"NUM",buf1,buf2,bufsize);
                         state = 1;
                         hold = 1;
                     }
                     else{
                         f1--;
-                        copy2lexeme(f1,f2,b1,b2,NUM,buf1,buf2,bufsize);
+                        copy2lexeme(f1,f2,b1,b2,"NUM",buf1,buf2,bufsize);
                         state = 1;
                         hold = 1;
                     }
@@ -482,7 +540,7 @@ void call_lexer(FILE* fp,int bufsize){
                 if(c>='0'&&c<='9') state = 32;
                 else if(c =='E' || c=='e') state = 33;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,RNUM,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"RNUM",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -491,7 +549,7 @@ void call_lexer(FILE* fp,int bufsize){
                 if(c>='0'&&c<='9') state = 35;
                 else if(c=='+'||c=='-') state = 34;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -499,7 +557,7 @@ void call_lexer(FILE* fp,int bufsize){
             case 34:
                 if(c>='0'&&c<='9') state = 35;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -507,7 +565,7 @@ void call_lexer(FILE* fp,int bufsize){
             case 35:
                 if(c>='0'&&c<='9') state = 35;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,RNUM,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"RNUM",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -515,7 +573,7 @@ void call_lexer(FILE* fp,int bufsize){
             case 36:
                 if(c=='*') state = 37;
                 else{
-                    copy2lexeme(f1,f2,b1,b2,MUL,buf1,buf2,bufsize);
+                    copy2lexeme(f1,f2,b1,b2,"MUL",buf1,buf2,bufsize);
                     state = 1;
                     hold = 1;
                 }
@@ -539,7 +597,7 @@ void call_lexer(FILE* fp,int bufsize){
                 hold = 1;
                 break;
             case 40:
-                copy2lexeme(f1,f2,b1,b2,ERROR,buf1,buf2,bufsize);
+                copy2lexeme(f1,f2,b1,b2,"ERROR",buf1,buf2,bufsize);
                 state = 1;
                 hold = 1;
 
@@ -551,7 +609,8 @@ void call_lexer(FILE* fp,int bufsize){
 
 int main(){
     FILE* fp;
-    fp = fopen("code_test_case1.txt","r");
+    fp = fopen("code_test_case3.txt","r");
+    populate_hash_table();
 
     // char* source;
     // source = "   abc:=b/5+c;";
