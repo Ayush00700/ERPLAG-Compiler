@@ -9,7 +9,9 @@ token_node* ll_node; //LINKED-LIST
 token_node* stack_head; //STACK FOR ERRORS 
 token_node* current; //LAST NODE THAT WAS ADDED
 
-void printtokens(){
+void printtokens()
+/*This function prints the token number, type and the corresponding lexeme*/
+{
     token_node* temp = ll_node;
     int i=1; //token_number
     while(temp!=NULL){
@@ -29,7 +31,9 @@ void populate(char* buffer,FILE* fp,int bufsize){
     }
 }
 
-void add_error_token(token_info* tk){
+void add_error_token(token_info* tk)
+/*This function adds an error entry into the stack*/
+{
     if(stack_head==NULL){
         stack_head = (token_node*)malloc(sizeof(token_node));
         stack_head->token = tk;
@@ -42,7 +46,9 @@ void add_error_token(token_info* tk){
     }
 }
 
-void pop_error_tokens(){
+void pop_error_tokens()
+/*This function pops an element from stack to display the error*/
+{
     token_node* temp;
     temp = stack_head;
     while(temp!=NULL){
