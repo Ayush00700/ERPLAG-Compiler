@@ -727,10 +727,56 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
 }
 
 
-void call_parser(){
-    //token_node* curr = get_next_token();
+void call_parser(rule* rules){
+    //Assume that you get the lookahead via this
+    token_info* curr = get_next_token();
+    curr->lexeme="ID";
+    curr->line_no=2;
+    // curr->values=3 ;
+    //curr->
 
-    //first - check from parse table given top of stack and curr(token), which rule you need to use
+    while(curr)
+    {
+
+        ruleNode* stackTop=top(&parse_stack);
+        if(stackTop->isTerminal)
+        {
+            if(stackTop->nodeInfo==curr->lexeme)
+            {
+                pop(&parse_stack);
+                //perform tree operation
+
+            }
+            else
+            {
+                //Perform Error Recovery
+            }
+        }
+        else
+        {
+            int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
+            int col_no= set_contains(curr->lexeme, Terminals_table);
+            int indexToPush= arr[row_no-1][col_no-1];
+            if(indexToPush==-1)
+            {
+                //Perform Error Recovery
+            }
+            else
+            {
+                rule ruleToPush=rules[indexToPush];
+                addNodesToStack(&parse_stack, &ruleToPush);
+            }
+
+        }
+        curr=get_next_token();
+      
+    }
+    
+}
+ //first - check from parse table given top of stack and curr(token), which rule you need to use
+    
+    
+
     //second - push that rule into the stack using the function addNodesToStack(&parse_stack, &rules[rule_no]);
     //third - note down the rule_no
     //if top of stack is a terminal and matches with the curr(token:lexeme)then pop the stack and get_next_token and iterate
@@ -758,8 +804,6 @@ void call_parser(){
     }
     
     */
-}
-
 
 
 int main(){
