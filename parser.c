@@ -5,6 +5,7 @@
 
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 72
+#define TERMINALS 57
 typedef enum Boolean {False,True}Boolean;
 typedef struct ruleNode{
     char* nodeInfo; 
@@ -35,12 +36,13 @@ typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL
     int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
 
+
 /* IMPORTANT GLOBAL VARIABLES*/
 int non_terminals = 0; 
 int terminals = 0;
 int lines = 0;
 int ischange = 1; 
-
+int* arr[NON_TERMINALS];
 
 entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
 entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
@@ -416,7 +418,102 @@ void compute_follow_Set(rule* rules,NonT* non_terminals_set){
         }
     }
 }
+void print_parse_Table(int** arr){
+    for(int i=0;i<non_terminals;i++){
+        printf("%d-: ", i);
+        for(int j=0;j<terminals;j++){
+            if(arr[i][j]==-1){
+                printf(" ");
+            }else{
+                printf(" %d ",arr[i][j]);
+            }
+        }
+        printf("\n");
+    }
 
+}
+
+int** create_parse_table(rule* rules,NonT* non_terminals_set){
+
+
+    
+    for (int i = 0; i < NON_TERMINALS; i++)
+        arr[i] = (int*)malloc(TERMINALS* sizeof(int));
+    
+
+    for(int i=0; i<NON_TERMINALS; i++)
+    {
+        for(int j=0; j<TERMINALS; j++)
+        {
+            arr[i][j]=-1;
+        }
+    }
+
+    for(int i =0;i<lines;i++){
+        int rule_no = i+1;
+        ruleNode* headnode = rules[i].head;
+        ruleNode* current = headnode;
+        current = current->nextNode;
+        int row_no = set_contains(headnode->nodeInfo,non_Terminals_table);//1 indexed
+        while(current!=NULL){
+            if(current->isTerminal){
+                //mmm
+                int col_no = set_contains(current->nodeInfo,Terminals_table);//1 indexed
+                if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;//error check
+                else {printf("\nGrammar not LL(1) compatible for non eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],current->nodeInfo,headnode->nodeInfo );}
+                break;
+            }
+            else{
+                //first set nikalo aur check if eps
+                int non_term_index = set_contains(current->nodeInfo,non_Terminals_table);
+                if(set_contains( "eps" ,non_terminals_set[non_term_index-1].first_set)){
+                    for (int j=0;j<TABLE_SIZE;j++){
+                        if(non_terminals_set[non_term_index-1].first_set[j]==NULL || strcmp(non_terminals_set[non_term_index-1].first_set[j]->key,"eps")==0 ){
+                            continue;
+                        }else {
+                            int col_no = set_contains(non_terminals_set[non_term_index-1].first_set[j]->key,Terminals_table);
+                            if(arr[row_no-1][col_no-1]==-1) arr[row_no-1][col_no-1] = rule_no;//error check
+                            else {printf("\nGrammar not LL(1) compatible for eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],non_terminals_set[non_term_index-1].first_set[j]->key,headnode->nodeInfo );}                          
+                        }   
+             
+                    }
+                current = current->nextNode;
+                }
+                else{
+
+                    for (int j=0;j<TABLE_SIZE;j++){
+                        if(non_terminals_set[non_term_index-1].first_set[j]==NULL){
+                            continue;
+                        }else {
+                            int col_no = set_contains(non_terminals_set[non_term_index-1].first_set[j]->key,Terminals_table);
+                            if(arr[row_no-1][col_no-1]==-1||arr[row_no-1][col_no-1]==rule_no)arr[row_no-1][col_no-1] = rule_no;//error check
+                            else {printf("\nGrammar not LL(1) compatible for follow set case %d, %d \n", row_no, col_no);}                          
+                        }   
+                //agar eps hai toh current ko next and repeat
+                    }
+                    break;
+
+                }
+
+            }
+        }
+        if(current == NULL){
+                //add the follow of head
+                    for (int j=0;j<TABLE_SIZE;j++){
+                        if(non_terminals_set[row_no-1].follow_set[j]==NULL){
+                            continue;
+                        }else {
+                            int col_no = set_contains(non_terminals_set[row_no-1].follow_set[j]->key,Terminals_table);
+                            if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;//error check
+                            else {printf("\nGrammar not LL(1) compatible");}                          
+                        }   
+                    }
+                    break;               
+
+        }
+    }
+    return arr;
+}
 
 int main(){
     rule* rules = populate_grammar();
@@ -448,7 +545,12 @@ int main(){
         changes++;
     }
 
-    print_follow_sets(nont);
-    printf("\n%d changes",changes);
+    // print_follow_sets(nont);
+    // printf("\n%d changes",changes);
+    // print_tables_sets(Terminals_table);
+    // printf("\n%d", terminals);
+
+    int ** arr = create_parse_table(rules,nont);
+    print_parse_Table(arr);
 
 }
