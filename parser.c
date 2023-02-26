@@ -763,23 +763,23 @@ int main(){
 
 
     int ** arr = create_parse_table(rules,nont);
-    // print_parse_Table(arr);
-    // ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
-    // char* dollar_char= "$";
-    // dollar->isTerminal=0;
-    // dollar->nodeInfo=dollar_char;
-    // push(&parse_stack, dollar);
+    print_parse_Table(arr);
+    ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
+    char* dollar_char= "$";
+    dollar->isTerminal=0;
+    dollar->nodeInfo=dollar_char;
+    push(&parse_stack, dollar);
 
-    // ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
-    // char* prog_char= "prog";
-    // prog->isTerminal=0;
-    // prog->nodeInfo=prog_char;
-    // push(&parse_stack, prog);
+    ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
+    char* prog_char= "prog";
+    prog->isTerminal=0;
+    prog->nodeInfo=prog_char;
+    push(&parse_stack, prog);
 
-    // addNodesToStack(&parse_stack, &rules[0]);
-    // printStack(&parse_stack);
+    addNodesToStack(&parse_stack, &rules[0]);
+    printStack(&parse_stack);
 
     // print_first_Sets(nont);
 
-    print_follow_sets(nont);
+    // print_follow_sets(nont);
 }
