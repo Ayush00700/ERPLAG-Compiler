@@ -451,5 +451,4 @@ int main(){
     print_follow_sets(nont);
     printf("\n%d changes",changes);
 
-
 }
