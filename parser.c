@@ -4,7 +4,7 @@
 /* IMPORTANT DEFINITIONS */
 
 #define MAX_MULTI_RULES 10
-#define NON_TERMINALS 72
+#define NON_TERMINALS 73
 #define TERMINALS 57
 typedef enum Boolean {False,True}Boolean;
 
@@ -32,6 +32,20 @@ typedef struct entry{
     struct entry* next;
 }entry;
 
+typedef struct treeNodes{
+    ruleNode* symbol;
+    struct treeNodes* parent;
+    struct treeNodes* r_sibling;
+    struct treeNodes* child;
+    Boolean isTerminal;
+    token_info* token;
+}treeNodes;
+
+typedef struct parse_tree{
+    treeNodes* root;
+    treeNodes* curr;
+}parse_tree;
+
 typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL 
     char* label; //--> the name of the non-terminal
     // Boolean derives_eps;
@@ -41,11 +55,19 @@ typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL
     int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
 
-void push(Stack* parseStack, ruleNode* element);
+//Stack Operations
+void push(Stack* parseStack, ruleNode* element);//Might need to handle epsilon rule issue
 ruleNode* pop(Stack* parseStack);
 ruleNode* top(Stack* parseStack);
 int isEmptyStack(Stack* parseStack);
 void printStack(Stack* parseStack);
+
+
+
+//Tree Operations
+void createParseTree(); 
+treeNodes* convertToPTreenode(ruleNode* Node, token_info* token);
+
 /* IMPORTANT GLOBAL VARIABLES*/
 int non_terminals = 0; 
 int terminals = 0;
@@ -56,12 +78,10 @@ int* arr[NON_TERMINALS];
 entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
 entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
 Stack parse_stack;
-
+parse_tree ptree;
 
 
 //Stack Operations
-
-
 void push(Stack* parseStack, ruleNode* element)
 {
     if(!parseStack)
@@ -105,28 +125,29 @@ int isEmptyStack(Stack* parseStack)
 {
     return parseStack->top?0:1;    
 }
-
+void addRecurse(Stack* stack, ruleNode* curr)
+{
+    if(!curr)
+    return;
+    else{
+    ruleNode* temp = (ruleNode*)malloc(sizeof(ruleNode));
+    temp->isTerminal= curr->isTerminal;
+    temp->nodeInfo = curr->nodeInfo;
+    addRecurse(stack, curr->nextNode);
+    push(stack,temp);
+    }
+}
 void addNodesToStack(Stack* stack, rule* Rule)
 {
     if(!Rule)
     {
         return;
     }
-    else
-    {
-      
+    else{
       ruleNode* curr=Rule->head;
-     
       curr=curr->nextNode;
       pop(stack);
-      while(curr)
-      {
-        ruleNode* temp = (ruleNode*)malloc(sizeof(ruleNode));
-        temp->isTerminal= curr->isTerminal;
-        temp->nodeInfo = curr->nodeInfo;
-        push(stack,temp);
-        curr = curr->nextNode;
-      }
+      addRecurse(stack, curr);
     }
 }
 
@@ -140,8 +161,85 @@ void printStack(Stack* parseStack){
     }
 
 }
-
 //
+
+
+//Tree Operations 
+// void create_pTree(){
+//     ptree.curr = (treeNodes*)malloc(sizeof(treeNodes));
+// }
+
+// void add_to_pTree(){
+
+// }
+
+
+treeNodes* convertToPTreenode(ruleNode* Node, token_info* token)
+{
+    treeNodes* generated =(treeNodes*)malloc(sizeof(treeNodes));
+    generated->symbol=Node;
+    if(Node->isTerminal)
+    {
+        generated->isTerminal=1;
+    }
+    else
+    {
+
+    }
+    return generated;
+}
+
+// void createParseTree()
+// {
+//     //push the dollar symbol and/or equivalent begining symbols
+//     while(isNextAvailable())//this function should check if there is a next token incoming. 
+//     //the above function can also be replaced by checking null pointer in the DS of lexemme
+//     {
+//         /// Implement the parsing algorithm 
+//         token_info inputToken=getNextToken();
+//         if(parse_stack.num<0)
+//         {
+//             printf("error, stack empty");
+//             break;
+//         }
+//         ruleNode * stackTop= top(&parse_stack);
+//         while(parse_stack.num>0)
+//         {
+//             if(stackTop->isTerminal)
+//             {
+//                 if(/*compare lookahead and stack top as both are terminals*/)
+//                 {
+//                     pop(&parse_stack);
+//                     //Perform some parsetree computation addNodesToParseTree(parseTree,head);         
+                    
+//                 }
+//                 else
+//                 {
+//                     //Perform Error Recovery
+//                 }
+//             }
+//             else
+//             {
+//                 //find the rule correpsonding to satckyop and look ahead via O(1) lookup  rule Rule=arr[findRow(stackTop)][findCol(inputToken)]
+//                 if(isRuleEmpty(Rule)==0)//Can make do with only the implicit null comparison 
+//                 {
+//                     pop(&parse_stack);
+//                     // addNodesToParseTree(parseTree,Rule);          
+//                     // addNodesToStack(stack, Rule)     
+//                 }
+//                 else
+//                 {
+//                     //Perform Error Recovery
+//                 }
+                    
+//             }
+//         }  
+//     }
+// }
+
+
+
+
 
 
 
@@ -408,14 +506,19 @@ void set_add_sets(entry* set_to_add[], entry* final_set[],int entry_number,char*
         if(set_to_add[i]==NULL){
             continue;
         }else{
-            if(except==NULL){
-                set_add(set_to_add[i]->key, final_set,entry_number+1);
-            }else if(strcmp(except,set_to_add[i]->key)==0){
+            entry* entry_node = set_to_add[i];
+            while(entry_node!=NULL){
+            if(except==NULL){ 
+                set_add(entry_node->key, final_set,entry_number+1);
+            }else if(strcmp(except,entry_node->key)==0){
+                entry_node = entry_node->next;
                 continue;
             }else{
-                set_add(set_to_add[i]->key, final_set,entry_number+1);
+                set_add(entry_node->key, final_set,entry_number+1);
             }
             entry_number++;
+            entry_node = entry_node->next;
+            }
         }
     }
 }
@@ -441,7 +544,7 @@ void compute_first_Set(rule* rules,NonT* non_terminals_set){
                     set_add_sets(non_terminals_set[add_index-1].first_set,non_terminals_set[index-1].first_set,entry_number-1,"eps"); //add everything except the epsilon
                 }
                 else if(!set_contains("eps",non_terminals_set[add_index-1].first_set)){ //remaining case
-                    set_add_sets(non_terminals_set[add_index-1].first_set,non_terminals_set[index-1].first_set,entry_number-1,"eps");
+                    set_add_sets(non_terminals_set[add_index-1].first_set,non_terminals_set[index-1].first_set,entry_number-1,NULL);
                     break;
                 }
                 
@@ -565,33 +668,40 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
                 int non_term_index = set_contains(current->nodeInfo,non_Terminals_table);
                 if(set_contains( "eps" ,non_terminals_set[non_term_index-1].first_set)){
                     for (int j=0;j<TABLE_SIZE;j++){
-                        if(non_terminals_set[non_term_index-1].first_set[j]==NULL || strcmp(non_terminals_set[non_term_index-1].first_set[j]->key,"eps")==0 ){
+                        entry* check = non_terminals_set[non_term_index-1].first_set[j];
+                        while(check!=NULL){
+                        if(check==NULL || strcmp(check->key,"eps")==0 ){
+                            check = check->next;
                             continue;
                         }else {
-                            int col_no = set_contains(non_terminals_set[non_term_index-1].first_set[j]->key,Terminals_table);
+                            int col_no = set_contains(check->key,Terminals_table);
                             if(arr[row_no-1][col_no-1]==-1) arr[row_no-1][col_no-1] = rule_no;//error check
                             else {printf("\nGrammar not LL(1) compatible for eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],non_terminals_set[non_term_index-1].first_set[j]->key,headnode->nodeInfo );}                          
                         }   
-             
+                        check = check->next;
+                    }
                     }
                 current = current->nextNode;
                 }
                 else{
 
                     for (int j=0;j<TABLE_SIZE;j++){
-                        if(non_terminals_set[non_term_index-1].first_set[j]==NULL){
+                        entry* check = non_terminals_set[non_term_index-1].first_set[j];
+                        while(check!=NULL){
+                        if(check==NULL){
+                            check = check->next;
                             continue;
                         }else {
-                            int col_no = set_contains(non_terminals_set[non_term_index-1].first_set[j]->key,Terminals_table);
+                            int col_no = set_contains(check->key,Terminals_table);
                             if(arr[row_no-1][col_no-1]==-1||arr[row_no-1][col_no-1]==rule_no)arr[row_no-1][col_no-1] = rule_no;//error check
-                            else {printf("\nGrammar not LL(1) compatible for follow set case %d, %d \n", row_no, col_no);}                          
+                            else {printf("\nGrammar not LL(1) compatible for follow set case rule_no: %d row_no : %d, col_no %d \n",rule_no, row_no, col_no);}                          
                         }   
+                        check = check->next;
+                        }
                 //agar eps hai toh current ko next and repeat
                     }
                     break;
-
                 }
-
             }
         }
         if(current == NULL){
@@ -618,7 +728,7 @@ int main(){
     // print_tables(non_Terminals_table);
     // printf("\n\n");
     // print_tables(Terminals_table);
-    // printf("%d %d\n",non_terminals,terminals);
+    printf("%d %d\n",non_terminals,terminals);
 
     NonT* nont = populate_non_terminals(non_Terminals_table,rules);
     // int index = hash("modDecs");
@@ -632,6 +742,7 @@ int main(){
         compute_first_Set(rules,nont);
         changes ++;
     }
+
     // print_first_Sets(nont);
     // printf("\n%d changes",changes);
     ischange = 1;
@@ -647,20 +758,28 @@ int main(){
     // print_tables_sets(Terminals_table);
     // printf("\n%d", terminals);
 
+
+    //for parsing operations uncomment below :
+
+
     int ** arr = create_parse_table(rules,nont);
     // print_parse_Table(arr);
-    ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
-    char* dollar_char= "$";
-    dollar->isTerminal=0;
-    dollar->nodeInfo=dollar_char;
-    push(&parse_stack, dollar);
+    // ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
+    // char* dollar_char= "$";
+    // dollar->isTerminal=0;
+    // dollar->nodeInfo=dollar_char;
+    // push(&parse_stack, dollar);
 
-    ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
-    char* prog_char= "prog";
-    prog->isTerminal=0;
-    prog->nodeInfo=prog_char;
-    push(&parse_stack, prog);
+    // ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
+    // char* prog_char= "prog";
+    // prog->isTerminal=0;
+    // prog->nodeInfo=prog_char;
+    // push(&parse_stack, prog);
 
-    addNodesToStack(&parse_stack, &rules[0]);
-    printStack(&parse_stack);
+    // addNodesToStack(&parse_stack, &rules[0]);
+    // printStack(&parse_stack);
+
+    // print_first_Sets(nont);
+
+    print_follow_sets(nont);
 }
