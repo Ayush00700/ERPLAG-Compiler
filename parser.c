@@ -618,14 +618,18 @@ void compute_follow_Set(rule* rules,NonT* non_terminals_set){
         }
     }
 }
-void print_parse_Table(int** arr){
+void print_parse_Table(int** arr,NonT* non_terminals_set){
+
+
+    printf("\n");
     for(int i=0;i<non_terminals;i++){
-        printf("%d-: ", i);
+        char* non_term = non_terminals_set[i].label;
+        printf("<%s:%d> ",non_term, i);
         for(int j=0;j<terminals;j++){
             if(arr[i][j]==-1){
                 printf(" ");
             }else{
-                printf(" %d ",arr[i][j]);
+                printf("<rule:%d,col:%d>",arr[i][j],j);
             }
         }
         printf("\n");
@@ -722,6 +726,42 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
     return arr;
 }
 
+
+void call_parser(){
+    //token_node* curr = get_next_token();
+
+    //first - check from parse table given top of stack and curr(token), which rule you need to use
+    //second - push that rule into the stack using the function addNodesToStack(&parse_stack, &rules[rule_no]);
+    //third - note down the rule_no
+    //if top of stack is a terminal and matches with the curr(token:lexeme)then pop the stack and get_next_token and iterate
+
+    /* BASELINE IMPLEMENTATION
+
+    while(curr){
+        
+        curr = get_next_token();
+
+        int pop = 0;
+        while(!pop){
+
+            do stack operations(check the top of the stack and curr(lookahead)-->)
+            if stack top is terminal 
+                then pop = 1 (pop from the stack)
+            else if TOP_OF_STACK IS replaced (some rule no from the parsetable)
+                    THEN ADD THE RULE INTO THE PARSE TREE AS WELL (initially the parse tree consists of <prog>TreeNode)
+
+            if something pops (because the non-terminal and the rule associated derives epsilon)
+                then pop = 1;(pop from the stack)
+        }
+
+
+    }
+    
+    */
+}
+
+
+
 int main(){
     rule* rules = populate_grammar();
     // print_grammar(rules);
@@ -755,7 +795,7 @@ int main(){
 
     // print_follow_sets(nont);
     // printf("\n%d changes",changes);
-    // print_tables_sets(Terminals_table);
+    print_tables_sets(non_Terminals_table);
     // printf("\n%d", terminals);
 
 
@@ -763,7 +803,7 @@ int main(){
 
 
     int ** arr = create_parse_table(rules,nont);
-    print_parse_Table(arr);
+    print_parse_Table(arr,nont);
     ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
     char* dollar_char= "$";
     dollar->isTerminal=0;
@@ -777,7 +817,7 @@ int main(){
     push(&parse_stack, prog);
 
     addNodesToStack(&parse_stack, &rules[0]);
-    printStack(&parse_stack);
+    // printStack(&parse_stack);
 
     // print_first_Sets(nont);
 
