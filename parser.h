@@ -11,9 +11,8 @@ typedef enum Boolean {False,True}Boolean;
 
 extern parseTree PTree; 
 extern nodeRepresentation sentential;
-extern nodeRepresentation ruleNode;
 extern Stack stack;
-extern rule_chain [NUMNONTERMINALS][NUMTERMINALS] table;
+extern rule [NUMNONTERMINALS][NUMTERMINALS] table;
 
 
 char* arr_NonT[65] = {"<prog>","<modDecs>","<othermods>","<driver>",
@@ -38,7 +37,6 @@ new_NT,arithExp,AnyTerm,N4,logOp,N5,relOp,
 term,N6,op1,factor,N7,op2,N_11,arr_element,
 sign,N_11,arrExpr,N_10,arrTerm,arr_N4,arrFactor,arr_N5,caseStmts,default,N9,value,range_forloop,index_forloop,new_index_forloop,sign_forloop}NT;
 
-
 typedef struct FirstSetNode{
     token_type type;
     struct FirstSet* next;
@@ -48,6 +46,7 @@ typedef struct FollowSetNode{
     token_type type;
     struct FollowSet* next;
 }FollowSetNode;
+
 
 typedef struct FirstSet{
     FirstSetNode head;
@@ -64,11 +63,33 @@ typedef union FnF{
     FollowSet Fo;
 }FnF;
 
+typedef struct NonT{
+    char* label;
+    NT type;
+    Boolean derives_eps;
+    FirstSet* Fi;
+    FollowSet* Fo;
+    rule Rules;//What is the use of this?
+}NonT;
+
+typedef union node{
+    NonT NonTerminal;//For memory issues, we might need to create a new DS which only stores relevant information
+    token_info terminal;
+}node;
+typedef struct nodeRepresentation{
+    node Node; 
+    Boolean isTerminal;
+    struct nodeRepresentation* next;
+}nodeRepresentation; 
+
 typedef struct rule{
+     nodeRepresentation* head;
+     nodeRepresentation* tail;
+    //nodeRepresentation* curr;//Might not be used
+    
+    // nodeRepresentation *element;
     // nodeRepresentation* head;
-    // nodeRepresentation* tail;
-    nodeRepresentation* head;
-    int lineNo;
+    int lineNo; //Array of linked list accessed
     FnF Fifo;
     {
         /* data */
@@ -76,66 +97,43 @@ typedef struct rule{
     
 }rule;
 
-typedef struct rule_chain{
+/*
+typedef struct rule{
     rule* chain_head;
     rule* chain_tail;
     Boolean isNull;
-}rule_chain;
+}rule_chain;//what is the use of this
+*/
 
-typedef struct NonT{
-    char* label;
-    NT type;
-    Boolean derives_eps;
-    FirstSet* Fi;
-    FollowSet* Fo;
-    rule_chain Rules;
-}NonT;
-
-
-
-union node{
-    NonT NonTerminal;//For memory issues, we might need to create a new DS which only stores relevant information
-    token_info terminal;
-}
-
-typedef struct nodeRepresentation{
-    node Node; 
+typedef struct treeNodes{
+    nodeRepresentation Node; //alternatively add a check condition with a boolean isLeaf
+    struct treeNodes* children;
+    struct treeNodes* sibling; 
+    struct treeNodes* parent; //used in case of non recursive traversals;
+    Boolean isLeaf;
     Boolean isTerminal;
-    nodeRepresentation* next;
-}nodeRepresentation; 
-
-typedef struct NonTerminalTreeNodes{
-    node Node; //alternatively add a check condition with a boolean isLeaf
-    NonTerminalTreeNodes* children;
-    NonTerminalTreeNodes* sibling; 
-    NonTerminalTreeNodes* parent; //used in case of non recursive traversals;
-    Boolean isleaf;
-    Boolean isTerminal;
-    // NTTN* 
-
+    // NTTN 
     /*
     NonT NonTerminal;//For memory issues, we might need to create a new DS which only stores relevant information
     token_info terminal;
 
     */
-}NonTerminalTreeNodes;
+}treeNodes;
 
-typedef struct ruleTable{
-    rule_chain ruleChain;
-    int num;
-}
+// typedef struct ruleTable{
+//     rule ruleChain;
+//     int num;
+// }
 
 /*
 typedef struct parseTable{
-    rule_chain [NUMNONTERMINALS][NUMTERMINALS] table;
-
-  
+    rule [NUMNONTERMINALS][NUMTERMINALS] table;
 }parseTable;*/
 
 
 typedef struct parseTree{
-    NonTerminalTreeNodes* root;
-    NonTerminalTreeNodes* curr;
+    treeNodes* root;
+    treeNodes* curr;//might be removed
 }parseTree;
 
 typedef struct Stack{
@@ -143,66 +141,24 @@ typedef struct Stack{
     int num;
 } Stack;
 
-void push(Stack* parseStack, nodeRepresentation* element)
-{
-    if(!parseStack)
-    {
-        printf("The Stack is Empty")
-     
-    }
-    else if(!element)
-    {
-        printf("The element passed is NULL or has some issues");
-    }
-    element->next=parseStack->top;
-    parseStack->top=element;
-    parseStack->num++;
-}
+//Stack operations
+void push(Stack* parseStack, nodeRepresentation* element);
+nodeRepresentation* pop(Stack* parseStack);
+nodeRepresentation* top(Stack* parseStack);
+int isEmptyStack(Stack* parseStack);
 
-nodeRepresentation* pop(Stack* parseStack)
-{
-    if(!parseStack)
-    {
-        printf("The Stack is Empty")
-        *flag=*flag; 
-    }
-    nodeRepresentation* temp=parseStack->top;
-    parseStack->top=parseStack->top->next;
-    parseStack->num--;
-    return temp;
-}
-nodeRepresentation* top(Stack* parseStack)
-{
-    if(!parseStack)
-    {
-        printf("The Stack is Empty")
-        *flag=*flag; 
-    }
-    nodeRepresentation* temp=parseStack->top;
+//Array indexing Hashing
+int findRow(Stack stackTop);
+int findCol(Stack stackTop);
 
-    return temp;
-}
-void addTerminalToTree(parseTree PTree, inputToken)
-{
-
-}
-
-int isEmptyStack(Stack* parseStack)
-{
-    return parseStack->top?0:1;    
-}
-
-int findRow(Stack stackTop)
-{
-
-    
-}
-int findRow(Stack stackTop)
-{
-
-    
-}
-void createParseTable(parseTable* parseTable);
-
+//Sudarshan
+void createParseTable(rule [] []table);
 void populateGrammar(FILE* fptr,rule rules[]);
 int noOfLines(FILE *fptr);
+void printArray(rule rules[],int noOfRules);
+
+treeNodes* convertToPTreenode(nodeRepresentation Node);
+void addNodesToStack(Stack* stack, rule* head);  
+
+
+

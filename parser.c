@@ -1,5 +1,158 @@
 #include "parser.h"
 
+//Code by Vasu
+
+
+void push(Stack* parseStack, nodeRepresentation* element)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty");
+    }
+    else if(!element)
+    {
+        printf("The element passed is NULL or has some issues");
+    }
+    element->next=parseStack->top;
+    parseStack->top=element;
+    parseStack->num++;
+}
+
+nodeRepresentation* pop(Stack* parseStack)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty")
+        *flag=*flag; 
+    }
+    nodeRepresentation* temp=parseStack->top;
+    parseStack->top=parseStack->top->next;
+    parseStack->num--;
+    return temp;
+}
+
+nodeRepresentation* top(Stack* parseStack)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty")
+       
+    }
+    nodeRepresentation* temp=parseStack->top;
+
+    return temp;
+}
+
+
+int isEmptyStack(Stack* parseStack)
+{
+    return parseStack->top?0:1;    
+}
+
+void addNodesToParseTree(parseTree PTree, rule Rule)
+{
+    treeNodes temp;
+    while(nodeRepresentation temp=getNode(Rule))
+    {
+       t =convertToPTreenode(temp);
+
+    }
+
+}
+
+
+int findRow(Stack stackTop)
+{
+
+    
+}
+int findCol(Stack stackTop)
+{
+
+    
+}
+
+void addNodesToStack(Stack* stack, rule* Rule)
+{
+    if(!Rule)
+    {
+        return;
+    }
+    else
+    {
+        addNodesToStack(stack, Rule->head->next);
+        push(stack, Rule->head);
+    }
+}
+
+// void addTerminal(parseTree PTree);
+// {
+
+// }
+
+treeNodes* convertToPTreenode(nodeRepresentation Node)
+{
+    treeNodes* generated =(treenNodes*)malloc(sizeof(treeNodes));
+    generated->Node= Node;
+    if(Node.isTerminal)
+    {
+        generated->isTerminal=1;
+        generated->isLeaf=0; //Some future/current way of checking if the bottom most layer
+    }
+    return generated;
+}
+
+void createParseTable(rule table[][])
+{
+    //push the dollar symbol and/or equivalent begining symbols
+    while(isNextAvailable())//this function should check if there is a next token incoming. 
+    //the above function can also be replaced by checking null pointer in the DS of lexemme
+    {
+        /// Implement the parsing algorithm 
+        token_info inputToken=getNextToken();
+        if(stack.num<0)
+        {
+            printf("error, stack empty")
+            break;
+        }
+        nodeRepresentation * stackTop= top(Stack);
+        while(stack.num>0)
+        {
+            if(stackTop->isTerminal)
+            {
+                if(inputToken.type==stackTop->top.Node.type)
+                {
+                    pop(Stack);
+                    //Perform some parsetree computation addNodesToParseTree(parseTree,head);         
+                    
+                }
+                else
+                {
+                    //Perform Error Recovery
+                }
+            }
+            else
+            {
+                rule Rule=table[findRow(stackTop)][findCol(inputToken)]
+                if(isRuleEmpty(Rule)==0)//Can make do with only the implicit null comparison 
+                {
+                    pop(Stack);
+                    addNodesToParseTree(parseTree,Rule);          
+                    addNodesToStack(stack, Rule)     
+                }
+                else
+                {
+                    //Perform Error Recovery
+                }
+                    
+            }
+        }  
+    }
+}
+
+
+
+
 /*----------------------------------------HELPER FUNCTIONS----------------------------------------*/
 int noOfLines(FILE* fptr){
     char* strtok_result;
@@ -69,7 +222,8 @@ FirstSet first_of_rule(rule r, NonT nt[])
 {
     // If first symbol in RHS of rule r is a terminal
     // Just return the symbol
-    if(r.head.nextNode->isTerminal)
+        //if(r->head->next)
+    if(r.head.next->isTerminal)
     {
         FirstSet f;
         // Single node
@@ -115,10 +269,12 @@ FirstSet first_of_rule(rule r, NonT nt[])
 
     }
 }
-FirstSet first_of_nt(ruleNode* N, NonT nt[])
+//this function might need to be changed
+FirstSet first_of_nt(nodeRepresentation* N, NonT nt[])
 {
-    if(nt[N->nodeInfo->type].derives_eps)
+    if(nt[N->Node->type].derives_eps)
         {
+        
             // Add epsilon to first set and return
             FirstSetNode f1;
             f1.type = (token_type)EPS;
@@ -129,7 +285,7 @@ FirstSet first_of_nt(ruleNode* N, NonT nt[])
 }
 
 /*----------------------------------------FOLLOW SET COMPUTATION----------------------------------------*/
-FollowSet follow(ruleNode* N, NonT nt[])
+FollowSet follow(nodeRepresentation* N, NonT nt[])
 {
 
 }
