@@ -287,6 +287,7 @@ void print_tables_sets(entry* table[]){ //only print the elements which are ther
 
 
 void print_first_Sets(NonT* nont){
+     printf("FIRST SETS_---\n");
     for(int i=0;i<NON_TERMINALS;i++){
         printf("%s --> \n",nont[i].label);
         print_tables_sets(nont[i].first_set);
@@ -294,6 +295,7 @@ void print_first_Sets(NonT* nont){
 }
 
 void print_follow_sets(NonT* nont){
+    printf("FOLLOW SETS_---\n");
         for(int i=0;i<NON_TERMINALS;i++){
         printf("%s --> \n",nont[i].label);
         print_tables_sets(nont[i].follow_set);
@@ -351,7 +353,55 @@ void compute_first_Set(rule* rules,NonT* non_terminals_set){
 }
 
 void followadd(int ruleno,NonT* non_terminals_set,int i,rule* rules){
-    // ruleNode* rulenode = 
+    ruleNode* rulenodehead = rules[ruleno-1].head;
+    ruleNode* rulenode = rulenodehead;
+    NonT* non_terminal = non_terminals_set+i;
+    rulenode = rulenode->nextNode;
+    while(rulenode!=NULL){
+        if(strcmp(rulenode->nodeInfo,(non_terminals_set+i)->label)){
+            rulenode = rulenode->nextNode;
+            continue;
+        }
+        else{
+            ruleNode* next = rulenode->nextNode;
+            //case 1:
+            if(next!=NULL && next->isTerminal){
+                // add this next terminal to NT+i;
+                set_add(next->nodeInfo,non_terminals_set[i].follow_set,0);
+            }
+            //case 2:
+            else if(next == NULL){
+                // add follow of rulenodehead to NT+i;
+                int index = set_contains(rulenodehead->nodeInfo,non_Terminals_table);
+                set_add_sets(non_terminals_set[index-1].follow_set,non_terminals_set[i].follow_set,0,NULL);
+            }
+            else{
+                //find the first of node "next" and add it to the follow of NT+i
+                // if the find is containing eps then next = next->nextnode and repeat untill next is NULL where just add the follow set or break; 
+                while(next!=NULL){
+                    if(next->isTerminal){
+                        set_add(next->nodeInfo,non_terminals_set[i].follow_set,0);
+                        break;
+                    }
+                    int index = set_contains(next->nodeInfo,non_Terminals_table);
+                    int does_contain_eps = set_contains("eps",non_terminals_set[index-1].first_set);
+                    if(does_contain_eps==0)//not containing
+                    {
+                        set_add_sets(non_terminals_set[index-1].first_set,non_terminals_set[i].follow_set,0,NULL);
+                        break;
+                    }else{
+                        set_add_sets(non_terminals_set[index-1].first_set,non_terminals_set[i].follow_set,0,"eps");
+                        next = next->nextNode;
+                    }
+                }
+                if(next == NULL){
+                    int index = set_contains(rulenodehead->nodeInfo,non_Terminals_table);
+                    set_add_sets(non_terminals_set[index-1].follow_set,non_terminals_set[i].follow_set,0,NULL);
+                }
+            }
+            rulenode = rulenode->nextNode;
+        }
+    }
 }
 
 
@@ -381,7 +431,7 @@ int main(){
     // printf("%d\n",index);
     // int r = set_contains("modDecs",non_Terminals_table);
     // printf("%d",set_contains("modDecs",non_Terminals_table));
-    print_nont(nont);
+    // print_nont(nont);
     int changes = 0;
     while(ischange){
         ischange = 0;
@@ -390,8 +440,16 @@ int main(){
     }
     // print_first_Sets(nont);
     // printf("\n%d changes",changes);
-    compute_follow_Set(rules, nont);
+    ischange = 1;
+    changes = 0;
+    while(ischange){
+        ischange = 0;
+        compute_follow_Set(rules, nont);
+        changes++;
+    }
+
     print_follow_sets(nont);
+    printf("\n%d changes",changes);
 
 
 }
