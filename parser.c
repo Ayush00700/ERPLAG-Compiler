@@ -7,6 +7,7 @@
 #define NON_TERMINALS 72
 #define TERMINALS 57
 typedef enum Boolean {False,True}Boolean;
+
 typedef struct ruleNode{
     char* nodeInfo; 
     Boolean isTerminal;
@@ -19,6 +20,10 @@ typedef struct rule{
     int lineNo;
 }rule;
 
+typedef struct Stack{
+    ruleNode* top;
+    int num;
+} Stack; //push element after creation
 
 typedef struct entry{
     char* key;
@@ -36,7 +41,11 @@ typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL
     int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
 
-
+void push(Stack* parseStack, ruleNode* element);
+ruleNode* pop(Stack* parseStack);
+ruleNode* top(Stack* parseStack);
+int isEmptyStack(Stack* parseStack);
+void printStack(Stack* parseStack);
 /* IMPORTANT GLOBAL VARIABLES*/
 int non_terminals = 0; 
 int terminals = 0;
@@ -46,6 +55,95 @@ int* arr[NON_TERMINALS];
 
 entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
 entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
+Stack parse_stack;
+
+
+
+//Stack Operations
+
+
+void push(Stack* parseStack, ruleNode* element)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty");
+    }
+    else if(!element)
+    {
+        printf("The element passed is NULL or has some issues");
+    }
+    element->nextNode=parseStack->top;
+    parseStack->top=element;
+    parseStack->num++;
+}
+
+ruleNode* pop(Stack* parseStack)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty");
+    }
+    ruleNode* temp=parseStack->top;
+    parseStack->top=parseStack->top->nextNode;
+    parseStack->num--;
+    return temp;
+}
+
+ruleNode* top(Stack* parseStack)
+{
+    if(!parseStack)
+    {
+        printf("The Stack is Empty");
+    }
+    ruleNode* temp=parseStack->top;
+
+    return temp;
+}
+
+
+int isEmptyStack(Stack* parseStack)
+{
+    return parseStack->top?0:1;    
+}
+
+void addNodesToStack(Stack* stack, rule* Rule)
+{
+    if(!Rule)
+    {
+        return;
+    }
+    else
+    {
+      
+      ruleNode* curr=Rule->head;
+     
+      curr=curr->nextNode;
+      pop(stack);
+      while(curr)
+      {
+        ruleNode* temp = (ruleNode*)malloc(sizeof(ruleNode));
+        temp->isTerminal= curr->isTerminal;
+        temp->nodeInfo = curr->nodeInfo;
+        push(stack,temp);
+        curr = curr->nextNode;
+      }
+    }
+}
+
+void printStack(Stack* parseStack){
+    int i=0;
+    while(parseStack->top)
+    {   
+        ruleNode* temp=parseStack->top;
+        printf("line no- %d ,%s, %d \n",i++,temp->nodeInfo, temp->isTerminal);
+        pop(parseStack);
+    }
+
+}
+
+//
+
+
 
 unsigned int hash(char* key){ //hash function for hashing a string 
     unsigned int hashval = 0;
@@ -70,7 +168,6 @@ void print_tables(entry* table[]){
            printf("\n");
         }
     }
-
 }
 
 int set_add(char* key,entry* table[],int entry_number){
@@ -551,6 +648,19 @@ int main(){
     // printf("\n%d", terminals);
 
     int ** arr = create_parse_table(rules,nont);
-    print_parse_Table(arr);
+    // print_parse_Table(arr);
+    ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
+    char* dollar_char= "$";
+    dollar->isTerminal=0;
+    dollar->nodeInfo=dollar_char;
+    push(&parse_stack, dollar);
 
+    ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
+    char* prog_char= "prog";
+    prog->isTerminal=0;
+    prog->nodeInfo=prog_char;
+    push(&parse_stack, prog);
+
+    addNodesToStack(&parse_stack, &rules[0]);
+    printStack(&parse_stack);
 }
