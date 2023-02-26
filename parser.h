@@ -7,15 +7,17 @@
 typedef enum Boolean {False,True}Boolean;
 
 #define NUMTERMINALS 57
-#define NUMNONTERMINALS 80
+// #define NON_TERMINALS 80
+#define TABLE_SIZE 15 //might be changed
+#define MAX_MULTI_RULES 10
+#define NON_TERMINALS 74
 
-extern parseTree PTree; 
-extern nodeRepresentation sentential;
-extern Stack stack;
-extern rule [NUMNONTERMINALS][NUMTERMINALS] table;
+//  parseTree PTree; 
+//  ruleNode sentential;
+//  Stack stack;
+//  rule table[NON_TERMINALS][NUMTERMINALS]; 
 
-
-char* arr_NonT[65] = {"<prog>","<modDecs>","<othermods>","<driver>",
+char* arr_NonT[NON_TERMINALS] = {"<prog>","<modDecs>","<othermods>","<driver>",
 "<modDec>","<mod>","<modDef>","<ip_list>","<ret>","<op_list>","<dataType>",
 "<N1>","<type>","<N2>","<range_arrays>","<index_arr>","<stmts>","<stmt>",
 "<iostmt>","<simplestmt>","<declarestmt>","<condstmt>","<iterstmt>",
@@ -63,61 +65,52 @@ typedef union FnF{
     FollowSet Fo;
 }FnF;
 
-typedef struct NonT{
-    char* label;
-    NT type;
-    Boolean derives_eps;
-    FirstSet* Fi;
-    FollowSet* Fo;
-    rule Rules;//What is the use of this?
+
+// typedef struct NonT{
+//     char* label;
+//     NT type;
+//     Boolean derives_eps;
+//     FirstSet* Fi;
+//     FollowSet* Fo;
+//     rule Rules;//What is the use of this?
+// }NonT;
+
+typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL 
+    char* label; //--> the name of the non-terminal
+    entry* first_set[TABLE_SIZE]; //first set of the non terminal
+    entry* follow_set[TABLE_SIZE]; //follow set of the non terminal
+    int last_added;
+    int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
+
 
 typedef union node{
     NonT NonTerminal;//For memory issues, we might need to create a new DS which only stores relevant information
     token_info terminal;
 }node;
-typedef struct nodeRepresentation{
-    node Node; 
+
+typedef struct ruleNode{
+    node Node;
+    char* nodeInfo; 
     Boolean isTerminal;
-    struct nodeRepresentation* next;
-}nodeRepresentation; 
+    struct ruleNode* nextNode;
+}ruleNode;
 
 typedef struct rule{
-     nodeRepresentation* head;
-     nodeRepresentation* tail;
-    //nodeRepresentation* curr;//Might not be used
-    
-    // nodeRepresentation *element;
-    // nodeRepresentation* head;
-    int lineNo; //Array of linked list accessed
-    FnF Fifo;
-    {
-        /* data */
-    };
-    
+    ruleNode *head;
+    ruleNode *tail;
+    int lineNo;
 }rule;
 
-/*
-typedef struct rule{
-    rule* chain_head;
-    rule* chain_tail;
-    Boolean isNull;
-}rule_chain;//what is the use of this
-*/
 
 typedef struct treeNodes{
-    nodeRepresentation Node; //alternatively add a check condition with a boolean isLeaf
+    ruleNode Node; //alternatively add a check condition with a boolean isLeaf
     struct treeNodes* children;
     struct treeNodes* sibling; 
     struct treeNodes* parent; //used in case of non recursive traversals;
     Boolean isLeaf;
     Boolean isTerminal;
-    // NTTN 
-    /*
-    NonT NonTerminal;//For memory issues, we might need to create a new DS which only stores relevant information
-    token_info terminal;
-
-    */
+   
 }treeNodes;
 
 // typedef struct ruleTable{
@@ -127,7 +120,7 @@ typedef struct treeNodes{
 
 /*
 typedef struct parseTable{
-    rule [NUMNONTERMINALS][NUMTERMINALS] table;
+    rule [NON_TERMINALS][NUMTERMINALS] table;
 }parseTable;*/
 
 
@@ -137,14 +130,22 @@ typedef struct parseTree{
 }parseTree;
 
 typedef struct Stack{
-    nodeRepresentation* top;
+    ruleNode* top;
     int num;
 } Stack;
 
+typedef struct entry{
+    char* key;
+    unsigned int entry_number;
+    unsigned int order;
+    struct entry* next;
+}entry;
+
+
 //Stack operations
-void push(Stack* parseStack, nodeRepresentation* element);
-nodeRepresentation* pop(Stack* parseStack);
-nodeRepresentation* top(Stack* parseStack);
+void push(Stack* parseStack, ruleNode* element);
+ruleNode* pop(Stack* parseStack);
+ruleNode* top(Stack* parseStack);
 int isEmptyStack(Stack* parseStack);
 
 //Array indexing Hashing
@@ -152,12 +153,12 @@ int findRow(Stack stackTop);
 int findCol(Stack stackTop);
 
 //Sudarshan
-void createParseTable(rule [] []table);
+void createParseTable(rule table[NON_TERMINALS][NUMTERMINALS]);
 void populateGrammar(FILE* fptr,rule rules[]);
 int noOfLines(FILE *fptr);
 void printArray(rule rules[],int noOfRules);
 
-treeNodes* convertToPTreenode(nodeRepresentation Node);
+treeNodes* convertToPTreenode(ruleNode Node);
 void addNodesToStack(Stack* stack, rule* head);  
 
 
