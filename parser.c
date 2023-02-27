@@ -566,8 +566,6 @@ void compute_follow_Set(rule* rules,NonT* non_terminals_set){
     }
 }
 void print_parse_Table(int** arr,NonT* non_terminals_set){
-
-
     printf("\n");
     for(int i=0;i<non_terminals;i++){
         char* non_term = non_terminals_set[i].label;
@@ -586,8 +584,6 @@ void print_parse_Table(int** arr,NonT* non_terminals_set){
 
 int** create_parse_table(rule* rules,NonT* non_terminals_set){
 
-
-    
     for (int i = 0; i < NON_TERMINALS; i++)
         arr[i] = (int*)malloc(TERMINALS* sizeof(int));
     

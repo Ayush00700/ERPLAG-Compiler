@@ -1396,7 +1396,31 @@ void call_parser(rule* rules){
     {
 
         ruleNode* stackTop=top(&parse_stack);//Find the top of stack
-        if(stackTop->isTerminal)//If the stack is terminal, then we need to match with lookahaed
+
+        while(!stackTop->isTerminal)
+        {
+            if(strcmp(stackTop->nodeInfo,"eps")==0)
+            {
+                pop(&parse_stack);
+                continue;
+            }
+            int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
+            int col_no= set_contains(curr->type, Terminals_table);
+
+            int indexToPush= arr[row_no-1][col_no-1];
+            if(indexToPush==-1)
+            {
+                //Perform Error Recovery for no rule found to expansion 
+            }
+            else
+            {
+                rule ruleToPush=rules[indexToPush-1];
+                addNodesToStack(&parse_stack, &ruleToPush); 
+                addRuleToTree(&ruleToPush);
+            }
+            stackTop=top(&parse_stack);
+        }
+        //the case when it goes out of the above statement i.e. there is a terminal to match
         {
             if(stackTop->nodeInfo==curr->lexeme)//If there is a match
             {
@@ -1417,25 +1441,7 @@ void call_parser(rule* rules){
                 //Perform Error Recovery due to non matchin
             }
         }
-        else
-        {   
-            //check the index finding operations once??
-            int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
-            int col_no= set_contains(curr->type, Terminals_table);
-           
-            int indexToPush= arr[row_no-1][col_no-1];
-            if(indexToPush==-1)
-            {
-                //Perform Error Recovery for no rule found to expansion 
-            }
-            else
-            {
-                rule ruleToPush=rules[indexToPush-1];
-                addNodesToStack(&parse_stack, &ruleToPush); 
-                addRuleToTree(&ruleToPush);
-            }
-
-        }
+    
         curr=get_next_token();
       
     }
