@@ -5,28 +5,30 @@
 
 #define MAX_LEN 20
 #define TABLE_SIZE 101
+#define TOTAL_KEYWORDS 30
 
-char* arr_keywords[26] = {
+char* arr_keywords[30] = {
 "integer","real","boolean","of",
 "array","start","end","declare",
 "module","driver","program","get_value",
 "print","use","with","parameters","takes",
 "input","returns","for","in","switch",
-"case","break","default","while"
+"case","break","default","while","true","false","AND","OR"
 };
 
-char* arr_keywords_upper[26] = {
+char* arr_keywords_upper[30] = {
 "INTEGER","REAL","BOOLEAN","OF",
 "ARRAY","START","END","DECLARE",
 "MODULE","DRIVER","PROGRAM","GET_VALUE",
 "PRINT","USE","WITH","PARAMETERS","TAKES",
 "INPUT","RETURNS","FOR","IN","SWITCH",
-"CASE","BREAK","DEFAULT","WHILE"
+"CASE","BREAK","DEFAULT","WHILE","TRUE","FALSE","AND","OR"
 };
 
 typedef struct hash_table_contents{
 char* lexeme ;
 char* tk_type;
+struct hash_table_contents* next;
 }hash_table_contents;
 
 typedef union data{
@@ -73,6 +75,9 @@ void initialize(){
 }
 
 token_info* get_next_token(){
+    if(get_next_curr==NULL){
+        return NULL;
+    }
      token_node* new_node =(token_node*) malloc(sizeof(token_node));
      new_node->token = (token_info*)malloc(sizeof(token_info));
      new_node->token->lexeme = (char*)malloc(sizeof(char)*20);
@@ -128,6 +133,7 @@ hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
     // h->lexeme = lexeme;h->tk_type = (token_type)hash(lexeme);
     h->lexeme = lexeme;
     h->tk_type = tk;
+    h->next = NULL;
     return h;
 }
 
@@ -141,7 +147,7 @@ size_t _hash(char *lexeme){
         hash_value = (hash_value*lexeme[i])%97;
     }
 
-    return hash_value;
+    return hash_value%TABLE_SIZE;
 }
 
 void init_hash_table(){
@@ -155,41 +161,51 @@ void print_hash_table(){
         if(hash_table[i]==NULL){
             printf("\t%d\t---\n",i);
         }else {
-            printf("\t%i\t%s\t%s\n", i ,hash_table[i]->lexeme, hash_table[i]->tk_type);
+            hash_table_contents* entry = hash_table[i];
+            while(entry!=NULL){
+                printf("\t%i\t%s\t%s", i ,entry->lexeme, entry->tk_type);
+                entry = entry->next;
+            }
         }
     }
 }
 
-
 int hash_table_insert(char* lexeme, char* tk){
     if(lexeme==NULL) return 0;
     int index = _hash(lexeme);
-    if(hash_table[index]!=NULL){
-        printf("Element already existing at index %d\n",index);
-        return 1;
-    }else{
+    hash_table_contents* entry = hash_table[index];
+
+    while(entry!=NULL){
+        if(strcmp(entry->lexeme,lexeme)==0){
+            return 0;
+        }
+        entry = entry->next;
+    }
     hash_table_contents* h = create_hash_table_content(lexeme, tk);
+    h->next = hash_table[index];
     hash_table[index] = h;
     return index;
-    }
 }
 
 void populate_hash_table(){
     init_hash_table();
-    for(int i=0;i<26;i++){
-
+    for(int i=0;i<TOTAL_KEYWORDS;i++){
         hash_table_insert(arr_keywords[i],arr_keywords_upper[i]);
-    
     }
 }
 
 char* lookup(char* lexeme){
     size_t hash_value = _hash(lexeme);
-    if (hash_value >= TABLE_SIZE || hash_table[hash_value]==NULL) return "ID";
-    if(hash_table[hash_value]!=NULL){
-        // printf("Found lexeme : %s\n", hash_table[hash_value]->tk_type);
-        return hash_table[hash_value]->tk_type;
+    hash_table_contents* entry = hash_table[hash_value];
+    int found = 0;
+    while(entry!=NULL){
+        if(strcmp(entry->lexeme,lexeme)==0){
+            found = 1;
+            return entry->tk_type;
+        }
+        entry = entry->next;
     }
+    if(found==0)return "ID";
 }
 
 void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize){
@@ -254,14 +270,12 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         if(!strcmp(message,"NUM")){
             tk->values.num = atoi(tk->lexeme);
         }
-        if(!strcmp(message,"RNUM")){
+        else if(!strcmp(message,"RNUM")){
             double value = (double)atof(lexeme);
             tk->values.rnum = (double)atof(tk->lexeme);
         }
-        if(!strcmp(message,"ID")){
-            //TODO implement lookup --> DONE
-            message = lookup(lexeme);
-        }
+        else if(!strcmp(message,"ID")) message = lookup(lexeme);
+
         memset(tk->type,'\0',20*sizeof(char));
         strcpy(tk->type,message);
     }
@@ -676,8 +690,8 @@ void call_lexer(FILE* fp,int bufsize){
 /*Parser Module*/
 
 #define MAX_MULTI_RULES 10
-#define NON_TERMINALS 73
-#define TERMINALS 57
+#define NON_TERMINALS 75
+#define TERMINALS 58
 typedef enum Boolean {False,True}Boolean;
 
 typedef struct ruleNode{
@@ -845,7 +859,7 @@ treeNodes* convertToPTreenode(ruleNode* Node)
 
 void createParseTree(ruleNode* start){
     ptree.root = (treeNodes*)malloc(sizeof(treeNodes));
-    ptree.curr = (treeNodes*)malloc(sizeof(treeNodes));
+   
     ptree.curr = ptree.root;
     ptree.root->isTerminal = 0;
     ptree.root->symbol = start;
@@ -1022,11 +1036,11 @@ void print_grammar(rule* rules){
 }
 
 rule* populate_grammar(){ //makes an array of linked list
-    FILE* fp = fopen("grammar.txt","r");
+    FILE* fp = fopen("new_grammar.txt","r");
     lines = noOfLines(fp);
     rule* rules = (rule*)malloc(sizeof(rule)*(lines+1));
     fclose(fp);
-    fp = fopen("grammar.txt","r");
+    fp = fopen("new_grammar.txt","r");
     for(int i=1;i<=lines;i++){
         linepop(fp,i,rules);
     }
@@ -1275,21 +1289,21 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
         current = current->nextNode;
         int row_no = set_contains(headnode->nodeInfo,non_Terminals_table);//1 indexed
         while(current!=NULL){
-            if(current->isTerminal){
+            if(current->isTerminal && strcmp(current->nodeInfo,"eps")!=0){
                 //mmm
                 int col_no = set_contains(current->nodeInfo,Terminals_table);//1 indexed
                 if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;//error check
                 else {printf("\nGrammar not LL(1) compatible for non eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],current->nodeInfo,headnode->nodeInfo );}
                 break;
             }
-            else{
+            else if(current->isTerminal==0){
                 //first set nikalo aur check if eps
                 int non_term_index = set_contains(current->nodeInfo,non_Terminals_table);
                 if(set_contains( "eps" ,non_terminals_set[non_term_index-1].first_set)){
                     for (int j=0;j<TABLE_SIZE;j++){
                         entry* check = non_terminals_set[non_term_index-1].first_set[j];
                         while(check!=NULL){
-                        if(check==NULL || strcmp(check->key,"eps")==0 ){
+                        if(strcmp(check->key,"eps")==0 ){
                             check = check->next;
                             continue;
                         }else {
@@ -1298,7 +1312,7 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
                             else {printf("\nGrammar not LL(1) compatible for eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],non_terminals_set[non_term_index-1].first_set[j]->key,headnode->nodeInfo );}                          
                         }   
                         check = check->next;
-                    }
+                        }
                     }
                 current = current->nextNode;
                 }
@@ -1307,14 +1321,11 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
                     for (int j=0;j<TABLE_SIZE;j++){
                         entry* check = non_terminals_set[non_term_index-1].first_set[j];
                         while(check!=NULL){
-                        if(check==NULL){
-                            check = check->next;
-                            continue;
-                        }else {
+                    
                             int col_no = set_contains(check->key,Terminals_table);
                             if(arr[row_no-1][col_no-1]==-1||arr[row_no-1][col_no-1]==rule_no)arr[row_no-1][col_no-1] = rule_no;//error check
                             else {printf("\nGrammar not LL(1) compatible for follow set case rule_no: %d row_no : %d, col_no %d \n",rule_no, row_no, col_no);}                          
-                        }   
+                        
                         check = check->next;
                         }
                 //agar eps hai toh current ko next and repeat
@@ -1322,20 +1333,25 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
                     break;
                 }
             }
+            else{
+                //folow of head bharo
+                current = current->nextNode;
+                // printf("\nEpsilon deriving rule was found !");
+            }
         }
         if(current == NULL){
                 //add the follow of head
                     for (int j=0;j<TABLE_SIZE;j++){
-                        if(non_terminals_set[row_no-1].follow_set[j]==NULL){
-                            continue;
-                        }else {
-                            int col_no = set_contains(non_terminals_set[row_no-1].follow_set[j]->key,Terminals_table);
+                        entry* check = non_terminals_set[row_no-1].follow_set[j];
+                        while(check!=NULL){
+                 
+                            int col_no = set_contains(check->key,Terminals_table);
                             if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;//error check
-                            else {printf("\nGrammar not LL(1) compatible");}                          
-                        }   
-                    }
-                    break;               
-
+                            else {printf("\nGrammar not LL(1) compatible %d %d %d",row_no,col_no,arr[row_no-1][col_no-1]);}                          
+                        
+                        check = check->next;
+                        }
+                    }             
         }
     }
     return arr;
@@ -1343,17 +1359,44 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
 
 
 //Add error checks in all of them
+
+int checkUncleExists(){
+
+    if(ptree.curr==ptree.root|| ptree.curr->parent==ptree.root) return 0;
+
+    if(ptree.curr->parent->r_sibling!=NULL){
+        return 1;
+    }else return 0;
+}
+
+
 void goToUncle(){
-    ptree.curr=ptree.curr->parent->r_sibling;
+    // printf("\nprevious_uncle : %s\t",ptree.curr->symbol->nodeInfo);
+    if(checkUncleExists())
+    {ptree.curr=ptree.curr->parent->r_sibling;}
+    else{
+        while(!checkUncleExists() && ptree.curr->parent!=ptree.root){
+            ptree.curr = ptree.curr->parent;
+        }
+        if(ptree.curr->parent==ptree.root)return ;
+        ptree.curr = ptree.curr->parent->r_sibling;
+    }
+    // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
 void goToParent(){
+    // printf("\nprevious : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->parent;
+    // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
 void goToChild(){
+   // printf("\nprevious : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->child;
+   // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
 void goToSibling(){
+   // printf("\nprevious sibling : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->r_sibling;
+   // printf("\nnext sibling : %s\t",ptree.curr->symbol->nodeInfo);
 }
 
 
@@ -1387,23 +1430,16 @@ void addRuleToTree(rule* rule)
 void call_parser(rule* rules){
     //Assume that you get the lookahead via this, filled some random values for now
     token_info* curr = get_next_token();
-    // curr->lexeme="ID";
-    // curr->line_no=2;
-    // curr->values=3 ;
-    //curr->
+
 
     while(curr) //till the time we keep on getting nextToken
     {
 
         ruleNode* stackTop=top(&parse_stack);//Find the top of stack
-
+        
         while(!stackTop->isTerminal)
-        {
-            if(strcmp(stackTop->nodeInfo,"eps")==0)
-            {
-                pop(&parse_stack);
-                continue;
-            }
+        {    
+            
             int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
             int col_no= set_contains(curr->type, Terminals_table);
 
@@ -1411,18 +1447,30 @@ void call_parser(rule* rules){
             if(indexToPush==-1)
             {
                 //Perform Error Recovery for no rule found to expansion 
+                printf(" initial Error recovery performing\n");
+                break;
             }
             else
             {
                 rule ruleToPush=rules[indexToPush-1];
-                addNodesToStack(&parse_stack, &ruleToPush); 
-                addRuleToTree(&ruleToPush);
+                if(strcmp(ruleToPush.head->nextNode->nodeInfo,"eps")!= 0){
+                    addNodesToStack(&parse_stack, &ruleToPush);
+                    addRuleToTree(&ruleToPush);
+                   // printf("\n %d rule used",ruleToPush.lineNo);
+                }
+                else{
+                    pop(&parse_stack);
+                    addRuleToTree(&ruleToPush);
+                   // printf("\n %d rule used and is epsilon rule",ruleToPush.lineNo);
+                    goToUncle();
+                } 
+                
             }
             stackTop=top(&parse_stack);
         }
         //the case when it goes out of the above statement i.e. there is a terminal to match
         {
-            if(stackTop->nodeInfo==curr->lexeme)//If there is a match
+            if(strcmp(stackTop->nodeInfo,curr->type)==0)//If there is a match
             {
                 pop(&parse_stack);//Pop the stack element
                 addTokenInfo(ptree.curr, curr); //Since only a terminal is popped, we map the token info to the parse tree
@@ -1439,22 +1487,40 @@ void call_parser(rule* rules){
             else
             {
                 //Perform Error Recovery due to non matchin
+                printf("AA Error recovery performing\n");
             }
         }
     
         curr=get_next_token();
       
     }
-    
+    if(isEmptyStack(&parse_stack)){
+        printf("\nParsing successfull");
+    }else {
+        printf("\nPerform error recovery");
+        printf("\n%s",parse_stack.top->nodeInfo);
+    }
 }
 
 int main(){
     /* Lexer module calls*/
     FILE* fp;
-    fp = fopen("code_test_case2.txt","r");
+    char test_buff[50] = "code_test_case1.txt";
+
+    fp = fopen(test_buff,"r");
+    printf("Running file %s", test_buff);
+    
     populate_hash_table();
 
+
     call_lexer(fp,4096);
+    current->next_token = (token_node*) malloc(sizeof(token_node)); //need to add dollar in the tokens too at the end
+    current->next_token->next_token = NULL;
+    current->next_token->token = (token_info*)malloc(sizeof(token_info));
+    current->next_token->token->lexeme = "$";
+    strcpy(current->next_token->token->type,"$");
+
+    
     initialize();
     // printf("TOKENS ARE .... (first to last) \n");
     // printtokens();
@@ -1463,6 +1529,8 @@ int main(){
 
     /* Parser module calls*/
     rule* rules = populate_grammar();
+    set_add("$",Terminals_table,57);
+    terminals++;
     NonT* nont = populate_non_terminals(non_Terminals_table,rules);
 
     int changes = 0;
@@ -1480,11 +1548,18 @@ int main(){
         changes++;
     }
 
+
+/*
+
+
+
+
+*/
     int ** arr = create_parse_table(rules,nont);
-    print_parse_Table(arr,nont);
+    // print_parse_Table(arr,nont);
     ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
     char* dollar_char= "$";
-    dollar->isTerminal=0;
+    dollar->isTerminal=1;
     dollar->nodeInfo=dollar_char;
     push(&parse_stack, dollar);
 
@@ -1499,4 +1574,6 @@ int main(){
 
 
     call_parser(rules);
+
+
 }
