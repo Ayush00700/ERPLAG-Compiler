@@ -2,7 +2,6 @@
 #include "lexer.h"
 
 /* IMPORTANT DEFINITIONS */
-
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 73
 #define TERMINALS 57
@@ -46,7 +45,8 @@ typedef struct parse_tree{
     treeNodes* curr;
 }parse_tree;
 
-typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL 
+/*STRUCTURE FOR A NON-TERMINAL*/
+typedef struct NonT{
     char* label; //--> the name of the non-terminal
     // Boolean derives_eps;
     entry* first_set[TABLE_SIZE]; //first set of the non terminal
