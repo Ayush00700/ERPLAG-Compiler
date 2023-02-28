@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+/*GLOBAL VARIABLES*/
 int populate_count = 1;
 int line_no = 1;
 
@@ -14,6 +16,7 @@ void printtokens()
 {
     token_node* temp = ll_node;
     int i=1; //token_number
+
     while(temp!=NULL){
         printf("%d line number ",temp->token->line_no);
         printf("token no. %d is %s .. lexeme is .. %s\n",i,temp->token->type,temp->token->lexeme);
@@ -22,7 +25,9 @@ void printtokens()
     }
 }
 
-void populate(char* buffer,FILE* fp,int bufsize){
+void populate(char* buffer,FILE* fp,int bufsize)
+/*This function populates the buffer with the data from file to be tokenized*/
+{
     printf("We populated the buffer here %dth time\n",populate_count);
     populate_count++;
     if(fp!=NULL){
@@ -34,11 +39,16 @@ void populate(char* buffer,FILE* fp,int bufsize){
 void add_error_token(token_info* tk)
 /*This function adds an error entry into the stack*/
 {
-    if(stack_head==NULL){
+    // When stack is empty
+    if(stack_head==NULL)
+    {
         stack_head = (token_node*)malloc(sizeof(token_node));
         stack_head->token = tk;
         stack_head->next_token = NULL;
-    }else{
+    }
+    
+    // Just add a node
+    else{
         token_node* temp = (token_node*)malloc(sizeof(token_node));
         temp->token = tk;
         temp->next_token = stack_head;
@@ -59,20 +69,28 @@ void pop_error_tokens()
 
 hash_table_contents* hash_table[TABLE_SIZE];
 
-hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
+hash_table_contents* create_hash_table_content(char* lexeme, char* tk)
+/*This function creates a hash table entry to map the token to the lexeme*/
+{
     hash_table_contents* h = (hash_table_contents*)malloc(sizeof(hash_table_contents));
     // h->lexeme = lexeme;h->tk_type = (token_type)hash(lexeme);
     h->lexeme = lexeme;
     h->tk_type = tk;
+
     return h;
 }
 
 
-size_t hash(char *lexeme){
-
+size_t hash(char *lexeme)
+/*This function does the hashing for the given lexeme*/
+{
+    // strnlen takes 2 parameters: 1) string whose length is to be computed
+    // 2) The max length to be checked
     int length = strnlen(lexeme, MAX_LEN);
     size_t  hash_value = 0;
-    for (int i =0;i<length;i++){
+
+    for (int i =0;i<length;i++)
+    {
         hash_value += lexeme[i];
         hash_value = (hash_value*lexeme[i])%97;
     }
@@ -80,37 +98,58 @@ size_t hash(char *lexeme){
     return hash_value;
 }
 
-void init_hash_table(){
+void init_hash_table()
+/*This function initializes the hash table with NULL entries*/
+{
     for(int i=0;i<TABLE_SIZE;i++){
         hash_table[i] = NULL;
     }
 }
 
-void print_hash_table(){
+void print_hash_table()
+/*This function prints the updated hash table*/
+{
     for (int i=0;i<TABLE_SIZE;i++){
-        if(hash_table[i]==NULL){
+        // No entry found
+        if(hash_table[i]==NULL)
+        {
             printf("\t%d\t---\n",i);
-        }else {
+        }
+        // Entry found
+        else
+        {
             printf("\t%i\t%s\t%s\n", i ,hash_table[i]->lexeme, hash_table[i]->tk_type);
         }
     }
 }
 
 
-int hash_table_insert(char* lexeme, char* tk){
-    if(lexeme==NULL) return 0;
+int hash_table_insert(char* lexeme, char* tk)
+/*This function takes the lexeme and the token, hashes the lexeme and
+returns a flag or index at which insertion is to be done*/
+{
+    if(lexeme==NULL)
+        return 0;
+    // Hash the lexeme
     int index = hash(lexeme);
+    // Check for collision
     if(hash_table[index]!=NULL){
         printf("Element already existing at index %d\n",index);
         return 1;
-    }else{
-    hash_table_contents* h = create_hash_table_content(lexeme, tk);
-    hash_table[index] = h;
-    return index;
+    }
+    // In case no collision, create entry and return index at which the entry is to be added
+    else
+    {
+        hash_table_contents* h = create_hash_table_content(lexeme, tk);
+        hash_table[index] = h;
+
+        return index;
     }
 }
 
-void populate_hash_table(){
+void populate_hash_table()
+{
+    // Initialize the hash table
     init_hash_table();
     for(int i=0;i<26;i++){
 
@@ -605,8 +644,7 @@ void call_lexer(FILE* fp,int bufsize){
     }
 }
 
-//driver function to test tokenization 
-
+/*This is the driver function to test tokenization*/
 int main(){
     FILE* fp;
     fp = fopen("code_test_case3.txt","r");
