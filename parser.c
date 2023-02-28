@@ -681,7 +681,7 @@ void goToChild()
 {
     ptree.curr=ptree.curr->child;
 }
-void goToSibling();
+void goToSibling()
 {
     ptree.curr=ptree.curr->r_sibling;
 }
