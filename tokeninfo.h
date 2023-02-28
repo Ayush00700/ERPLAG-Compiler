@@ -23,12 +23,9 @@ char* arr_keywords_upper[26] = {
 "CASE","BREAK","DEFAULT","WHILE"
 };
 
-
 typedef struct hash_table_contents{
-
-char* lexeme ;
-char* tk_type;
-
+    char* lexeme ;
+    char* tk_type;
 }hash_table_contents;
 
 
