@@ -837,7 +837,7 @@ Stack parse_stack;
 parse_tree ptree;
 
 
-//Stack Operations defined
+// ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
 void push(Stack* parseStack, ruleNode* element)
 /*Push an element into the parseStack*/
 {
@@ -946,6 +946,7 @@ void printStack(Stack* parseStack)
 
 }
 
+// ----------------------------------------------HELPER FUNCTIONS FOR PARSE TREE ----------------------------------------------//
 treeNodes* convertToPTreenode(ruleNode* Node)
 /*This function makes a Parse tree node from the passed rule node*/
 {
@@ -1007,8 +1008,11 @@ void print_tables(entry* table[])
     }
 }
 
+// ----------------------------------------------HELPER FUNCTIONS FOR SET OPERATIONS ----------------------------------------------//
 int set_add(char* key,entry* table[],int entry_number)
-/*This function adds the key into the table along with the entry number*/
+/*This function adds the key into the table along with the entry number
+0 => need not be added since it already exists
+1 => needs to be added*/
 {
     // Hash the key to get the index
     unsigned int index = hash(key);
@@ -1052,17 +1056,27 @@ int set_contains(char* key,entry* table[])
     return 0;
 }
 
+// ----------------------------------------------HELPER FUNCTIONS FOR GRAMMAR ARRAY ----------------------------------------------//
 int noOfLines(FILE* fptr)
+/*This function counts the number of lines in the input file*/
 {
     char* strtok_result;
     int linecount = 0;
+
+    // Move the file pointer to end of the file
     fseek (fptr , 0 , SEEK_END);
+    // Ask the position of file pointer
     long fptr_size = ftell (fptr);
+    // Reset the pointer back to start
     rewind (fptr);
+
     char buffer[fptr_size];
-    size_t result;
-    result = fread (buffer,1,fptr_size,fptr);
+    size_t result; // Indicates number of bytes successfully read
+    result = fread(buffer,1,fptr_size,fptr);
+
+    // Returns first token
     strtok_result = strtok(buffer, "\n");
+    // Keep counting the tokens
     while(strtok_result!=NULL){
         linecount++;
         strtok_result = strtok(NULL,"\n");
@@ -1072,7 +1086,10 @@ int noOfLines(FILE* fptr)
 
 
 
-void insert_in_rule(rule* rules, int i, Boolean isTerminal, char* buff){
+void insert_in_rule(rule* rules, int i, Boolean isTerminal, char* buff)
+/*This functions adds a symbol to a linked list of symbols in a rule
+It adds the string in the buff in the linked list at the ith index of rules array*/
+{
         ruleNode* r2 = (ruleNode*)malloc(sizeof(ruleNode));
         r2->nodeInfo = buff;
         r2->isTerminal = isTerminal;
@@ -1082,63 +1099,97 @@ void insert_in_rule(rule* rules, int i, Boolean isTerminal, char* buff){
 }
 
 
-void linepop(FILE* fp,int i,rule* rules){ //given a line of the grammar.txt file--parses it to form a linked list
+void linepop(FILE* fp,int i,rule* rules)
+/*This function reads a line of grammar.txt file and parses it to form a linked list*/
+{
     char* buff = (char*) malloc(sizeof(char)*50);
+    // Initialize a buffer
     memset(buff,'\0',50);
+    // Read the string enclosed by '<' and '>'
     fscanf(fp,"<%s> ",buff);
+    // Set the final character a null character
     buff[strlen(buff) - 1] = '\0';
-    ruleNode* r1 = (ruleNode*)malloc(sizeof(ruleNode));
 
+    // Set a rule node to be added to the set of rules
+    ruleNode* r1 = (ruleNode*)malloc(sizeof(ruleNode));
     r1->nodeInfo = buff;
     r1->isTerminal = False;
     r1->nextNode = NULL;
     (rules+i-1)->head = r1;
     rules[i-1].tail = r1;
     rules[i-1].lineNo = i;
+
+    // Check if the string in buffer is a new non-terminal or an existing one
     int r = set_add(buff,non_Terminals_table,non_terminals);
-    if(r==1)non_terminals++;
+    if(r==1)
+        non_terminals++;
+    
     char c;
-    c = fgetc(fp);// moving to RHS of production
-    c = fgetc(fp);
-    c = fgetc(fp);
+    // moving to RHS of production
+    c = fgetc(fp); // for ' ' before the '-'
+    c = fgetc(fp); // for '-'
+    c = fgetc(fp); // for ' ' after '-'
     int break_point = 0;
     c = fgetc(fp);
     
+    // Untile end of line
     while(c!='\n'){
-    if(c == '<'){
-        char* buff = (char*) malloc(sizeof(char)*50);
-        ungetc(c,fp);
-        memset(buff,'\0',50);
-        fscanf(fp,"<%s>",buff); //read a non terminal 
-        buff[strlen(buff) - 1] = '\0';
-        insert_in_rule(rules,i,False,buff);
-        r = set_add(buff,non_Terminals_table,non_terminals);
-        if(r==1) non_terminals++;
-    }
-    else{
-        char* buff = (char*) malloc(sizeof(char)*20);
-        ungetc(c,fp);
-        memset(buff,'\0',20);
-        fscanf(fp,"%s",buff); //read a terminal 
-        insert_in_rule(rules,i,True,buff);
-        r = set_add(buff,Terminals_table,terminals);
-        if(r==1) terminals++;
+        // Non-terminal
+        if(c == '<'){
+            char* buff = (char*) malloc(sizeof(char)*50);
+            // Replace the character at fp with the character in c
+            // Here we are just writing back '<'
+            ungetc(c,fp);
+            memset(buff,'\0',50);
+            //read a non terminal
+            fscanf(fp,"<%s>",buff); 
+            buff[strlen(buff) - 1] = '\0';
+            insert_in_rule(rules,i,False,buff);
+            // Check if it a new non-terminal or not
+            r = set_add(buff,non_Terminals_table,non_terminals);
+            if(r==1)
+                non_terminals++;
+        }
 
-    }
+        // Terminal
+        else{
+            char* buff = (char*) malloc(sizeof(char)*20);
+            // Replace the character at fp with the character in c
+            // Here we are just writing back the character we read
+            ungetc(c,fp);
+            memset(buff,'\0',20);
+            //read a terminal
+            fscanf(fp,"%s",buff); 
+            insert_in_rule(rules,i,True,buff);
+            // Check if it is a new terminal or not
+            r = set_add(buff,Terminals_table,terminals);
+            if(r==1)
+                terminals++;
 
-    if(break_point)break;
-    c = fgetc(fp);
-    if(c=='\n')break;
-    c = fgetc(fp);
+        }
 
-    if(c==EOF) break;
-    }
+        if(break_point)
+            break;
+        // Next 3 lines are to handle \r\n or just \n
+        c = fgetc(fp);
+        if(c=='\n')
+            break;
+        c = fgetc(fp);
+
+        if(c==EOF)
+            break;
+        }
 }
 
-void print_grammar(rule* rules){
-      for(int i=0;i<lines;i++){
+void print_grammar(rule* rules)
+/*This function prints the grammar from the rules populated in the array of linked list*/
+{
+    for(int i=0;i<lines;i++){
+        // LHS of rule
         printf("<%s> ==> ",rules[i].head->nodeInfo);
         ruleNode* currNode = rules[i].head->nextNode;
+
+        // RHS of rule
         while(currNode!=NULL){
             if(currNode->isTerminal==True){
             printf("%s ",currNode->nodeInfo);
@@ -1152,7 +1203,9 @@ void print_grammar(rule* rules){
     }
 }
 
-rule* populate_grammar(){ //makes an array of linked list
+rule* populate_grammar()
+/*This function makes an array of linked list and populates it with the rules read from grammar.txt*/
+{
     FILE* fp = fopen("new_grammar.txt","r");
     lines = noOfLines(fp);
     rule* rules = (rule*)malloc(sizeof(rule)*(lines+1));
@@ -1165,17 +1218,20 @@ rule* populate_grammar(){ //makes an array of linked list
 }
 
 
-NonT* populate_non_terminals(entry* table[],rule* rules){ //start making an array of non-terminals along with important information
+NonT* populate_non_terminals(entry* table[],rule* rules)
+/*This function makes an array of non-terminals along with important information*/
+{
     NonT* non_terminals_rules = (NonT*) malloc(sizeof(NonT)*NON_TERMINALS);
     //int index,last_index = -1;
 
-    /* FIrst added their corresponding names and hashed them into their respective places within the array */
+    /* First added their corresponding names and hashed them into their respective places within the array */
     for(int i=0;i<lines;i++){
         char* buff = rules[i].head->nodeInfo;
         int index = set_contains(buff, table); // find the hashed value of non-terminal from the non-terminals table
         non_terminals_rules[index-1].label = buff;
         non_terminals_rules[index-1].last_added = 0;
-    } 
+    }
+
     /* Following loop completes the initialization of rules array present in every non terminal from the array of non-terminals*/
     for(int i=0;i<lines;i++){
         ruleNode* current = rules[i].head;
@@ -1200,7 +1256,9 @@ NonT* populate_non_terminals(entry* table[],rule* rules){ //start making an arra
     return non_terminals_rules;
 }
 
-void print_nont(NonT* nont){ //print non -terminals 
+void print_nont(NonT* nont)
+/*This function prints non-terminals*/
+{
     for(int i=0;i<NON_TERMINALS;i++){
         printf("%s --> ",nont[i].label);
         for(int j=0;j<nont[i].last_added;j++){
@@ -1210,11 +1268,16 @@ void print_nont(NonT* nont){ //print non -terminals
     }
 }
 
-void print_tables_sets(entry* table[]){ //only print the elements which are there
+void print_tables_sets(entry* table[])
+/*This function prints only the elements which are present in table*/
+{
      for (int i=0;i<TABLE_SIZE;i++){
+        // NULL entry
         if(table[i]==NULL){
           continue;
-        }else {
+        }
+        // Non-NULL entry
+        else {
            entry* current;
            current = table[i];
            printf("\t%d\t",i);
@@ -1229,7 +1292,9 @@ void print_tables_sets(entry* table[]){ //only print the elements which are ther
 }
 
 
-void print_first_Sets(NonT* nont){
+void print_first_Sets(NonT* nont)
+/*This function prints the first sets of all the non-terminals*/
+{
      printf("FIRST SETS_---\n");
     for(int i=0;i<NON_TERMINALS;i++){
         printf("%s --> \n",nont[i].label);
@@ -1237,51 +1302,69 @@ void print_first_Sets(NonT* nont){
     }
 }
 
-void print_follow_sets(NonT* nont){
+void print_follow_sets(NonT* nont)
+/*This function prints the follow sets of all the non-terminals*/
+{
     printf("FOLLOW SETS_---\n");
-        for(int i=0;i<NON_TERMINALS;i++){
+    for(int i=0;i<NON_TERMINALS;i++){
         printf("%s --> \n",nont[i].label);
         print_tables_sets(nont[i].follow_set);
     }
 }
 
-/* Functionality to add a set of values into a set */
-//provided the functionlaity of adding anything except the char* "except"
-void set_add_sets(entry* set_to_add[], entry* final_set[],int entry_number,char* except){ 
+void set_add_sets(entry* set_to_add[], entry* final_set[],int entry_number,char* except)
+/* Function to add a set of values into a set provided the functionlaity of adding
+ anything except the string mentioned in the variable "except"*/
+{ 
     for(int i=0;i<TABLE_SIZE;i++){
+
         if(set_to_add[i]==NULL){
             continue;
-        }else{
+        }
+        
+        else{
+            // Controlled addition
             entry* entry_node = set_to_add[i];
+
             while(entry_node!=NULL){
-            if(except==NULL){ 
-                set_add(entry_node->key, final_set,entry_number+1);
-            }else if(strcmp(except,entry_node->key)==0){
+                if(except==NULL){ 
+                    set_add(entry_node->key, final_set,entry_number+1);
+                }
+                else if(strcmp(except,entry_node->key)==0){
+                    entry_node = entry_node->next;
+                    continue;
+                }
+                else{
+                    set_add(entry_node->key, final_set,entry_number+1);
+                }
+                entry_number++;
                 entry_node = entry_node->next;
-                continue;
-            }else{
-                set_add(entry_node->key, final_set,entry_number+1);
-            }
-            entry_number++;
-            entry_node = entry_node->next;
             }
         }
     }
 }
 
-/* Needs to be computed untill there is no more addition into their respective first sets*/
-void compute_first_Set(rule* rules,NonT* non_terminals_set){
-    
+
+void compute_first_Set(rule* rules,NonT* non_terminals_set)
+/*Needs to be computed until there is no more addition into their respective first sets*/
+{
+    // Bottom-up computation
     for(int i=lines-1;i>=0;i--){
-        int index = set_contains(rules[i].head->nodeInfo, non_Terminals_table);//find the index of non-terminal in the array of non-terminals
+        //find the index of non-terminal in the array of non-terminals
+        int index = set_contains(rules[i].head->nodeInfo, non_Terminals_table);
+        // Get to first symbol in RHS of the rule
         ruleNode* rulenode = rules[i].head->nextNode;
        
         while(rulenode!=NULL){
-            if(rulenode->isTerminal==True){ // encounters a terminal in the rule and break 
+            // encounters a terminal in the rule and break 
+            if(rulenode->isTerminal==True){
                 int entry_number = set_contains(rulenode->nodeInfo,Terminals_table);
                 set_add(rulenode->nodeInfo,non_terminals_set[index-1].first_set,entry_number-1);
                 break;
-            }else{ //encounters another non -terminal in the rule
+            }
+            
+            //encounters another non-terminal in the rule
+            else{
                 int entry_number = set_contains(rulenode->nodeInfo,non_Terminals_table);
                 int add_index = set_contains(rulenode->nodeInfo,non_Terminals_table );
                 if(rulenode->nextNode==NULL&&set_contains("eps",non_terminals_set[add_index-1].first_set)){ // A -> A1 B2 and B2 derives epsilon
@@ -1300,7 +1383,9 @@ void compute_first_Set(rule* rules,NonT* non_terminals_set){
     }
 }
 
-void followadd(int ruleno,NonT* non_terminals_set,int i,rule* rules){
+void followadd(int ruleno,NonT* non_terminals_set,int i,rule* rules)
+/*Helper function to compute follow set*/
+{
     ruleNode* rulenodehead = rules[ruleno-1].head;
     ruleNode* rulenode = rulenodehead;
     NonT* non_terminal = non_terminals_set+i;
@@ -1353,7 +1438,9 @@ void followadd(int ruleno,NonT* non_terminals_set,int i,rule* rules){
 }
 
 
-void compute_follow_Set(rule* rules,NonT* non_terminals_set){
+void compute_follow_Set(rule* rules,NonT* non_terminals_set)
+/*Needs to be computed until there is no more addition into their respective follow sets*/
+{
     int index_start_symbol = set_contains("prog", non_Terminals_table);
     set_add("$",non_terminals_set[index_start_symbol-1].follow_set,0);
 
@@ -1364,9 +1451,9 @@ void compute_follow_Set(rule* rules,NonT* non_terminals_set){
         }
     }
 }
-void print_parse_Table(int** arr,NonT* non_terminals_set){
-
-
+void print_parse_Table(int** arr,NonT* non_terminals_set)
+/*This function prints the parse table*/
+{
     printf("\n");
     for(int i=0;i<non_terminals;i++){
         char* non_term = non_terminals_set[i].label;
@@ -1383,14 +1470,15 @@ void print_parse_Table(int** arr,NonT* non_terminals_set){
 
 }
 
-int** create_parse_table(rule* rules,NonT* non_terminals_set){
-
-
-    
+int** create_parse_table(rule* rules,NonT* non_terminals_set)
+/*Creates a parse table using info from rules and non-terminals*/
+{
+    // Initialize each row
     for (int i = 0; i < NON_TERMINALS; i++)
         arr[i] = (int*)malloc(TERMINALS* sizeof(int));
     
 
+    // To denote null entries
     for(int i=0; i<NON_TERMINALS; i++)
     {
         for(int j=0; j<TERMINALS; j++)
@@ -1399,24 +1487,32 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
         }
     }
 
-    for(int i =0;i<lines;i++){
+    // Fill in the table
+    for(int i =0;i<lines;i++)
+    {
         int rule_no = i+1;
         ruleNode* headnode = rules[i].head;
         ruleNode* current = headnode;
         current = current->nextNode;
-        int row_no = set_contains(headnode->nodeInfo,non_Terminals_table);//1 indexed
+        // Get row number (1-indexed)
+        int row_no = set_contains(headnode->nodeInfo,non_Terminals_table);
+        
         while(current!=NULL){
             if(current->isTerminal && strcmp(current->nodeInfo,"eps")!=0){
-                //mmm
-                int col_no = set_contains(current->nodeInfo,Terminals_table);//1 indexed
-                if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;//error check
+                // Get column number (1-indexed)
+                int col_no = set_contains(current->nodeInfo,Terminals_table);
+                // error check - collision
+                if(arr[row_no-1][col_no-1]==-1)arr[row_no-1][col_no-1] = rule_no;
                 else {printf("\nGrammar not LL(1) compatible for non eps case %d %d %d %s %s", row_no,col_no, arr[row_no-1][col_no-1],current->nodeInfo,headnode->nodeInfo );}
                 break;
             }
+
             else if(current->isTerminal==0){
-                //first set nikalo aur check if eps
+                // Get first set and check if eps exists in it
                 int non_term_index = set_contains(current->nodeInfo,non_Terminals_table);
-                if(set_contains( "eps" ,non_terminals_set[non_term_index-1].first_set)){
+                // If it contains eps
+                if(set_contains( "eps" ,non_terminals_set[non_term_index-1].first_set))
+                {
                     for (int j=0;j<TABLE_SIZE;j++){
                         entry* check = non_terminals_set[non_term_index-1].first_set[j];
                         while(check!=NULL){
@@ -1431,8 +1527,9 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
                         check = check->next;
                         }
                     }
-                current = current->nextNode;
+                    current = current->nextNode;
                 }
+
                 else{
 
                     for (int j=0;j<TABLE_SIZE;j++){
@@ -1474,20 +1571,27 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
     return arr;
 }
 
-
+// ----------------------------------------------HELPER FUNCTIONS FOR PARSE TREE TRAVERSAL ----------------------------------------------//
 //Add error checks in all of them
+int checkUncleExists()
+/*Checks if the parent of the node has a sibling or not*/
+{
 
-int checkUncleExists(){
-
-    if(ptree.curr==ptree.root|| ptree.curr->parent==ptree.root) return 0;
+    if(ptree.curr==ptree.root|| ptree.curr->parent==ptree.root)
+        return 0;
 
     if(ptree.curr->parent->r_sibling!=NULL){
         return 1;
-    }else return 0;
+    }
+    
+    else
+        return 0;
 }
 
 
-void goToUncle(){
+void goToUncle()
+/*Go to right sibling of the parent*/
+{
     // printf("\nprevious_uncle : %s\t",ptree.curr->symbol->nodeInfo);
     if(checkUncleExists())
     {ptree.curr=ptree.curr->parent->r_sibling;}
@@ -1500,17 +1604,23 @@ void goToUncle(){
     }
     // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
-void goToParent(){
+void goToParent()
+/*Go to the parent node*/
+{
     // printf("\nprevious : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->parent;
     // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
-void goToChild(){
+void goToChild()
+/*Go to the child node*/
+{
    // printf("\nprevious : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->child;
    // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
-void goToSibling(){
+void goToSibling()
+/*Go to right sibling node*/
+{
    // printf("\nprevious sibling : %s\t",ptree.curr->symbol->nodeInfo);
     ptree.curr=ptree.curr->r_sibling;
    // printf("\nnext sibling : %s\t",ptree.curr->symbol->nodeInfo);
@@ -1518,6 +1628,7 @@ void goToSibling(){
 
 
 void addRuleToTree(rule* rule)
+/*Add the "rule" to the parse tree*/
 {
     if(strcmp(rule->head->nodeInfo,ptree.curr->symbol->nodeInfo)==0)
     {
@@ -1539,42 +1650,53 @@ void addRuleToTree(rule* rule)
     }
     else
     {
-        //Error
+        // Error recovery/reporting
     }
 }
 
 
-void call_parser(rule* rules){
+void call_parser(rule* rules)
+/*This function gives cue to start the Syntax Analyzer*/
+{
     //Assume that you get the lookahead via this, filled some random values for now
     token_info* curr = get_next_token();
 
-
-    while(curr) //till the time we keep on getting nextToken
+    // till the time we keep on getting nextToken
+    while(curr)
     {
-
-        ruleNode* stackTop=top(&parse_stack);//Find the top of stack
-        
+        // Find the top of stack
+        ruleNode* stackTop=top(&parse_stack);
+        // ParseStack operations
         while(!stackTop->isTerminal)
         {    
-            
             int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
             int col_no= set_contains(curr->type, Terminals_table);
 
+            // Access the parse table
             int indexToPush= arr[row_no-1][col_no-1];
+
+            // If null entry found
             if(indexToPush==-1)
             {
                 //Perform Error Recovery for no rule found to expansion 
                 printf(" initial Error recovery performing\n");
                 break;
             }
+
+            // Safe to push
             else
             {
+                // Rule obtained from the parse table
                 rule ruleToPush=rules[indexToPush-1];
+                // If the rule is of the form A->eps
                 if(strcmp(ruleToPush.head->nextNode->nodeInfo,"eps")!= 0){
+                    // Push to stack
                     addNodesToStack(&parse_stack, &ruleToPush);
+                    // Update parse tree
                     addRuleToTree(&ruleToPush);
                    // printf("\n %d rule used",ruleToPush.lineNo);
                 }
+
                 else{
                     pop(&parse_stack);
                     addRuleToTree(&ruleToPush);
@@ -1585,9 +1707,11 @@ void call_parser(rule* rules){
             }
             stackTop=top(&parse_stack);
         }
-        //the case when it goes out of the above statement i.e. there is a terminal to match
+
+        // the case when it goes out of the above statement i.e. there is a terminal to match
         {
-            if(strcmp(stackTop->nodeInfo,curr->type)==0)//If there is a match
+            // If there is a match
+            if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
                 pop(&parse_stack);//Pop the stack element
                 addTokenInfo(ptree.curr, curr); //Since only a terminal is popped, we map the token info to the parse tree
@@ -1607,19 +1731,26 @@ void call_parser(rule* rules){
                 printf("AA Error recovery performing\n");
             }
         }
-    
+
+        // Get next token from the lexer
         curr=get_next_token();
       
     }
+
+    // No more elements in parse stack, then parsing is successful
     if(isEmptyStack(&parse_stack)){
         printf("\nParsing successfull");
-    }else {
+    }
+    // If stack is non-empty after parsing all input then perform error recovery
+    else {
         printf("\nPerform error recovery");
         printf("\n%s",parse_stack.top->nodeInfo);
     }
 }
 
-int main(){
+int main()
+/*Main driver function*/
+{
     /* Lexer module calls*/
     FILE* fp;
     char test_buff[50] = "code_test_case1.txt";
