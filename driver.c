@@ -1654,6 +1654,40 @@ void addRuleToTree(rule* rule)
     }
 }
 
+void in_order_traversal(treeNodes* current)
+/*Inorder traversal of the parse tree:
+If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
+Ex: Input:        A
+                 /
+                B -- C -- D
+                    /
+                   E -- F
+    
+    Output:  B,A,E,C,F,D*/
+{
+    if(!current)
+        return;
+    
+    // Check if leftmost child exists
+    if(current->child)
+        in_order_traversal(current->child);
+
+    else{
+        // Print current node
+        printf("%s, ", current->symbol->nodeInfo);
+    }
+
+    // Print parent node if current is leftmost child
+    if(current->parent->child == current)
+        printf("%s, ", current->parent->symbol->nodeInfo);
+
+    // Right sibling
+    treeNodes* temp = current->r_sibling;
+    if(!temp){
+        in_order_traversal(temp);
+    }
+}
+
 
 void call_parser(rule* rules)
 /*This function gives cue to start the Syntax Analyzer*/
