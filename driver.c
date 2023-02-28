@@ -26,9 +26,9 @@ char* arr_keywords_upper[30] = {
 };
 
 typedef struct hash_table_contents{
-char* lexeme ;
-char* tk_type;
-struct hash_table_contents* next;
+    char* lexeme ;
+    char* tk_type;
+    struct hash_table_contents* next;
 }hash_table_contents;
 
 typedef union data{
@@ -70,32 +70,43 @@ void printtokens()
         i++;
     }
 }
-void initialize(){
+void initialize()
+/*Initialize next pointer for get_next_token()*/
+{
     get_next_curr = ll_node;
 }
 
-token_info* get_next_token(){
+token_info* get_next_token()
+/*This function returns the next valid token to the parser upon request*/
+{
+    // When there are no more tokens
     if(get_next_curr==NULL){
         return NULL;
     }
-     token_node* new_node =(token_node*) malloc(sizeof(token_node));
-     new_node->token = (token_info*)malloc(sizeof(token_info));
-     new_node->token->lexeme = (char*)malloc(sizeof(char)*20);
-     strcpy(new_node->token->lexeme,get_next_curr->token->lexeme);
-     new_node->token->line_no = get_next_curr->token->line_no;
-     strcpy(new_node->token->type,get_next_curr->token->type);
-     new_node->token->values = get_next_curr->token->values;
 
-     get_next_curr =get_next_curr->next_token;
-     return new_node->token;
+    // Populate required fields and send the token to parser
+    token_node* new_node =(token_node*) malloc(sizeof(token_node));
+    new_node->token = (token_info*)malloc(sizeof(token_info));
+    new_node->token->lexeme = (char*)malloc(sizeof(char)*20);
+    strcpy(new_node->token->lexeme,get_next_curr->token->lexeme);
+    new_node->token->line_no = get_next_curr->token->line_no;
+    strcpy(new_node->token->type,get_next_curr->token->type);
+    new_node->token->values = get_next_curr->token->values;
+
+    get_next_curr =get_next_curr->next_token;
+    return new_node->token;
 }
 
 
-void populate(char* buffer,FILE* fp,int bufsize){
+void populate(char* buffer,FILE* fp,int bufsize)
+/*This function populates the buffer with the data from file to be tokenized*/
+{
     printf("We populated the buffer here %dth time\n",populate_count);
     populate_count++;
     if(fp!=NULL){
+        // Flush buffer
         memset(buffer, 0, bufsize);
+        // Read file to fill buffer
         fread(buffer,sizeof(char),bufsize,fp);
     }
 }
@@ -103,11 +114,16 @@ void populate(char* buffer,FILE* fp,int bufsize){
 void add_error_token(token_info* tk)
 /*This function adds an error entry into the stack*/
 {
+    // If stack is empty then initialize
     if(stack_head==NULL){
         stack_head = (token_node*)malloc(sizeof(token_node));
         stack_head->token = tk;
         stack_head->next_token = NULL;
-    }else{
+    }
+    
+    // Push node
+    else
+    {
         token_node* temp = (token_node*)malloc(sizeof(token_node));
         temp->token = tk;
         temp->next_token = stack_head;
@@ -120,15 +136,20 @@ void pop_error_tokens()
 {
     token_node* temp;
     temp = stack_head;
+    
+    // Print error entries
     while(temp!=NULL){
         printf("Error in line number :%d, Couldn't tokenize the keyword %s\n", temp->token->line_no,temp->token->lexeme);
         temp = temp->next_token;
     }
 }
 
+/*THE HASHING IS PART OF THE PRE-PROCESSING STEP*/
 hash_table_contents* hash_table[TABLE_SIZE];
 
-hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
+hash_table_contents* create_hash_table_content(char* lexeme, char* tk)
+/*This function creates a hash table entry to map the token to the lexeme*/
+{
     hash_table_contents* h = (hash_table_contents*)malloc(sizeof(hash_table_contents));
     // h->lexeme = lexeme;h->tk_type = (token_type)hash(lexeme);
     h->lexeme = lexeme;
@@ -138,7 +159,9 @@ hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
 }
 
 
-size_t _hash(char *lexeme){
+size_t _hash(char *lexeme)
+/*This function does the hashing for the given lexeme*/
+{
 
     int length = strnlen(lexeme, MAX_LEN);
     size_t  hash_value = 0;
@@ -150,13 +173,17 @@ size_t _hash(char *lexeme){
     return hash_value%TABLE_SIZE;
 }
 
-void init_hash_table(){
+void init_hash_table()
+/*This function initializes the hash table with NULL entries*/
+{
     for(int i=0;i<TABLE_SIZE;i++){
         hash_table[i] = NULL;
     }
 }
 
-void print_hash_table(){
+void print_hash_table()
+/*This function prints the updated hash table*/
+{
     for (int i=0;i<TABLE_SIZE;i++){
         if(hash_table[i]==NULL){
             printf("\t%d\t---\n",i);
@@ -170,34 +197,47 @@ void print_hash_table(){
     }
 }
 
-int hash_table_insert(char* lexeme, char* tk){
-    if(lexeme==NULL) return 0;
+int hash_table_insert(char* lexeme, char* tk)
+/*This function takes the lexeme and the token, hashes the lexeme and
+returns a flag or index at which insertion is to be done*/
+{
+    if(lexeme==NULL)
+        return 0;
+
     int index = _hash(lexeme);
     hash_table_contents* entry = hash_table[index];
 
+    // Check until you get an empty cell to add (part of linear probing)
     while(entry!=NULL){
         if(strcmp(entry->lexeme,lexeme)==0){
             return 0;
         }
         entry = entry->next;
     }
+    // Now that we have the index, we create hash table entry to be added
     hash_table_contents* h = create_hash_table_content(lexeme, tk);
     h->next = hash_table[index];
     hash_table[index] = h;
     return index;
 }
 
-void populate_hash_table(){
+void populate_hash_table()
+/*This function populates the hash table to map the keywords lower case keywords to the ones in upper case*/
+{
     init_hash_table();
     for(int i=0;i<TOTAL_KEYWORDS;i++){
         hash_table_insert(arr_keywords[i],arr_keywords_upper[i]);
     }
 }
 
-char* lookup(char* lexeme){
+char* lookup(char* lexeme)
+/*This function takes an input lexeme and returns the corresponding mapped value from the hash table*/
+{
     size_t hash_value = _hash(lexeme);
     hash_table_contents* entry = hash_table[hash_value];
     int found = 0;
+
+    // Find a match :(
     while(entry!=NULL){
         if(strcmp(entry->lexeme,lexeme)==0){
             found = 1;
@@ -205,13 +245,23 @@ char* lookup(char* lexeme){
         }
         entry = entry->next;
     }
-    if(found==0)return "ID";
+
+    // If not found, return ID
+    if(found==0)
+        return "ID";
 }
 
-void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize){
+/*HERE WE FOLLOW THE BUFFER AND SIMULTE IT ON THE DFA*/
+void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize)
+/*fi, bi: Forward and begin pointer of buffer i respectively
+messgae: The lexeme to which we have to map the string read in buffer as instructed by the DFA*/
+
+{
     int size; //size of the string should be one more than the required because of '\0' character
     char* lexeme;
-    if(b1==bufsize && f1==bufsize){ //reading from buffer 2 
+
+    // Tokenizing from buffer 2
+    if(b1==bufsize && f1==bufsize){
         size = f2-b2;
         size++; //accounting for endline character 
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -220,7 +270,9 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[f2-b2] = '\0';
     }
-    else if(b2==bufsize && f2==bufsize){ //reading from buffer 1
+
+    // Tokenizing from buffer 1
+    else if(b2==bufsize && f2==bufsize){
         size = f1-b1;
         size++;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -229,7 +281,9 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[f1-b1] = '\0';
     }
-    else if(b2==bufsize && f1==bufsize){ //first buffer 1 and then buffer 2
+
+    // Tokenizing from buffer 1 and then buffer 2
+    else if(b2==bufsize && f1==bufsize){
         size = 1;
         size += f2 + bufsize-b1;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -241,7 +295,9 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[bufsize-b1+f2] = '\0';
     }
-    else{ //first buffer 2 then buffer 1
+
+    // Tokenizing from buffer 2 then buffer 1
+    else{
         size = 1;
         size += f1+bufsize-b2;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -253,7 +309,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[bufsize-b2+f1] = '\0';
     }
-    token_info* tk ;
+    token_info* tk;
+    /*IN THE FOLLOWING STEP, WE POPULATE THE token_info OBJECT BASED ON THE MESSAGE*/
+
+    // If message is "ERROR", we have to map that and add entry to stack
     if(!strcmp(message,"ERROR")){
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
@@ -262,7 +321,11 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         memset(tk->type,'\0',20*sizeof(char));
         strcpy(tk->type,"ERROR");
     }
+
+    // If not an ERROR
     else{
+
+        /*TOKENIZATION*/
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
         strncpy(tk->lexeme,lexeme,size);
@@ -279,15 +342,21 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         memset(tk->type,'\0',20*sizeof(char));
         strcpy(tk->type,message);
     }
+
+    // Although error, we tokenize but push in error stack
     if(!strcmp(tk->type,"ERROR")){
         add_error_token(tk);
     }
+
+    // When linked list of tokens is empty, create a node (doesn't involve error tokens)
     else if(ll_node == NULL){
         ll_node = (token_node*)malloc(sizeof(token_node));
         ll_node->token = tk;
         ll_node->next_token = NULL;
         current = ll_node;
     }
+
+    // Else, just extend the list
     else{
         token_node* temp = (token_node *)malloc(sizeof(token_node));
         current->next_token = temp;
@@ -298,7 +367,9 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
 }
 //TODO Linked List to Stack conversion for error tokens --> DONE 
 
-void call_lexer(FILE* fp,int bufsize){
+void call_lexer(FILE* fp,int bufsize)
+/*This function gives the cue for Lexical Analysis*/
+{
     //TWIN BUFFER SYSTEM 
     char* buf1 = (char*)malloc(bufsize*sizeof(char));
     char* buf2 = (char*)malloc(bufsize*sizeof(char));
@@ -311,6 +382,7 @@ void call_lexer(FILE* fp,int bufsize){
     b2 = bufsize; //not reading buffer2
     f2 = bufsize;
 
+    /*DFA Encoding*/
     int state = 1; //start state = 1
     line_no = 1; 
     char c; //current character to be read from the buffer  
@@ -684,11 +756,10 @@ void call_lexer(FILE* fp,int bufsize){
 }
 
 
-
+/*---------------------------------------------------------------------------------------------------------------------*/
 
 
 /*Parser Module*/
-
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 75
 #define TERMINALS 58
@@ -732,7 +803,8 @@ typedef struct parse_tree{
     treeNodes* curr;
 }parse_tree;
 
-typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL 
+// Structure for Non-terminal 
+typedef struct NonT{
     char* label; //--> the name of the non-terminal
     // Boolean derives_eps;
     entry* first_set[TABLE_SIZE]; //first set of the non terminal
@@ -741,8 +813,6 @@ typedef struct NonT{ //STRUCTURE FOR A NON-TERMINAL
     int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
 
-/* IMPORTANT GLOBAL VARIABLES FOR PARSER MODULE*/
-
 //Stack Operations
 void push(Stack* parseStack, ruleNode* element);//Might need to handle epsilon rule issue
 ruleNode* pop(Stack* parseStack);
@@ -750,13 +820,11 @@ ruleNode* top(Stack* parseStack);
 int isEmptyStack(Stack* parseStack);
 void printStack(Stack* parseStack);
 
-
-
 //Tree Operations
 void createParseTree(ruleNode* prog); 
 treeNodes* convertToPTreenode(ruleNode* Node);
 
-/* IMPORTANT GLOBAL VARIABLES*/
+/* IMPORTANT GLOBAL VARIABLES FOR PARSER MODULE*/
 int non_terminals = 0; 
 int terminals = 0;
 int lines = 0;
@@ -769,28 +837,41 @@ Stack parse_stack;
 parse_tree ptree;
 
 
-//Stack Operations
+//Stack Operations defined
 void push(Stack* parseStack, ruleNode* element)
+/*Push an element into the parseStack*/
 {
+    // Empty stack
     if(!parseStack)
     {
         printf("The Stack is Empty");
+        return;
     }
+
+    // Problem in element
     else if(!element)
     {
         printf("The element passed is NULL or has some issues");
+        return;
     }
+
+    // Else push element in stack
     element->nextNode=parseStack->top;
     parseStack->top=element;
     parseStack->num++;
 }
 
 ruleNode* pop(Stack* parseStack)
+/*Pop the topmost element from parseStack*/
 {
+    // Can't pop from empty stack
     if(!parseStack)
     {
         printf("The Stack is Empty");
+        return NULL;
     }
+
+    // Else pop
     ruleNode* temp=parseStack->top;
     parseStack->top=parseStack->top->nextNode;
     parseStack->num--;
@@ -798,48 +879,63 @@ ruleNode* pop(Stack* parseStack)
 }
 
 ruleNode* top(Stack* parseStack)
+/*Give a peek of the topmost element of the stack*/
 {
     if(!parseStack)
     {
         printf("The Stack is Empty");
+        return NULL;
     }
-    ruleNode* temp=parseStack->top;
+    
+    else{
+        ruleNode* temp=parseStack->top;
+        return temp;
+    }
 
-    return temp;
 }
 
 
 int isEmptyStack(Stack* parseStack)
+/*Return 0 if stack is empty, else return 1*/
 {
     return parseStack->top?0:1;    
 }
+
 void addRecurse(Stack* stack, ruleNode* curr)
+/*To maintain the order so as to follow Left-most derivation*/
 {
     if(!curr)
-    return;
-    else{
-    ruleNode* temp = (ruleNode*)malloc(sizeof(ruleNode));
-    temp->isTerminal= curr->isTerminal;
-    temp->nodeInfo = curr->nodeInfo;
-    addRecurse(stack, curr->nextNode);
-    push(stack,temp);
+        return;
+
+    else
+    {
+        ruleNode* temp = (ruleNode*)malloc(sizeof(ruleNode));
+        temp->isTerminal= curr->isTerminal;
+        temp->nodeInfo = curr->nodeInfo;
+        addRecurse(stack, curr->nextNode);
+        push(stack,temp);
     }
 }
+
 void addNodesToStack(Stack* stack, rule* Rule)
+/*This function takes the stack and which rule is to be added into the stack. It calls the addRecurse fn*/
 {
     if(!Rule)
     {
         return;
     }
+
     else{
-      ruleNode* curr=Rule->head;
-      curr=curr->nextNode;
-      pop(stack);
-      addRecurse(stack, curr);
+        ruleNode* curr=Rule->head;
+        curr=curr->nextNode;
+        pop(stack);
+        addRecurse(stack, curr);
     }
 }
 
-void printStack(Stack* parseStack){
+void printStack(Stack* parseStack)
+/*This function prints the updated stack*/
+{
     int i=0;
     while(parseStack->top)
     {   
@@ -851,13 +947,16 @@ void printStack(Stack* parseStack){
 }
 
 treeNodes* convertToPTreenode(ruleNode* Node)
+/*This function makes a Parse tree node from the passed rule node*/
 {
     treeNodes* generated =(treeNodes*)malloc(sizeof(treeNodes));
     generated->symbol=Node;
     return generated;
 }
 
-void createParseTree(ruleNode* start){
+void createParseTree(ruleNode* start)
+/*Initializes the parse tree*/
+{
     ptree.root = (treeNodes*)malloc(sizeof(treeNodes));
    
     ptree.curr = ptree.root;
@@ -866,13 +965,16 @@ void createParseTree(ruleNode* start){
 }
 
 void addTokenInfo(treeNodes* Node, token_info* token )
+/*Setter function for a tree node*/
 {
     Node->isTerminal=1;
     Node->token=token;
 }
 
 
-unsigned int hash(char* key){ //hash function for hashing a string 
+unsigned int hash(char* key)
+/*hash function to hash a string*/
+{
     unsigned int hashval = 0;
     for(;*key !='\0';key++){
         hashval = *key + 11*hashval;
@@ -880,35 +982,48 @@ unsigned int hash(char* key){ //hash function for hashing a string
     return hashval%TABLE_SIZE;
 }
 
-void print_tables(entry* table[]){ 
- for (int i=0;i<TABLE_SIZE;i++){
+void print_tables(entry* table[])
+/*Print the hash or parse table or any table in the required format*/
+{ 
+    for (int i=0;i<TABLE_SIZE;i++){
+        // Empty entry
         if(table[i]==NULL){
             printf("\t%d\t---\n",i);
-        }else {
-           entry* current;
-           current = table[i];
-           printf("\t%d\t",i);
-           while(current!=NULL){
-           printf("'%s':<%d>order<%d> \t",current->key,current->entry_number,current->order);
-           current = current->next;
-           }
-           printf("\n");
+        }
+
+        else
+        {
+            entry* current;
+            current = table[i];
+            printf("\t%d\t",i);
+
+            // Check all entries if chained
+            while(current!=NULL){
+                printf("'%s':<%d>order<%d> \t",current->key,current->entry_number,current->order);
+                current = current->next;
+            }
+            printf("\n");
         }
     }
 }
 
-int set_add(char* key,entry* table[],int entry_number){
+int set_add(char* key,entry* table[],int entry_number)
+/*This function adds the key into the table along with the entry number*/
+{
+    // Hash the key to get the index
     unsigned int index = hash(key);
     entry* current = table[index];
 
-    while(current!=NULL){// first checks whether it is already present or not 
+    // first checks whether it is already present or not 
+    while(current!=NULL){
         if(strcmp(current->key,key)==0){
             return 0; //in case it doesn't need to add
         }
         current = current->next;
     }
 
-    entry* new_node = (entry*)malloc(sizeof(entry)); //else need to add the element
+    // else need to add the element
+    entry* new_node = (entry*)malloc(sizeof(entry));
     new_node -> key = key;
     new_node -> next = table[index];
     new_node->entry_number = index;
@@ -919,10 +1034,14 @@ int set_add(char* key,entry* table[],int entry_number){
 
 }
 
-int set_contains(char* key,entry* table[]){
+int set_contains(char* key,entry* table[])
+/*Checks if the key is there in the table*/
+{
+    // Hash the key to get index
     unsigned int index = hash(key);
     entry* current = table[index];
 
+    // If didn't match at first, go through the chain
     while(current!=NULL){
         if(strcmp(current->key,key)==0){
             // printf(" %d %d",current->entry_number,current->order);
@@ -933,10 +1052,8 @@ int set_contains(char* key,entry* table[]){
     return 0;
 }
 
-
-
-
-int noOfLines(FILE* fptr){
+int noOfLines(FILE* fptr)
+{
     char* strtok_result;
     int linecount = 0;
     fseek (fptr , 0 , SEEK_END);
