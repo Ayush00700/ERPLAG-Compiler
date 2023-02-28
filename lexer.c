@@ -148,6 +148,7 @@ returns a flag or index at which insertion is to be done*/
 }
 
 void populate_hash_table()
+/*This function populates the hash table to map the keywords lower case keywords to the ones in upper case*/
 {
     // Initialize the hash table
     init_hash_table();
