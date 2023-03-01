@@ -26,13 +26,13 @@ The language is designed for the course CS F363 and the name of the language is 
 
 - MinGW
 
-# Clone the repository (clone GPLAN separately in server if it doesn't work!)
+# Clone the repository
 
 ```
 git clone https://github.com/Ayush00700/ERPLAG-Compiler.git 
 ```
 
-# Check GCC Version and Ubuntu Version/ dependencies for react frontend
+# Check GCC Version and Ubuntu Version
 
 compatible to GCC version 9.4.0  on Ubuntu 20.04.4.
 
