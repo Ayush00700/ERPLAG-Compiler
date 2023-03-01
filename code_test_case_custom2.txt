@@ -1,0 +1,32 @@
+**This function is used to find the maximum of the array**
+
+<<module arrayMax>>
+takes input[list:array[3:20] of real];      **L_Error**
+returns [max:real]
+start 
+    declare curr_max:real;
+    curr_max:=-10000;
+    for(index in 3..20)
+    start
+        flag=curr_max<arrayMax[index];
+        switch(flag)
+            start
+                case true: curr:=arrayMax[index];
+                break                       **S_Error**
+                case false: break;
+            end
+    end
+end
+
+<<<driver Program>>>
+start 
+    declare A: array[3..20] of real;
+    for(k in 3..20)
+    start
+        A[k] := k;
+    end
+
+    [max] := use module arrayMax wiTH parameters A;  **S_Error**
+    print(max);
+end
+

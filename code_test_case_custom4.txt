@@ -1,0 +1,6 @@
+<<<driver program>>>
+start
+
+**Empty function definition**
+
+end

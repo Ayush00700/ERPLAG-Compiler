@@ -1742,7 +1742,7 @@ void call_parser(rule* rules, NonT* nont)
                     printf("we ignored %s\n",curr->type);
                     curr=get_next_token();
                     // skip changes in parse tree, gibberish added in the source code
-                    //Add the check that if the curr->lineno changes greater than prev; 
+                    //Add the check that if the curr->lineno changes greater than prev; then 
                     ptree.curr->error=-2;
                 }
                 else{
