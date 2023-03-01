@@ -799,6 +799,10 @@ typedef struct treeNodes{
     struct treeNodes* r_sibling;
     struct treeNodes* child;
     Boolean isTerminal;
+    int error; //tetntatively error=0 is no error, error =-1 iss the error that the parse tree below is missing 
+    //and going to nextRight, error==-3 is the case when we assume the existence of the terminal 
+    //construct but was not recieved from the code, error=-2 gibberish in the source code following 
+    //the node containing this flag
     token_info* token;
 }treeNodes;
 
@@ -1592,10 +1596,23 @@ int checkUncleExists()
         return 0;
 }
 
+void goToSibling()
+/*Go to right sibling node*/
+{
+   // printf("\nprevious sibling : %s\t",ptree.curr->symbol->nodeInfo);
+    ptree.curr=ptree.curr->r_sibling;
+   // printf("\nnext sibling : %s\t",ptree.curr->symbol->nodeInfo);
+}
 
-void goToUncle()
+
+void goToNextRight()
 /*Go to right sibling of the parent*/
 {
+     if(ptree.curr->r_sibling)//We need to take parse tree curr to the next step. Either there is a right sibling available, and we move there
+    {
+        goToSibling();
+        return;
+    }
     // printf("\nprevious_uncle : %s\t",ptree.curr->symbol->nodeInfo);
     if(checkUncleExists())
     {ptree.curr=ptree.curr->parent->r_sibling;}
@@ -1622,13 +1639,7 @@ void goToChild()
     ptree.curr=ptree.curr->child;
    // printf("\nnext : %s\t",ptree.curr->symbol->nodeInfo);
 }
-void goToSibling()
-/*Go to right sibling node*/
-{
-   // printf("\nprevious sibling : %s\t",ptree.curr->symbol->nodeInfo);
-    ptree.curr=ptree.curr->r_sibling;
-   // printf("\nnext sibling : %s\t",ptree.curr->symbol->nodeInfo);
-}
+
 
 
 void addRuleToTree(rule* rule)
@@ -1698,7 +1709,9 @@ void call_parser(rule* rules, NonT* nont)
 /*This function gives cue to start the Syntax Analyzer*/
 {
     //Assume that you get the lookahead via this, filled some random values for now
+    int prevLineNo=-1;
     token_info* curr = get_next_token();
+    prevLineNo=curr->line_no;
 
     // till the time we keep on getting nextToken
     while(curr)    
@@ -1724,32 +1737,57 @@ void call_parser(rule* rules, NonT* nont)
                 // printf(" initial Error recovery performing\n");
                 int index = set_contains(stackTop->nodeInfo,non_Terminals_table);
                 int val = set_contains(curr->type,nont[index-1].follow_set);
-                if(!val){
-                    printf("expected %s but got %s\n",stackTop->nodeInfo,curr->type);
+                if(!val){ // if val ==0 that is not present in the follow set
+                    printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
                     printf("we ignored %s\n",curr->type);
                     curr=get_next_token();
+                    // skip changes in parse tree, gibberish added in the source code
+                    //Add the check that if the curr->lineno changes greater than prev; 
+                    ptree.curr->error=-2;
                 }
                 else{
                     if(stackTop->nextNode->isTerminal){
                         if(!strcmp(stackTop->nextNode->nodeInfo,curr->type )){
-                            printf("expected %s statement insted got %s\n",stackTop->nodeInfo,curr->type);
+                            printf("expected %s statement insted got %s at the line no. %d [2]\n",stackTop->nodeInfo,curr->type, curr->line_no);
                             printf("we popped stack top\n");
                             pop(&parse_stack);
+                            //Add the flag node to indicate that the construct for that nonT is missing and recurssively go to uncle
+                            ptree.curr->error=-1;
+                            goToNextRight();
+                            
                         }
                         else{
-                            printf("expected %s but got %s\n",stackTop->nodeInfo,curr->type);
+                            printf("expected %s but got %s at the line no. %d [3]\n",stackTop->nodeInfo,curr->type, curr->line_no);
                             printf("we ignored %s\n",curr->type);
                             curr=get_next_token();
+                            // skip changes in parse tree 
+                            ptree.curr->error=-2;
                         }
                     }
                     else{
-                        
+                        int new_index = set_contains(stackTop->nextNode->nodeInfo,non_Terminals_table);
+                        int temp = arr[new_index-1][col_no-1];
+                        if(temp == -1){
+                            printf("expected %s but got %s at the line no. %d [4]\n",stackTop->nodeInfo,curr->type, curr->line_no);
+                            printf("we ignored %s\n",curr->type);
+                            prevLineNo=curr->line_no;
+                            curr=get_next_token();
+                            // skip changes in parse tree ,ight need to error flags
+                            ptree.curr->error=-2;
+                        }
+                        else{
+                            printf("expected %s statement insted got %s at the line no. %d [5]\n",stackTop->nodeInfo,curr->type, curr->line_no);
+                            printf("we popped stack top\n");
+                            pop(&parse_stack);
+                            //Add the flag node to indicate that the construct for that nonT is missing and recurssively go to uncle
+                            ptree.curr->error=-1;
+                            goToNextRight();
+                        }
                     }
                 }
-                break;
+    
             }
-
-            // Safe to push
+            // Safe to push (Rule exists)
             else
             {
                 // Rule obtained from the parse table
@@ -1767,7 +1805,7 @@ void call_parser(rule* rules, NonT* nont)
                     pop(&parse_stack);
                     addRuleToTree(&ruleToPush);
                    // printf("\n %d rule used and is epsilon rule",ruleToPush.lineNo);
-                    goToUncle();
+                    goToNextRight();
                 } 
                 
             }
@@ -1781,28 +1819,32 @@ void call_parser(rule* rules, NonT* nont)
                 pop(&parse_stack);//Pop the stack element
                 addTokenInfo(ptree.curr, curr); //Since only a terminal is popped, we map the token info to the parse tree
                 
-                if(ptree.curr->r_sibling)//We need to take parse tree curr to the next step. Either there is a right sibling available, and we move there
-                {
-                    goToSibling();
-                }//Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use, we need to go the sibling which should ideally be present in the stack at the same time
-                else
-                {
-                    goToUncle();
-                }
+               //Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use, we need to go the sibling which should ideally be present in the stack at the same time
+                
+                    goToNextRight();
+               
             }
             // Terminal mismatch
             else
             {
                 // Error recovery - print message that missing terminal (lookahead symbol) was added (have to verify once)
                 // and move to next lookahead
-                printf("Terminal mismatch %s was missing\n",stackTop->nodeInfo);
+                int lineWithError=curr->line_no;
+                if(prevLineNo!=curr->line_no)
+                {
+                    lineWithError=prevLineNo;
+                }
+                printf("Terminal mismatch %s was missing at the line no. %d [6]\n",stackTop->nodeInfo, lineWithError);
                 pop(&parse_stack);
+                ptree.curr->error=-3;
+                goToNextRight();
                 flag = 1;
+                
             }
         }
 
         // Get next token from the lexer
-        if(!flag) curr=get_next_token();
+        if(!flag) {prevLineNo=curr->line_no; curr=get_next_token();}
       
     }
 
@@ -1826,7 +1868,7 @@ int main()
 {
     /* Lexer module calls*/
     FILE* fp;
-    char test_buff[50] = "code_test_case1.txt";
+    char test_buff[50] = "code_error_case2.txt";
 
     fp = fopen(test_buff,"r");
     printf("Running file %s", test_buff);
