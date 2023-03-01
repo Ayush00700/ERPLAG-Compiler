@@ -1,0 +1,15 @@
+<<<driver program>>             **S_Error**
+start 
+    declare a,b::integer;       **S_Error** 
+    declare c:boolean; 
+    a:=21; 
+    b:=23: 
+    c:=(b-a>3); 
+    switch(c                    **L_Error*
+    start 
+    case true: b:=100; 
+        break; 
+    case false: b:= -100; 
+        break; 
+    end 
+end
