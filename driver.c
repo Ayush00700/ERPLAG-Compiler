@@ -1694,15 +1694,16 @@ Ex: Input:        A
 }
 
 
-void call_parser(rule* rules)
+void call_parser(rule* rules, NonT* nont)
 /*This function gives cue to start the Syntax Analyzer*/
 {
     //Assume that you get the lookahead via this, filled some random values for now
     token_info* curr = get_next_token();
 
     // till the time we keep on getting nextToken
-    while(curr)
+    while(curr)    
     {
+        int flag = 0;
         // Find the top of stack
         ruleNode* stackTop=top(&parse_stack);
         // ParseStack operations
@@ -1720,7 +1721,31 @@ void call_parser(rule* rules)
                 //Error Recovery:
                 // If lookahead symbol is in SYNC(A) then pop A from stack and continue 
                 // If lookahead symbol is not in SYNC(A) then record error and move pointer to right
-                printf(" initial Error recovery performing\n");
+                // printf(" initial Error recovery performing\n");
+                int index = set_contains(stackTop->nodeInfo,non_Terminals_table);
+                int val = set_contains(curr->type,nont[index-1].follow_set);
+                if(!val){
+                    printf("expected %s but got %s\n",stackTop->nodeInfo,curr->type);
+                    printf("we ignored %s\n",curr->type);
+                    curr=get_next_token();
+                }
+                else{
+                    if(stackTop->nextNode->isTerminal){
+                        if(!strcmp(stackTop->nextNode->nodeInfo,curr->type )){
+                            printf("expected %s statement insted got %s\n",stackTop->nodeInfo,curr->type);
+                            printf("we popped stack top\n");
+                            pop(&parse_stack);
+                        }
+                        else{
+                            printf("expected %s but got %s\n",stackTop->nodeInfo,curr->type);
+                            printf("we ignored %s\n",curr->type);
+                            curr=get_next_token();
+                        }
+                    }
+                    else{
+                        
+                    }
+                }
                 break;
             }
 
@@ -1748,7 +1773,6 @@ void call_parser(rule* rules)
             }
             stackTop=top(&parse_stack);
         }
-
         // the case when it goes out of the above statement i.e. there is a terminal to match
         {
             // If there is a match
@@ -1766,18 +1790,19 @@ void call_parser(rule* rules)
                     goToUncle();
                 }
             }
-
             // Terminal mismatch
             else
             {
                 // Error recovery - print message that missing terminal (lookahead symbol) was added (have to verify once)
                 // and move to next lookahead
-                printf("AA Error recovery performing\n");
+                printf("Terminal mismatch %s was missing\n",stackTop->nodeInfo);
+                pop(&parse_stack);
+                flag = 1;
             }
         }
 
         // Get next token from the lexer
-        curr=get_next_token();
+        if(!flag) curr=get_next_token();
       
     }
 
@@ -1789,7 +1814,9 @@ void call_parser(rule* rules)
     // If stack is non-empty after parsing all input then perform error recovery
     else {
         // Error recovery - if A --> eps then apply that, else pop A and report (have to verify once)
-        printf("\nPerform error recovery");
+        
+        printf("\nError in implementation, the stack should not have been empty");
+
         printf("\n%s",parse_stack.top->nodeInfo);
     }
 }
@@ -1867,6 +1894,6 @@ int main()
     //start symbol add in the parse tree
 
 
-    call_parser(rules);
+    call_parser(rules,nont);
 
 }
