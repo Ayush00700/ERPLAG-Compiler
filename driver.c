@@ -1765,7 +1765,7 @@ void call_parser(rule* rules)
             // Terminal mismatch
             else
             {
-                // Error recovery - print message that missing terminal (lookahead symbol) was added
+                // Error recovery - print message that missing terminal (lookahead symbol) was added (have to verify once)
                 // and move to next lookahead
                 printf("AA Error recovery performing\n");
             }
