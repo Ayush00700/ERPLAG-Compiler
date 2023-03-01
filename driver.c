@@ -1633,7 +1633,7 @@ void addRuleToTree(rule* rule)
     if(strcmp(rule->head->nodeInfo,ptree.curr->symbol->nodeInfo)==0)
     {
         ruleNode* temp=rule->head->nextNode;//Finds the first ruleNode to be added. The second element in the rule chain 
-        treeNodes* node=convertToPTreenode(temp); //Converts it to Ptree node. No pointers attached yer
+        treeNodes* node=convertToPTreenode(temp); //Converts it to Ptree node. No pointers attached yet
         node->parent=ptree.curr;//Add the parent pointer
         ptree.curr->child=node; //The parent will only have one child. Multiple children can have the pointer to the same parent 
         temp=temp->nextNode;    //Go to the next ruleNode
@@ -1646,7 +1646,7 @@ void addRuleToTree(rule* rule)
             follow=node;
             temp=temp->nextNode;   //we need not use the r_sibling because nextPointers of the rule         
         }
-        ptree.curr=ptree.curr->child;//Once we push the new role. The first NonTerminal, i.e. the direct child of parent should be pointer by curr hence simulating the stack movement as well
+        ptree.curr=ptree.curr->child;//Once we push the new role. The first NonTerminal, i.e. the direct child of parent should be pointed by curr hence simulating the stack movement as well
     }
     else
     {
@@ -1712,7 +1712,9 @@ void call_parser(rule* rules)
             // If null entry found
             if(indexToPush==-1)
             {
-                //Perform Error Recovery for no rule found to expansion 
+                //Error Recovery:
+                // If lookahead symbol is in SYNC(A) then pop A from stack and continue
+                // If lookahead symbol is not in SYNC(A) then record error and move pointer to right
                 printf(" initial Error recovery performing\n");
                 break;
             }
@@ -1759,9 +1761,12 @@ void call_parser(rule* rules)
                     goToUncle();
                 }
             }
+
+            // Terminal mismatch
             else
             {
-                //Perform Error Recovery due to non matchin
+                // Error recovery - print message that missing terminal (lookahead symbol) was added
+                // and move to next lookahead
                 printf("AA Error recovery performing\n");
             }
         }
@@ -1775,8 +1780,10 @@ void call_parser(rule* rules)
     if(isEmptyStack(&parse_stack)){
         printf("\nParsing successfull");
     }
+
     // If stack is non-empty after parsing all input then perform error recovery
     else {
+        // Error recovery - if A --> eps then apply that, else pop A and report (have to verify once)
         printf("\nPerform error recovery");
         printf("\n%s",parse_stack.top->nodeInfo);
     }
