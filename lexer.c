@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+/*GLOBAL VARIABLES*/
 int populate_count = 1;
 int line_no = 1;
 
@@ -22,7 +24,9 @@ void printtokens()
     }
 }
 
-void populate(char* buffer,FILE* fp,int bufsize){
+void populate(char* buffer,FILE* fp,int bufsize)
+/*This function populates the buffer with the data from file to be tokenized*/
+{
     printf("We populated the buffer here %dth time\n",populate_count);
     populate_count++;
     if(fp!=NULL){
@@ -57,9 +61,13 @@ void pop_error_tokens()
     }
 }
 
+
+/*THE HASHING IS PART OF THE PRE-PROCESSING STEP*/
 hash_table_contents* hash_table[TABLE_SIZE];
 
-hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
+hash_table_contents* create_hash_table_content(char* lexeme, char* tk)
+/*This function creates a hash table entry to map the token to the lexeme*/
+{
     hash_table_contents* h = (hash_table_contents*)malloc(sizeof(hash_table_contents));
     // h->lexeme = lexeme;h->tk_type = (token_type)hash(lexeme);
     h->lexeme = lexeme;
@@ -68,7 +76,9 @@ hash_table_contents* create_hash_table_content(char* lexeme, char* tk){
 }
 
 
-size_t hash(char *lexeme){
+size_t hash(char *lexeme)
+/*This function does the hashing for the given lexeme*/
+{
 
     int length = strnlen(lexeme, MAX_LEN);
     size_t  hash_value = 0;
@@ -80,13 +90,17 @@ size_t hash(char *lexeme){
     return hash_value;
 }
 
-void init_hash_table(){
+void init_hash_table()
+/*This function initializes the hash table with NULL entries*/
+{
     for(int i=0;i<TABLE_SIZE;i++){
         hash_table[i] = NULL;
     }
 }
 
-void print_hash_table(){
+void print_hash_table()
+/*This function prints the updated hash table*/
+{
     for (int i=0;i<TABLE_SIZE;i++){
         if(hash_table[i]==NULL){
             printf("\t%d\t---\n",i);
@@ -97,7 +111,10 @@ void print_hash_table(){
 }
 
 
-int hash_table_insert(char* lexeme, char* tk){
+int hash_table_insert(char* lexeme, char* tk)
+/*This function takes the lexeme and the token, hashes the lexeme and
+returns a flag or index at which insertion is to be done*/
+{
     if(lexeme==NULL) return 0;
     int index = hash(lexeme);
     if(hash_table[index]!=NULL){
@@ -110,7 +127,9 @@ int hash_table_insert(char* lexeme, char* tk){
     }
 }
 
-void populate_hash_table(){
+void populate_hash_table()
+/*This function populates the hash table to map the keywords lower case keywords to the ones in upper case*/
+{
     init_hash_table();
     for(int i=0;i<26;i++){
 
@@ -119,7 +138,9 @@ void populate_hash_table(){
     }
 }
 
-char* lookup(char* lexeme){
+char* lookup(char* lexeme)
+/*This function takes an input lexeme and returns the corresponding mapped value from the hash table*/
+{
     size_t hash_value = hash(lexeme);
     if (hash_value >= TABLE_SIZE || hash_table[hash_value]==NULL) return "ID";
     if(hash_table[hash_value]!=NULL){
@@ -128,10 +149,17 @@ char* lookup(char* lexeme){
     }
 }
 
-void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize){
-    int size; //size of the string should be one more than the required because of '\0' character
+
+/*HERE WE FOLLOW THE BUFFER AND SIMULTE IT ON THE DFA*/
+void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize)
+/*fi, bi: Forward and begin pointer of buffer i respectively
+messgae: The lexeme to which we have to map the string read in buffer as instructed by the DFA*/
+{
+    int size; // size of the string should be one more than the required because of '\0' character
     char* lexeme;
-    if(b1==bufsize && f1==bufsize){ //reading from buffer 2 
+
+    // Tokenizing from buffer 2
+    if(b1==bufsize && f1==bufsize){ 
         size = f2-b2;
         size++; //accounting for endline character 
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -140,7 +168,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[f2-b2] = '\0';
     }
-    else if(b2==bufsize && f2==bufsize){ //reading from buffer 1
+
+    // Tokenizing from buffer 1
+    else if(b2==bufsize && f2==bufsize)
+    {
         size = f1-b1;
         size++;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -149,7 +180,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[f1-b1] = '\0';
     }
-    else if(b2==bufsize && f1==bufsize){ //first buffer 1 and then buffer 2
+
+    // Tokenizing from buffer 1 and then buffer 2
+    else if(b2==bufsize && f1==bufsize)
+    {
         size = 1;
         size += f2 + bufsize-b1;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -161,7 +195,10 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[bufsize-b1+f2] = '\0';
     }
-    else{ //first buffer 2 then buffer 1
+
+    // Tokenizing from buffer 2 then buffer 1
+    else
+    {
         size = 1;
         size += f1+bufsize-b2;
         lexeme = (char *)malloc(sizeof(char)*size);
@@ -173,7 +210,11 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         }
         lexeme[bufsize-b2+f1] = '\0';
     }
+
     token_info* tk ;
+    /*IN THE FOLLOWING STEP, WE POPULATE THE token_info OBJECT BASED ON THE MESSAGE*/
+
+    // If message is "ERROR", we have to map that and add entry to stack
     if(!strcmp(message,"ERROR")){
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
@@ -182,34 +223,45 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
         memset(tk->type,'\0',20*sizeof(char));
         strcpy(tk->type,"ERROR");
     }
-    else{
+
+    // Not an ERROR
+    else
+    {
+        /*TOKENIZATION*/
         tk = (token_info *)malloc(sizeof(token_info));
         tk->lexeme = (char*)malloc(sizeof(char)*size);
         strncpy(tk->lexeme,lexeme,size);
         tk->line_no = line_no;
+
         if(!strcmp(message,"NUM")){
             tk->values.num = atoi(tk->lexeme);
         }
+
         if(!strcmp(message,"RNUM")){
             double value = (double)atof(lexeme);
             tk->values.rnum = (double)atof(tk->lexeme);
         }
+
         if(!strcmp(message,"ID")){
             //TODO implement lookup --> DONE
             message = lookup(lexeme);
         }
+
         memset(tk->type,'\0',20*sizeof(char));
         strcpy(tk->type,message);
     }
+
     if(!strcmp(tk->type,"ERROR")){
         add_error_token(tk);
     }
+
     else if(ll_node == NULL){
         ll_node = (token_node*)malloc(sizeof(token_node));
         ll_node->token = tk;
         ll_node->next_token = NULL;
         current = ll_node;
     }
+
     else{
         token_node* temp = (token_node *)malloc(sizeof(token_node));
         current->next_token = temp;
@@ -220,7 +272,9 @@ void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2
 }
 //TODO Linked List to Stack conversion for error tokens --> DONE 
 
-void call_lexer(FILE* fp,int bufsize){
+void call_lexer(FILE* fp,int bufsize)
+/*This function gives the cue for Lexical Analysis*/
+{
     //TWIN BUFFER SYSTEM 
     char* buf1 = (char*)malloc(bufsize*sizeof(char));
     char* buf2 = (char*)malloc(bufsize*sizeof(char));
@@ -233,6 +287,7 @@ void call_lexer(FILE* fp,int bufsize){
     b2 = bufsize; //not reading buffer2
     f2 = bufsize;
 
+    /*DFA Encoding*/
     int state = 1; //start state = 1
     line_no = 1; 
     char c; //current character to be read from the buffer  
@@ -605,8 +660,7 @@ void call_lexer(FILE* fp,int bufsize){
     }
 }
 
-//driver function to test tokenization 
-
+// This is the driver function to test tokenization 
 int main(){
     FILE* fp;
     fp = fopen("code_test_case3.txt","r");
