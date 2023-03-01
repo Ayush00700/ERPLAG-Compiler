@@ -65,8 +65,15 @@ void printStack(Stack* parseStack);
 
 
 //Tree Operations
-void createParseTree(); 
-treeNodes* convertToPTreenode(ruleNode* Node, token_info* token);
+
+treeNodes* convertToPTreenode(ruleNode* Node);
+void addTokenInfo(treeNodes* Node, token_info* token );
+// void addTerminalInfoToParser(token_info token);
+void addRuleToTree(rule* rule);
+void goToUncle();
+void goToParent();
+void goToChild();
+void goToSibling();
 
 /* IMPORTANT GLOBAL VARIABLES*/
 int non_terminals = 0; 
@@ -165,82 +172,22 @@ void printStack(Stack* parseStack){
 
 
 //Tree Operations 
-// void create_pTree(){
-//     ptree.curr = (treeNodes*)malloc(sizeof(treeNodes));
-// }
+void createParseTree(){
+    ptree.curr = (treeNodes*)malloc(sizeof(treeNodes));
+}
 
-// void add_to_pTree(){
+void addTokenInfo(treeNodes* Node, token_info* token )
+{
+    Node->isTerminal=1;
+    Node->token=token;
+}
 
-// }
-
-
-treeNodes* convertToPTreenode(ruleNode* Node, token_info* token)
+treeNodes* convertToPTreenode(ruleNode* Node)
 {
     treeNodes* generated =(treeNodes*)malloc(sizeof(treeNodes));
     generated->symbol=Node;
-    if(Node->isTerminal)
-    {
-        generated->isTerminal=1;
-    }
-    else
-    {
-
-    }
     return generated;
 }
-
-// void createParseTree()
-// {
-//     //push the dollar symbol and/or equivalent begining symbols
-//     while(isNextAvailable())//this function should check if there is a next token incoming. 
-//     //the above function can also be replaced by checking null pointer in the DS of lexemme
-//     {
-//         /// Implement the parsing algorithm 
-//         token_info inputToken=getNextToken();
-//         if(parse_stack.num<0)
-//         {
-//             printf("error, stack empty");
-//             break;
-//         }
-//         ruleNode * stackTop= top(&parse_stack);
-//         while(parse_stack.num>0)
-//         {
-//             if(stackTop->isTerminal)
-//             {
-//                 if(/*compare lookahead and stack top as both are terminals*/)
-//                 {
-//                     pop(&parse_stack);
-//                     //Perform some parsetree computation addNodesToParseTree(parseTree,head);         
-                    
-//                 }
-//                 else
-//                 {
-//                     //Perform Error Recovery
-//                 }
-//             }
-//             else
-//             {
-//                 //find the rule correpsonding to satckyop and look ahead via O(1) lookup  rule Rule=arr[findRow(stackTop)][findCol(inputToken)]
-//                 if(isRuleEmpty(Rule)==0)//Can make do with only the implicit null comparison 
-//                 {
-//                     pop(&parse_stack);
-//                     // addNodesToParseTree(parseTree,Rule);          
-//                     // addNodesToStack(stack, Rule)     
-//                 }
-//                 else
-//                 {
-//                     //Perform Error Recovery
-//                 }
-                    
-//             }
-//         }  
-//     }
-// }
-
-
-
-
-
 
 
 unsigned int hash(char* key){ //hash function for hashing a string 
@@ -619,8 +566,6 @@ void compute_follow_Set(rule* rules,NonT* non_terminals_set){
     }
 }
 void print_parse_Table(int** arr,NonT* non_terminals_set){
-
-
     printf("\n");
     for(int i=0;i<non_terminals;i++){
         char* non_term = non_terminals_set[i].label;
@@ -639,8 +584,6 @@ void print_parse_Table(int** arr,NonT* non_terminals_set){
 
 int** create_parse_table(rule* rules,NonT* non_terminals_set){
 
-
-    
     for (int i = 0; i < NON_TERMINALS; i++)
         arr[i] = (int*)malloc(TERMINALS* sizeof(int));
     
@@ -725,12 +668,113 @@ int** create_parse_table(rule* rules,NonT* non_terminals_set){
     }
     return arr;
 }
+//Add error checks in all of them
+void goToUncle()
+{
+    ptree.curr=ptree.curr->parent->r_sibling;
+}
+void goToParent()
+{
+    ptree.curr=ptree.curr->parent;
+}
+void goToChild()
+{
+    ptree.curr=ptree.curr->child;
+}
+void goToSibling()
+{
+    ptree.curr=ptree.curr->r_sibling;
+}
 
 
-void call_parser(){
-    //token_node* curr = get_next_token();
+void addRuleToTree(rule* rule)
+{
+    if(rule->head->nodeInfo==ptree.curr->symbol->nodeInfo)
+    {
+        ruleNode* temp=rule->head->nextNode;//Finds the first ruleNode to be added. The second element in the rule chain 
+        treeNodes* node=convertToPTreenode(temp); //Converts it to Ptree node. No pointers attached yer
+        node->parent=ptree.curr;//Add the parent pointer
+        ptree.curr->child=node; //The parent will only have one child. Multiple children can have the pointer to the same parent 
+        temp=temp->nextNode;    //Go to the next ruleNode
+        treeNodes* follow=node; //follow is used to attach the sibling pointers
+        while(temp)//While RuleNode end is not reached
+        {
+            treeNodes* node=convertToPTreenode(temp);//Comments same as before
+            node->parent=ptree.curr;
+            follow->r_sibling=node;
+            follow=node;
+            temp=temp->nextNode;            
+        }
+        ptree.curr=ptree.curr->child;//Once we push the new role. The first NonTerminal, i.e. the direct child of parent should be pointer by curr hence simulating the stack movement as well
+    }
+    else
+    {
+        //Error
+    }
+}
 
-    //first - check from parse table given top of stack and curr(token), which rule you need to use
+
+void call_parser(rule* rules){
+    //Assume that you get the lookahead via this, filled some random values for now
+    token_info* curr = get_next_token();
+    curr->lexeme="ID";
+    curr->line_no=2;
+    // curr->values=3 ;
+    //curr->
+
+    while(curr) //till the time we keep on getting nextToken
+    {
+
+        ruleNode* stackTop=top(&parse_stack);//Find the top of stack
+        if(stackTop->isTerminal)//If the stack is terminal, then we need to match with lookahaed
+        {
+            if(stackTop->nodeInfo==curr->lexeme)//If there is a match
+            {
+                pop(&parse_stack);//Pop the stack element
+                addTokenInfo(ptree.curr, curr); //Since only a terminal is popped, we map the token info to the parse tree
+                
+                if(ptree.curr->r_sibling)//We need to take parse tree curr to the next step. Either there is a right sibling available, and we move there
+                {
+                    goToSibling();
+                }//Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use, we need to go the sibling which should ideally be present in the stack at the same time
+                else
+                {
+                    goToUncle();
+                }
+            }
+            else
+            {
+                //Perform Error Recovery due to non matchin
+            }
+        }
+        else
+        {   
+            //check the index finding operations once??
+            int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
+            int col_no= set_contains(curr->lexeme, Terminals_table);
+           
+            int indexToPush= arr[row_no-1][col_no-1];
+            if(indexToPush==-1)
+            {
+                //Perform Error Recovery for no rule found to expansion 
+            }
+            else
+            {
+                rule ruleToPush=rules[indexToPush];
+                addNodesToStack(&parse_stack, &ruleToPush); 
+                addRuleToTree(&ruleToPush);
+            }
+
+        }
+        curr=get_next_token();
+      
+    }
+    
+}
+ //first - check from parse table given top of stack and curr(token), which rule you need to use
+    
+    
+
     //second - push that rule into the stack using the function addNodesToStack(&parse_stack, &rules[rule_no]);
     //third - note down the rule_no
     //if top of stack is a terminal and matches with the curr(token:lexeme)then pop the stack and get_next_token and iterate
@@ -758,8 +802,6 @@ void call_parser(){
     }
     
     */
-}
-
 
 
 int main(){
@@ -802,7 +844,7 @@ int main(){
     //for parsing operations uncomment below :
 
 
-    int ** arr = create_parse_table(rules,nont);
+    int ** arr = create_parse_table(rules,nont); //Confusion with the global name arr?
     print_parse_Table(arr,nont);
     ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
     char* dollar_char= "$";
