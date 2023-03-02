@@ -6,6 +6,9 @@
 4. Vasu Swaroop     2019B4A70656P
 5. A Sudarshan      2019B4A70744P
 */
+#ifndef PARSERDEF_H
+#define PARSERDEF_H
+#include "lexer.h"
 
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 75
@@ -64,13 +67,4 @@ typedef struct NonT{
     int Rules[MAX_MULTI_RULES]; //the rules in which this particular non terminal occurs in RHS
 }NonT;
 
-/* IMPORTANT GLOBAL VARIABLES FOR PARSER MODULE*/
-int non_terminals = 0; 
-int terminals = 0;
-int lines = 0;
-int ischange = 1; 
-int* arr[NON_TERMINALS];
-entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
-entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
-Stack parse_stack;
-parse_tree ptree;
+#endif

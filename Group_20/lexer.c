@@ -10,7 +10,35 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "lexerDef.h"
+#include "lexer.h"
+
+/* IMPORTANT GLOBAL VARIABLES FOR LEXER MODULE */
+int populate_count = 1;
+int line_no = 1;
+token_node* ll_node; //LINKED-LIST 
+token_node* stack_head; //STACK FOR ERRORS 
+token_node* current; //LAST NODE THAT WAS ADDED
+token_node* get_next_curr;
+hash_table_contents* hash_table[TABLE_SIZE];
+// #endif
+
+char* arr_keywords[30] = {
+"integer","real","boolean","of",
+"array","start","end","declare",
+"module","driver","program","get_value",
+"print","use","with","parameters","takes",
+"input","returns","for","in","switch",
+"case","break","default","while","true","false","AND","OR"
+};
+
+char* arr_keywords_upper[30] = {
+"INTEGER","REAL","BOOLEAN","OF",
+"ARRAY","START","END","DECLARE",
+"MODULE","DRIVER","PROGRAM","GET_VALUE",
+"PRINT","USE","WITH","PARAMETERS","TAKES",
+"INPUT","RETURNS","FOR","IN","SWITCH",
+"CASE","BREAK","DEFAULT","WHILE","TRUE","FALSE","AND","OR"
+};
 
 void printtokens()
 /*This function prints the token number, type and the corresponding lexeme*/
@@ -709,5 +737,46 @@ void removeComments(char *testcaseFile, char *cleanFile)
 {
     FILE* f1 = fopen(testcaseFile,"r");
     FILE* f2 = fopen(cleanFile,"w+");
+    char ch = fgetc(f1);
+    int commentFlag =0;
+    while(ch!=EOF){
+        char nextChar = fgetc(f1);
+        if(ch=='*' && nextChar=='*'){
+            commentFlag = commentFlag==0?1:0;
+            ch = fgetc(f1);
+            continue;
+        }
+        if(commentFlag==0){
+            fputc(ch,f2);
+        }
+        else if(ch=='\n'){
+            fputc(ch,f2);
+        }
+        ch = nextChar;
+    }
+    fclose(f1);
+    fclose(f2);
+    printf("Successfully removed comments and added to file the original file %s to %s\n",testcaseFile,cleanFile);
+
     // populate();   
 }
+
+void postProcessing(){
+    current->next_token = (token_node*) malloc(sizeof(token_node)); //need to add dollar in the tokens too at the end
+    current->next_token->next_token = NULL;
+    current->next_token->token = (token_info*)malloc(sizeof(token_info));
+    current->next_token->token->lexeme = "$";
+    strcpy(current->next_token->token->type,"$");
+    initialize();
+}
+// int main(){
+//     char originalFile[100];
+//     printf("Enter name of new clean file where you want the code without comments\n");
+//     scanf("%s",&originalFile);
+
+//     char cleanFile[100];
+//     printf("Enter name of new clean file where you want the code without comments\n");
+//     scanf("%s",&cleanFile);
+//     removeComments(originalFile,cleanFile);
+    // int 0;
+// }

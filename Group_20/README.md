@@ -183,7 +183,7 @@ Also print the lexical errors with lexemes and line numbers appropriately.
     - MAKEFILE Docs: http://www.gnu.org/software/make/manual/make.html
 - Compiler Master Document
     - Group 20 Master Document for Checkpoints and doubts. (if docs useless check source code): https://docs.google.com/document/d/1oK50FhVqL7UVcHQ9-tFCd5QYU0-ufKB7BWihiRdb2jE/edit?usp=sharing
-
+- GDB: rose-hulman.edu/class/csse/csse132/2223b/debugging-segfaults.html
 ### Known Problems and Future Scopes
 
 

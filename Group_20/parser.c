@@ -7,9 +7,20 @@
 5. A Sudarshan      2019B4A70744P
 */
 
-#include "lexer.h"
 #include <string.h>
-#include "parserDef.h"
+#include "parser.h"
+
+/* IMPORTANT GLOBAL VARIABLES FOR PARSER MODULE*/
+int non_terminals = 0; 
+int terminals = 0;
+int lines = 0;
+int ischange = 1; 
+int* arr[NON_TERMINALS];
+entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
+entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
+Stack parse_stack;
+parse_tree ptree;
+
 // ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
 void push(Stack* parseStack, ruleNode* element)
 /*Push an element into the parseStack*/
@@ -379,7 +390,7 @@ void print_grammar(rule* rules)
 rule* populate_grammar()
 /*This function makes an array of linked list and populates it with the rules read from grammar.txt*/
 {
-    FILE* fp = fopen("new_grammar.txt","r");
+    FILE* fp = fopen("grammar.txt","r");
     lines = noOfLines(fp);
     rule* rules = (rule*)malloc(sizeof(rule)*(lines+1));
     fclose(fp);
@@ -838,118 +849,118 @@ void addRuleToTree(rule* rule)
     }
 }
 
-void in_order_traversal(FILE* fp, treeNodes* current)
-/*Inorder traversal of the parse tree:
-If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
-Ex: Input:        A
-                 /
-                B -- C -- D
-                    /
-                   E -- F
+// void in_order_traversal(FILE* fp, treeNodes* current)
+// /*Inorder traversal of the parse tree:
+// If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
+// Ex: Input:        A
+//                  /
+//                 B -- C -- D
+//                     /
+//                    E -- F
     
-    Output:  B,A,E,C,F,D*/
-{
-    if(!current)
-        return;
+//     Output:  B,A,E,C,F,D*/
+// {
+//     if(!current)
+//         return;
     
-    // Check if leftmost child exists
-    if(current->child)
-        in_order_traversal(fp, current->child);
+//     // Check if leftmost child exists
+//     if(current->child)
+//         in_order_traversal(fp, current->child);
 
-    // If it is a leaf
-    else{
-        // Print lexeme
-        if(current->symbol->isTerminal)
-            fprintf(fp,"%s %s\t","Lexeme:",current->token->lexeme);
-        else
-            fprintf(fp,"%s %s\t","Lexeme:","----");
+//     // If it is a leaf
+//     else{
+//         // Print lexeme
+//         if(current->symbol->isTerminal)
+//             fprintf(fp,"%s %s\t","Lexeme:",current->token->lexeme);
+//         else
+//             fprintf(fp,"%s %s\t","Lexeme:","----");
         
-        // Print line number
-        fprintf(fp,"%s %s\t","Line no.:",tostring(current->token->line_no));
+//         // Print line number
+//         fprintf(fp,"%s %s\t","Line no.:",tostring(current->token->line_no));
 
-        // Print the token type
-        fprintf(fp,"%s %s\t","Token:",current->token->type);
+//         // Print the token type
+//         fprintf(fp,"%s %s\t","Token:",current->token->type);
 
-        // Print value if integer or real
-        if(!strcmp(current->token->type, "NUM") || !strcmp(current->token->type, "RNUM"))
-            fprintf(fp,"%s %s\t","Value:",tostring(current->token->values));
+//         // Print value if integer or real
+//         if(!strcmp(current->token->type, "NUM") || !strcmp(current->token->type, "RNUM"))
+//             fprintf(fp,"%s %s\t","Value:",tostring(current->token->values));
         
-        // Print parent symbol
-        if(current == ptree.root)
-            fprintf(fp,"%s %s\t","Parent:","ROOT");
-        else
-            fprintf(fp,"%s %s\t","Parent:",current->parent->symbol->nodeInfo);
+//         // Print parent symbol
+//         if(current == ptree.root)
+//             fprintf(fp,"%s %s\t","Parent:","ROOT");
+//         else
+//             fprintf(fp,"%s %s\t","Parent:",current->parent->symbol->nodeInfo);
         
-        // Print is leaf or not
-            fprintf(fp,"%s %s\t","isLeaf:","YES");
+//         // Print is leaf or not
+//             fprintf(fp,"%s %s\t","isLeaf:","YES");
 
-        // Print current node symbol
-        fprintf(fp,"%s %s\t","Node:",current->symbol->nodeInfo);
-    }
+//         // Print current node symbol
+//         fprintf(fp,"%s %s\t","Node:",current->symbol->nodeInfo);
+//     }
 
-    // Print parent node if current is leftmost child
-    if(current->parent->child == current)
-        printf("%s, ", current->parent->symbol->nodeInfo);
+//     // Print parent node if current is leftmost child
+//     if(current->parent->child == current)
+//         printf("%s, ", current->parent->symbol->nodeInfo);
     
-    // Print lexeme
-        if(current->parent->symbol->isTerminal)
-            fprintf(fp,"%s %s\t","Lexeme:",current->parent->token->lexeme);
-        else
-            fprintf(fp,"%s %s\t","Lexeme:","----");
+//     // Print lexeme
+//         if(current->parent->symbol->isTerminal)
+//             fprintf(fp,"%s %s\t","Lexeme:",current->parent->token->lexeme);
+//         else
+//             fprintf(fp,"%s %s\t","Lexeme:","----");
         
-        // Print line number
-        fprintf(fp,"%s %s\t","Line no.:",tostring(current->parent->token->line_no));
+//         // Print line number
+//         fprintf(fp,"%s %s\t","Line no.:",tostring(current->parent->token->line_no));
 
-        // Print the token type
-        fprintf(fp,"%s %s\t","Token:",current->parent->token->type);
+//         // Print the token type
+//         fprintf(fp,"%s %s\t","Token:",current->parent->token->type);
 
-        // Print value if integer or real
-        if(!strcmp(current->parent->token->type, "NUM") || !strcmp(current->parent->token->type, "RNUM"))
-            fprintf(fp,"%s %s\t","Value:",tostring(current->parent->token->values));
+//         // Print value if integer or real
+//         if(!strcmp(current->parent->token->type, "NUM") || !strcmp(current->parent->token->type, "RNUM"))
+//             fprintf(fp,"%s %s\t","Value:",tostring(current->parent->token->values));
         
-        // Print parent symbol
-        if(current == ptree.root)
-            fprintf(fp,"%s %s\t","Parent:","ROOT");
-        else
-            fprintf(fp,"%s %s\t","Parent:",current->parent->parent->symbol->nodeInfo);
+//         // Print parent symbol
+//         if(current == ptree.root)
+//             fprintf(fp,"%s %s\t","Parent:","ROOT");
+//         else
+//             fprintf(fp,"%s %s\t","Parent:",current->parent->parent->symbol->nodeInfo);
         
-        // Print is leaf or not
-            fprintf(fp,"%s %s\t","isLeaf:","NO");
+//         // Print is leaf or not
+//             fprintf(fp,"%s %s\t","isLeaf:","NO");
 
-        // Print current node symbol
-        fprintf(fp,"%s %s\t","Node:",current->parent->symbol->nodeInfo);
+//         // Print current node symbol
+//         fprintf(fp,"%s %s\t","Node:",current->parent->symbol->nodeInfo);
 
-    // Right sibling
-    treeNodes* temp = current->r_sibling;
-    if(!temp){
-        in_order_traversal(fp, temp);
-    }
-}
+//     // Right sibling
+//     treeNodes* temp = current->r_sibling;
+//     if(!temp){
+//         in_order_traversal(fp, temp);
+//     }
+// }
 
-void print_parse_tree(char* out_file)
-/*This function uses the inorder traversal and */
-{
-    // Open file in append mode
-    FILE* f = fopen(out_file,"a+");
+// void print_parse_tree(char* out_file)
+// /*This function uses the inorder traversal and */
+// {
+//     // Open file in append mode
+//     FILE* f = fopen(out_file,"a+");
 
-    // If file opened successfully
-    if(!f){
+//     // If file opened successfully
+//     if(!f){
 
-        // Create a pointer to traverse the parse tree
-        treeNodes* p = ptree.root;
-        // Perform inorder traversal
-        in_order_traversal(f, p);
+//         // Create a pointer to traverse the parse tree
+//         treeNodes* p = ptree.root;
+//         // Perform inorder traversal
+//         in_order_traversal(f, p);
 
-    }
+//     }
 
-    // File couldn't be opened
-    else{
+//     // File couldn't be opened
+//     else{
 
-        printf("Couldn't open %s\n",out_file);
-        return;
+//         printf("Couldn't open %s\n",out_file);
+//         return;
 
-    }
-}
+//     }
+// }
 
 void call_parser(rule* rules, NonT* nont)
 /*This function gives cue to start the Syntax Analyzer*/
@@ -1143,4 +1154,43 @@ void call_parser(rule* rules, NonT* nont)
         // What was the top of the stack when error occured - just for debugging
         printf("\n%s",parse_stack.top->nodeInfo);
     }
+}
+void parseCompletely(){
+    rule* rules = populate_grammar();
+    set_add("$",Terminals_table,57);
+    terminals++;
+    NonT* nont = populate_non_terminals(non_Terminals_table,rules);
+
+    int changes = 0;
+    while(ischange){
+        ischange = 0;
+        compute_first_Set(rules,nont);
+        changes ++;
+    }    
+
+    ischange = 1;
+    changes = 0;
+    while(ischange){
+        ischange = 0;
+        compute_follow_Set(rules, nont);
+        changes++;
+    }
+    int ** arr = create_parse_table(rules,nont);
+    // print_parse_Table(arr,nont);
+    ruleNode* dollar= (ruleNode*)malloc(sizeof(ruleNode));
+    char* dollar_char= "$";
+    dollar->isTerminal=1;
+    dollar->nodeInfo=dollar_char;
+    push(&parse_stack, dollar);
+
+    ruleNode* prog= (ruleNode*)malloc(sizeof(ruleNode));
+    char* prog_char= "prog";
+    prog->isTerminal=0;
+    prog->nodeInfo=prog_char;
+    push(&parse_stack, prog);
+
+    createParseTree(prog);
+    //start symbol add in the parse tree
+    call_parser(rules,nont);
+    //TODO Print parseTree
 }
