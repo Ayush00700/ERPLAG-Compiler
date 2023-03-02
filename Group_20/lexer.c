@@ -1,3 +1,12 @@
+/* THE MATH_CS boiz
+--------------------
+1. Rajan Sahu       2019B4A70572P
+2. Yash Goyal       2019B4A70638P
+3. Ayush Agarwal    2019B4A70652P
+4. Vasu Swaroop     2019B4A70656P
+5. A Sudarshan      2019B4A70744P
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -197,7 +206,6 @@ char* lookup(char* lexeme)
 void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize)
 /*fi, bi: Forward and begin pointer of buffer i respectively
 messgae: The lexeme to which we have to map the string read in buffer as instructed by the DFA*/
-
 {
     int size; //size of the string should be one more than the required because of '\0' character
     char* lexeme;

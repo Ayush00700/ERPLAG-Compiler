@@ -1,3 +1,13 @@
+/* THE MATH_CS boiz
+--------------------
+1. Rajan Sahu       2019B4A70572P
+2. Yash Goyal       2019B4A70638P
+3. Ayush Agarwal    2019B4A70652P
+4. Vasu Swaroop     2019B4A70656P
+5. A Sudarshan      2019B4A70744P
+*/
+
+
 #define MAX_LEN 20
 #define TABLE_SIZE 101
 #define TOTAL_KEYWORDS 30
