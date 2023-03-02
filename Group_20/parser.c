@@ -391,10 +391,21 @@ rule* populate_grammar()
 /*This function makes an array of linked list and populates it with the rules read from grammar.txt*/
 {
     FILE* fp = fopen("grammar.txt","r");
+    if(fp == NULL)
+    {
+        printf("Error opening file: grammar.txt!\n");   
+        exit(1);             
+    }
     lines = noOfLines(fp);
     rule* rules = (rule*)malloc(sizeof(rule)*(lines+1));
     fclose(fp);
-    fp = fopen("new_grammar.txt","r");
+    fp = fopen("grammar.txt","r");
+    if(fp == NULL)
+    {
+        printf("Error opening file: grammar.txt!\n");   
+        exit(1);             
+    }
+
     for(int i=1;i<=lines;i++){
         linepop(fp,i,rules);
     }
@@ -942,6 +953,11 @@ void addRuleToTree(rule* rule)
 // {
 //     // Open file in append mode
 //     FILE* f = fopen(out_file,"a+");
+    // if(f == NULL)
+    // {
+    //     printf("Error opening file: %s!",out_file);   
+    //     exit(1);             
+    // }
 
 //     // If file opened successfully
 //     if(!f){

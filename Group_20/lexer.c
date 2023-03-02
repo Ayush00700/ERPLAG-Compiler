@@ -45,9 +45,10 @@ void printtokens()
 {
     token_node* temp = ll_node;
     int i=1; //token_number
+    printf("Line_number          lexeme           Token_name\n"); 
     while(temp!=NULL){
-        printf("%d line number ",temp->token->line_no);
-        printf("token no. %d is %s .. lexeme is .. %s\n",i,temp->token->type,temp->token->lexeme);
+        printf("%d\t\t\t",temp->token->line_no);
+        printf("%s\t\t\t%s\n",temp->token->lexeme,temp->token->type);
         temp = temp->next_token;
         i++;
     }
@@ -118,12 +119,17 @@ void pop_error_tokens()
 {
     token_node* temp;
     temp = stack_head;
-    
+    int i=0;
     // Print error entries
+     printf("Line_number          Keyword(that caused the error):\n"); 
     while(temp!=NULL){
-        printf("Error in line number :%d, Couldn't tokenize the keyword %s\n", temp->token->line_no,temp->token->lexeme);
+        i++;
+        printf("%d\t\t\t%s\n", temp->token->line_no,temp->token->lexeme);
         temp = temp->next_token;
     }
+    if(i==0){
+        printf("No Errors Found!\n");
+    }   
 }
 
 /*THE HASHING IS PART OF THE PRE-PROCESSING STEP*/
@@ -736,7 +742,19 @@ void call_lexer(FILE* fp,int bufsize)
 void removeComments(char *testcaseFile, char *cleanFile)
 {
     FILE* f1 = fopen(testcaseFile,"r");
+    if(f1 == NULL)
+    {
+        printf("Error opening file:%s!\n",testcaseFile);   
+        exit(1);             
+    }
+
     FILE* f2 = fopen(cleanFile,"w+");
+    if(f2 == NULL)
+    {
+        printf("Error opening file:%s!\n",cleanFile);   
+        exit(1);             
+    }
+
     char ch = fgetc(f1);
     int commentFlag =0;
     while(ch!=EOF){

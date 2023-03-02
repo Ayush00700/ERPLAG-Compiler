@@ -15,7 +15,10 @@ int main(int argc, char* args[]){ //DRIVER
     // strcpy(testcaseFile,args[1]);
     char* fileForParseTree = args[2];
     int bufferSize = atoi(args[3]);
-    int run =1;
+    // printf("Test Case File:%s\n",testcaseFile);
+    // printf("Parse Tree Printing File:%s\n",fileForParseTree);
+    // printf("Buffer Size:%d\n",bufferSize);
+    int run = 1;
     int third = 0; 
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
     printf("Ayush Agarwal\t2019B4A70652P\n");
@@ -50,7 +53,7 @@ int main(int argc, char* args[]){ //DRIVER
 
             /*Printing code without comments*/
             case 1:
-                char* cleanFile = args[1];
+                char cleanFile[100];
                 printf("Enter name of new clean file where you want the code without comments\n");
                 scanf("%s",cleanFile);
                 removeComments(testcaseFile,cleanFile);
@@ -62,7 +65,12 @@ int main(int argc, char* args[]){ //DRIVER
                 l_start_time = clock();
                 FILE* fp;
                 fp = fopen(testcaseFile,"r");
-                printf("Running file %s", testcaseFile);
+                if(fp == NULL)
+                {
+                    printf("Error opening file:%s\n!",testcaseFile);   
+                    exit(1);             
+                }
+                printf("Running file %s\n", testcaseFile);
                 populate_hash_table();
                 call_lexer(fp,4096);
                 postProcessing();
@@ -83,7 +91,13 @@ int main(int argc, char* args[]){ //DRIVER
                     l_start_time = clock();
                     FILE* fp;
                     fp = fopen(testcaseFile,"r");
-                    printf("Running file %s", testcaseFile);
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s\n!",testcaseFile);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s\n", testcaseFile);
                     populate_hash_table();
                     call_lexer(fp,4096);
                     postProcessing();
@@ -113,7 +127,12 @@ int main(int argc, char* args[]){ //DRIVER
                         l_start_time = clock();
                         FILE* fp;
                         fp = fopen(testcaseFile,"r");
-                        printf("Running file %s", testcaseFile);
+                        if(fp == NULL)
+                        {
+                            printf("Error opening file:%s\n!",testcaseFile);   
+                            exit(1);             
+                        }
+                        printf("Running file %s\n", testcaseFile);
                         populate_hash_table();
                         call_lexer(fp,4096);
                         postProcessing();
