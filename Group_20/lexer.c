@@ -299,6 +299,15 @@ messgae: The lexeme to which we have to map the string read in buffer as instruc
     token_info* tk;
     /*IN THE FOLLOWING STEP, WE POPULATE THE token_info OBJECT BASED ON THE MESSAGE*/
 
+
+    if(size>20){
+        int n = strlen(message);
+        for(int i=0;i<n;i++){
+            message[i] = '\0';
+        }
+        strcpy(message,"ERROR");
+    }
+
     // If message is "ERROR", we have to map that and add entry to stack
     if(!strcmp(message,"ERROR")){
         tk = (token_info *)malloc(sizeof(token_info));
