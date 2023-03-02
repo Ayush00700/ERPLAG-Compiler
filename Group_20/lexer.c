@@ -109,8 +109,11 @@ void add_error_token(token_info* tk)
     {
         token_node* temp = (token_node*)malloc(sizeof(token_node));
         temp->token = tk;
-        temp->next_token = stack_head;
-        stack_head = temp;
+        token_node* temp1 = stack_head;
+        while(temp1->next_token != NULL){
+            temp1 = temp1->next_token;
+        }
+        temp1->next_token = temp;
     }
 }
 
