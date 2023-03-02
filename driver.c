@@ -2032,30 +2032,33 @@ void tostring(char s[], int n)
 }
 
 
-void printer(treeNodes* current){
+void printer(FILE* fptr, treeNodes* current){
     if(!current->isTerminal){
         if(strcmp(current->symbol->nodeInfo,"eps")){
-            printf("%s\n",current->symbol->nodeInfo);
+            fprintf(fptr, "%s\n",current->symbol->nodeInfo);
         }
     }
     else{
-       printf("%s\n",current->token->lexeme);
+       fprintf(fptr,"Type:%s Lexeme:%s Line Number:%d ",current->token->type,current->token->lexeme,current->token->line_no);
+       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"Values :%f\n",current->token->values.rnum);
+       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"Values :%d\n",current->token->values.num);
+
     }
 }
 
-void InOrderTraversal(treeNodes* current){
+void InOrderTraversal(FILE* fptr, treeNodes* current){
     int flag = 0;
     if(current->child == NULL){
-        printer(current);
+        printer(fptr, current);
         return;
     }
     else{
-        InOrderTraversal(current->child);
-        printer(current);
+        InOrderTraversal(fptr, current->child);
+        printer(fptr,current);
         if(current->child->r_sibling!=NULL){
             treeNodes* temp = current->child->r_sibling;
             while(temp!=NULL){
-                InOrderTraversal(temp);
+                InOrderTraversal(fptr,temp);
                 temp = temp->r_sibling;
             }
         }
@@ -2185,30 +2188,30 @@ void InOrderTraversal(treeNodes* current){
 
 
 
-// void print_parse_tree(char* out_file)
-// /*This function uses the inorder traversal and */
-// {
-//     // Open file in append mode
-//     FILE* f = fopen(out_file,"a+");
+void print_parse_tree(char* out_file)
+/*This function uses the inorder traversal and */
+{
+    // Open file in append mode
+    FILE* f = fopen(out_file,"a+");
 
-//     // If file opened successfully
-//     if(f){
+    // If file opened successfully
+    if(f){
 
-//         // Create a pointer to traverse the parse tree
-//         treeNodes* p = ptree.root;
-//         // Perform inorder traversal
-//         in_order_traversal(f, p);
+        // Create a pointer to traverse the parse tree
+        treeNodes* p = ptree.root;
+        // Perform inorder traversal
+        InOrderTraversal(f, p);
 
-//     }
+    }
 
-//     // File couldn't be opened
-//     else{
+    // File couldn't be opened
+    else{
 
-//         printf("Couldn't open %s\n",out_file);
-//         return;
+        printf("Couldn't open %s\n",out_file);
+        return;
 
-//     }
-// }
+    }
+}
 
 
 
@@ -2292,7 +2295,7 @@ int main()
 
 
     call_parser(rules,nont);
-    InOrderTraversal(ptree.root);
-    // print_parse_tree("output_file.txt");
+  
+    print_parse_tree("output_file.txt");
 
 }

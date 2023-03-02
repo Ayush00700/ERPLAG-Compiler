@@ -1,0 +1,232 @@
+modDecs
+prog
+Type:DEF Lexeme:<< Line Number:1 mod
+Type:MODULE Lexeme:module Line Number:1 Type:ID Lexeme:arraysum Line Number:1 Type:ENDDEF Lexeme:>> Line Number:1 Type:TAKES Lexeme:takes Line Number:2 Type:INPUT Lexeme:input Line Number:2 Type:SQBO Lexeme:[ Line Number:2 Type:ID Lexeme:list Line Number:2 ip_list
+Type:COLON Lexeme:: Line Number:2 Type:ARRAY Lexeme:array Line Number:2 dataType
+Type:SQBO Lexeme:[ Line Number:2 sign
+index_arr
+Type:NUM Lexeme:4 Line Number:2 Values :4
+new_index
+range_arrays
+Type:RANGEOP Lexeme:.. Line Number:2 sign
+index_arr
+Type:NUM Lexeme:20 Line Number:2 Values :20
+new_index
+Type:SQBC Lexeme:] Line Number:2 Type:OF Lexeme:of Line Number:2 Type:REAL Lexeme:real Line Number:2 type
+N1
+Type:SQBC Lexeme:] Line Number:2 Type:SEMICOL Lexeme:; Line Number:2 Type:RETURNS Lexeme:returns Line Number:3 ret
+Type:SQBO Lexeme:[ Line Number:3 Type:ID Lexeme:sum Line Number:3 op_list
+Type:COLON Lexeme:: Line Number:3 Type:REAL Lexeme:real Line Number:3 type
+N2
+Type:SQBC Lexeme:] Line Number:3 Type:SEMICOL Lexeme:; Line Number:3 Type:START Lexeme:start Line Number:4 modDef
+Type:DECLARE Lexeme:declare Line Number:5 declarestmt
+Type:ID Lexeme:s Line Number:5 idList
+N3
+Type:COLON Lexeme:: Line Number:5 Type:REAL Lexeme:real Line Number:5 dataType
+Type:SEMICOL Lexeme:; Line Number:5 stmt
+stmts
+Type:ID Lexeme:s Line Number:6 assignstmt
+Type:ASSIGNOP Lexeme::= Line Number:6 lvalueIDstmt
+Type:RNUM Lexeme:0.0 Line Number:6 Values :0.000000
+factor
+term
+N7
+arithExp
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+exp
+Type:SEMICOL Lexeme:; Line Number:6 whichstmt
+simplestmt
+stmt
+stmts
+Type:DECLARE Lexeme:declare Line Number:7 declarestmt
+Type:ID Lexeme:index Line Number:7 idList
+N3
+Type:COLON Lexeme:: Line Number:7 Type:INTEGER Lexeme:integer Line Number:7 dataType
+Type:SEMICOL Lexeme:; Line Number:7 stmt
+stmts
+Type:FOR Lexeme:for Line Number:8 iterstmt
+Type:BO Lexeme:( Line Number:8 Type:ID Lexeme:index Line Number:8 Type:IN Lexeme:in Line Number:8 sign_forloop
+index_forloop
+Type:NUM Lexeme:4 Line Number:8 Values :4
+new_index_forloop
+range_forloop
+Type:RANGEOP Lexeme:.. Line Number:8 sign_forloop
+index_forloop
+Type:NUM Lexeme:20 Line Number:8 Values :20
+new_index_forloop
+Type:BC Lexeme:) Line Number:8 Type:START Lexeme:start Line Number:9 Type:ID Lexeme:s Line Number:10 assignstmt
+Type:ASSIGNOP Lexeme::= Line Number:10 lvalueIDstmt
+Type:ID Lexeme:s Line Number:10 factor
+N_11
+term
+N7
+arithExp
+Type:PLUS Lexeme:+ Line Number:10 op1
+N6
+Type:ID Lexeme:list Line Number:10 factor
+Type:SQBO Lexeme:[ Line Number:10 N_11
+Type:ID Lexeme:index Line Number:10 arrFactor
+arrTerm
+arr_N5
+arrExpr
+arr_N4
+element_index_with_expressions
+Type:SQBC Lexeme:] Line Number:10 term
+N7
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+exp
+Type:SEMICOL Lexeme:; Line Number:10 whichstmt
+simplestmt
+stmt
+stmts
+stmts
+Type:END Lexeme:end Line Number:11 stmt
+stmts
+Type:ID Lexeme:sum Line Number:12 assignstmt
+Type:ASSIGNOP Lexeme::= Line Number:12 lvalueIDstmt
+Type:ID Lexeme:s Line Number:12 factor
+N_11
+term
+N7
+arithExp
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+exp
+Type:SEMICOL Lexeme:; Line Number:12 whichstmt
+simplestmt
+stmt
+stmts
+stmts
+Type:END Lexeme:end Line Number:13 othermods
+othermods
+Type:DRIVERDEF Lexeme:<<< Line Number:15 driver
+Type:DRIVER Lexeme:driver Line Number:15 Type:PROGRAM Lexeme:program Line Number:15 Type:DRIVERENDDEF Lexeme:>>> Line Number:15 Type:START Lexeme:start Line Number:16 modDef
+Type:DECLARE Lexeme:declare Line Number:17 declarestmt
+Type:ID Lexeme:num Line Number:17 idList
+Type:COMMA Lexeme:, Line Number:17 N3
+Type:ID Lexeme:k Line Number:17 N3
+Type:COLON Lexeme:: Line Number:17 Type:INTEGER Lexeme:integer Line Number:17 dataType
+Type:SEMICOL Lexeme:; Line Number:17 stmt
+stmts
+Type:DECLARE Lexeme:declare Line Number:18 declarestmt
+Type:ID Lexeme:A Line Number:18 idList
+N3
+Type:COLON Lexeme:: Line Number:18 Type:ARRAY Lexeme:array Line Number:18 dataType
+Type:SQBO Lexeme:[ Line Number:18 sign
+index_arr
+Type:NUM Lexeme:4 Line Number:18 Values :4
+new_index
+range_arrays
+Type:RANGEOP Lexeme:.. Line Number:18 sign
+index_arr
+Type:NUM Lexeme:10 Line Number:18 Values :10
+new_index
+Type:SQBC Lexeme:] Line Number:18 Type:OF Lexeme:of Line Number:18 Type:INTEGER Lexeme:integer Line Number:18 type
+Type:SEMICOL Lexeme:; Line Number:18 stmt
+stmts
+Type:FOR Lexeme:for Line Number:19 iterstmt
+Type:BO Lexeme:( Line Number:19 Type:ID Lexeme:k Line Number:19 Type:IN Lexeme:in Line Number:19 sign_forloop
+index_forloop
+Type:NUM Lexeme:6 Line Number:19 Values :6
+new_index_forloop
+range_forloop
+Type:RANGEOP Lexeme:.. Line Number:19 sign_forloop
+index_forloop
+Type:NUM Lexeme:10 Line Number:19 Values :10
+new_index_forloop
+Type:BC Lexeme:) Line Number:19 Type:START Lexeme:start Line Number:20 Type:ID Lexeme:A Line Number:21 assignstmt
+Type:SQBO Lexeme:[ Line Number:21 lvalueARRstmt
+Type:ID Lexeme:k Line Number:21 arrFactor
+arrTerm
+arr_N5
+arrExpr
+arr_N4
+element_index_with_expressions
+Type:SQBC Lexeme:] Line Number:21 Type:ASSIGNOP Lexeme::= Line Number:21 Type:BO Lexeme:( Line Number:21 factor
+Type:ID Lexeme:num Line Number:21 factor
+N_11
+term
+N7
+arithExp
+Type:MINUS Lexeme:- Line Number:21 op1
+N6
+Type:ID Lexeme:k Line Number:21 factor
+N_11
+term
+N7
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+Type:BC Lexeme:) Line Number:21 term
+Type:MUL Lexeme:* Line Number:21 op2
+N7
+Type:BO Lexeme:( Line Number:21 factor
+Type:ID Lexeme:num Line Number:21 factor
+N_11
+term
+N7
+arithExp
+Type:MINUS Lexeme:- Line Number:21 op1
+N6
+Type:ID Lexeme:k Line Number:21 factor
+N_11
+term
+N7
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+Type:BC Lexeme:) Line Number:21 N7
+arithExp
+N6
+AnyTerm
+N5
+arithOrboolExp
+N4
+exp
+Type:SEMICOL Lexeme:; Line Number:21 whichstmt
+simplestmt
+stmt
+stmts
+Type:PRINT Lexeme:print Line Number:22 iostmt
+Type:BO Lexeme:( Line Number:22 Type:ID Lexeme:A Line Number:22 var_print
+Type:SQBO Lexeme:[ Line Number:22 P1
+Type:ID Lexeme:k Line Number:22 new_index
+Type:SQBC Lexeme:] Line Number:22 Type:BC Lexeme:) Line Number:22 Type:SEMICOL Lexeme:; Line Number:22 stmt
+stmts
+stmts
+Type:END Lexeme:end Line Number:23 stmt
+stmts
+Type:SQBO Lexeme:[ Line Number:24 optional
+Type:ID Lexeme:num Line Number:24 idList
+N3
+Type:SQBC Lexeme:] Line Number:24 Type:ASSIGNOP Lexeme::= Line Number:24 modReusestmt
+Type:USE Lexeme:use Line Number:24 Type:MODULE Lexeme:module Line Number:24 Type:ID Lexeme:arraysum Line Number:24 Type:WITH Lexeme:with Line Number:24 Type:PARAMETERS Lexeme:parameters Line Number:24 sign
+paralist
+Type:ID Lexeme:A Line Number:24 actual_para_list
+N_11
+paralist2
+Type:SEMICOL Lexeme:; Line Number:24 simplestmt
+stmt
+stmts
+Type:PRINT Lexeme:print Line Number:25 iostmt
+Type:BO Lexeme:( Line Number:25 Type:ID Lexeme:num Line Number:25 var_print
+P1
+Type:BC Lexeme:) Line Number:25 Type:SEMICOL Lexeme:; Line Number:25 stmt
+stmts
+stmts
+Type:END Lexeme:end Line Number:27 Type:$ Lexeme:$ Line Number:0 
