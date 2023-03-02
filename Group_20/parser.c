@@ -838,7 +838,7 @@ void addRuleToTree(rule* rule)
     }
 }
 
-void in_order_traversal(treeNodes* current)
+void in_order_traversal(FILE* fp, treeNodes* current)
 /*Inorder traversal of the parse tree:
 If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
 Ex: Input:        A
@@ -854,21 +854,75 @@ Ex: Input:        A
     
     // Check if leftmost child exists
     if(current->child)
-        in_order_traversal(current->child);
+        in_order_traversal(fp, current->child);
 
+    // If it is a leaf
     else{
-        // Print current node
-        printf("%s, ", current->symbol->nodeInfo);
+        // Print lexeme
+        if(current->symbol->isTerminal)
+            fprintf(fp,"%s %s\t","Lexeme:",current->token->lexeme);
+        else
+            fprintf(fp,"%s %s\t","Lexeme:","----");
+        
+        // Print line number
+        fprintf(fp,"%s %s\t","Line no.:",tostring(current->token->line_no));
+
+        // Print the token type
+        fprintf(fp,"%s %s\t","Token:",current->token->type);
+
+        // Print value if integer or real
+        if(!strcmp(current->token->type, "NUM") || !strcmp(current->token->type, "RNUM"))
+            fprintf(fp,"%s %s\t","Value:",tostring(current->token->values));
+        
+        // Print parent symbol
+        if(current == ptree.root)
+            fprintf(fp,"%s %s\t","Parent:","ROOT");
+        else
+            fprintf(fp,"%s %s\t","Parent:",current->parent->symbol->nodeInfo);
+        
+        // Print is leaf or not
+            fprintf(fp,"%s %s\t","isLeaf:","YES");
+
+        // Print current node symbol
+        fprintf(fp,"%s %s\t","Node:",current->symbol->nodeInfo);
     }
 
     // Print parent node if current is leftmost child
     if(current->parent->child == current)
         printf("%s, ", current->parent->symbol->nodeInfo);
+    
+    // Print lexeme
+        if(current->parent->symbol->isTerminal)
+            fprintf(fp,"%s %s\t","Lexeme:",current->parent->token->lexeme);
+        else
+            fprintf(fp,"%s %s\t","Lexeme:","----");
+        
+        // Print line number
+        fprintf(fp,"%s %s\t","Line no.:",tostring(current->parent->token->line_no));
+
+        // Print the token type
+        fprintf(fp,"%s %s\t","Token:",current->parent->token->type);
+
+        // Print value if integer or real
+        if(!strcmp(current->parent->token->type, "NUM") || !strcmp(current->parent->token->type, "RNUM"))
+            fprintf(fp,"%s %s\t","Value:",tostring(current->parent->token->values));
+        
+        // Print parent symbol
+        if(current == ptree.root)
+            fprintf(fp,"%s %s\t","Parent:","ROOT");
+        else
+            fprintf(fp,"%s %s\t","Parent:",current->parent->parent->symbol->nodeInfo);
+        
+        // Print is leaf or not
+            fprintf(fp,"%s %s\t","isLeaf:","NO");
+
+        // Print current node symbol
+        fprintf(fp,"%s %s\t","Node:",current->parent->symbol->nodeInfo);
 
     // Right sibling
     treeNodes* temp = current->r_sibling;
     if(!temp){
-        in_order_traversal(temp);
+        in_order_traversal(fp, temp);
     }
 }
 
@@ -882,6 +936,17 @@ void print_parse_tree(char* out_file)
     if(!f){
 
         // Create a pointer to traverse the parse tree
+        treeNodes* p = ptree.root;
+        // Perform inorder traversal
+        in_order_traversal(f, p);
+
+    }
+
+    // File couldn't be opened
+    else{
+
+        printf("Couldn't open %s\n",out_file);
+        return;
 
     }
 }

@@ -28,7 +28,8 @@ void timed(){
 
 
 int main(int argc, char* args[]){ //DRIVER
-    char* testcaseFile = args[1];
+    char* testcaseFile;
+    strcpy(testcaseFile,args[1]);
     char* fileForParseTree = args[2];
     int bufferSize = atoi(args[3]);
     int run =1;
@@ -64,21 +65,23 @@ int main(int argc, char* args[]){ //DRIVER
             case 0:
                 run = 0;
                 break;
+
+            /*Printing code without comments*/
             case 1:
-                /*Printing code without comments*/
-                char* cleanFile;
+                char* cleanFile = args[1];
                 printf("Enter name of new clean file where you want the code without comments\n");
-                scanf("%s",cleanFile);
-                removeComments(testcaseFile,cleanFile);
+                // scanf("%s",&cleanFile);
+                // removeComments(testcaseFile,cleanFile);
                 printf("\nTask 1 done, again going to Options\n");
                 break;
+
+            /*Token List by LEXER with Errors*/
             case 2:
-                /*Token List by LEXER with Errors*/
-                //TODO
-                FILE* fp = fopen(testcaseFile,"r");
+                FILE* fp;
+                fp = fopen(testcaseFile,"r");
                 printf("Running file %s", testcaseFile);
                 populate_hash_table();
-                call_lexer(fp,4096);
+                // call_lexer(fp,4096);
                 current->next_token = (token_node*) malloc(sizeof(token_node)); //need to add dollar in the tokens too at the end
                 current->next_token->next_token = NULL;
                 current->next_token->token = (token_info*)malloc(sizeof(token_info));
