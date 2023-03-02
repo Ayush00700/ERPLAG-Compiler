@@ -21,7 +21,7 @@ The language is designed for the course CS F363 and the name of the language is 
 
 - GCC version 9.4.0 
 - UBUNTU LTS 20.04.4.
-
+- make
 **WINDOWS**
 
 - MinGW
@@ -45,7 +45,10 @@ gcc --version
 If not installed, install
 
 ```
-sudo apt-get install gcc:9.4.0
+sudo apt update
+sudo apt install build-essential
+sudo apt-get install manpages-dev
+sudo apt install make
 ```
 
 
