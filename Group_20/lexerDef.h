@@ -7,7 +7,6 @@
 5. A Sudarshan      2019B4A70744P
 */
 
-
 #define MAX_LEN 20
 #define TABLE_SIZE 101
 #define TOTAL_KEYWORDS 30
