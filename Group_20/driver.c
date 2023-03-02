@@ -53,6 +53,7 @@ int main(int argc, char* args[]){ //DRIVER
 
             /*Printing code without comments*/
             case 1:
+                printf(" ");
                 char cleanFile[100];
                 printf("Enter name of new clean file where you want the code without comments\n");
                 scanf("%s",cleanFile);
@@ -116,7 +117,7 @@ int main(int argc, char* args[]){ //DRIVER
                 p_total_CPU_time = (double) (p_end_time - p_start_time);
                 p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                 /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
-                //TODO
+                print_parse_tree(fileForParseTree);
                 printf("\nTask 3 done, again going to Options\n");
                 pflag=1;
                 break;
