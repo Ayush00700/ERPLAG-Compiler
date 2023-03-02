@@ -1,0 +1,10 @@
+<<<driver program>>>
+start 
+ declare num k:integer;  **Error**
+ num:=9; 
+for( k  2..8) **Error**
+start 
+ a:=(num - k)*(num-k); 
+ print(a) **Error**
+end 
+end

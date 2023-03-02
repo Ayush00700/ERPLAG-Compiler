@@ -2,13 +2,13 @@
 
 <<module arrayMax>>
 takes input[list:array[3..20] of real];
-returns [max:real]
+returns [max:real];
 start 
     declare curr_max:real;
     curr_max:=-10000;
     for(index in 3..20)
     start
-        flag=curr_max<arrayMax[index];
+        flag:=curr_max<arrayMax[index];
         switch(flag)
             start
                 case true: curr:=arrayMax[index];
@@ -18,15 +18,15 @@ start
     end
 end
 
-<<<driver Program>>>
+<<<driver program>>>
 start 
     declare A: array[3..20] of real;
-    for(k in 3..20)
-    start
+    for(k 
+    **ERROR**
         A[k] := k;
     end
 
-    [max] := use module arrayMax with parameters A;
+    **ERROR** arrayMax with parameters A;
     print(max);
 end
 

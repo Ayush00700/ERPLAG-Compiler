@@ -5,7 +5,7 @@ start
  a:=21; 
  b:=23; 
  c:=(b-a>3); 
- switch(c) 
+ switch(c)
  start 
   case true: b:=100; 
     break; 

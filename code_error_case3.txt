@@ -1,0 +1,11 @@
+<<<driver program>>> 
+start ;  **Error**
+ declare num, k:integer; 
+ declare A:;array [1..10] of integer;  **Error**
+ num:=5; 
+for( k in -7..10) 
+start 
+ A[k]:=(num ;- k)*(num-k)  **Error**
+ print(A[k]);;  **Error**
+end ;           **Error**
+end

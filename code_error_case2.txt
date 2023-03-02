@@ -1,15 +1,15 @@
 <<<driver program>>> 
 start 
- declare a b:integer; 
- declare c boolean; 
- a:=21 
- b:=23 
+ declare a b:integer;  ** ERROR 1**
+ declare c boolean; ** ERROR 1**
+ a:=21 ** ERROR 1** **Error not caught**
+ b:=23; ** ERROR 1**
  c:=(b-a>3); 
  switch(c) 
  start 
   case true: b:=100; 
     break; 
   case false: b:= -100; 
-    break 
+    break ** ERROR 1**
  end 
-end
+end 

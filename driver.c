@@ -1703,7 +1703,61 @@ Ex: Input:        A
         in_order_traversal(temp);
     }
 }
+void popOnErrors(token_info* curr, int prevLineNo)
+{
+    if(!curr)
+    return;
+    if(strcmp(curr->type, "SEMICOL")==0)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "stmts")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num<=1)  //Only dollar left
+            {
+                break;
+            }
+        }
+        
+    }
+    else if(strcmp(curr->type, "DRIVERENDDEF")==0)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num<=1)  //Only dollar left
+            {
+                break;
+            }
+        }
+    }
+    else if(strcmp(curr->type, "ENDDEF")==0)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num<=1)  //Only dollar left
+            {
+                break;
+            }
+        }
+    }
+else if(prevLineNo!=curr->line_no)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "stmts")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num==1)  //Only dollar left
+            {
+                break;
+            }
+        }
+    }
 
+}
 
 void call_parser(rule* rules, NonT* nont)
 /*This function gives cue to start the Syntax Analyzer*/
@@ -1716,12 +1770,30 @@ void call_parser(rule* rules, NonT* nont)
     // till the time we keep on getting nextToken
     while(curr)    
     {
+       
         int flag = 0;
         // Find the top of stack
         ruleNode* stackTop=top(&parse_stack);
         // ParseStack operations
+        if(!stackTop)
+        {
+            printf("End ka doosra mkc error");
+            return; 
+
+        } 
         while(!stackTop->isTerminal)
-        {    
+        {   
+             if(!curr)
+        {
+            printf("End ka mkc error");
+            return;   
+        } 
+        if(!stackTop)
+        {
+            printf("End ka doosra mkc error");
+            return; 
+
+        }
             int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
             int col_no= set_contains(curr->type, Terminals_table);
 
@@ -1741,9 +1813,12 @@ void call_parser(rule* rules, NonT* nont)
                     printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
                     printf("we ignored %s\n",curr->type);
                     curr=get_next_token();
+                    popOnErrors(curr, prevLineNo);
+                     ptree.curr->error=-2;
+                    
                     // skip changes in parse tree, gibberish added in the source code
                     //Add the check that if the curr->lineno changes greater than prev; then 
-                    ptree.curr->error=-2;
+                   
                 }
                 else{
                     if(stackTop->nextNode->isTerminal){
@@ -1761,7 +1836,8 @@ void call_parser(rule* rules, NonT* nont)
                             printf("we ignored %s\n",curr->type);
                             curr=get_next_token();
                             // skip changes in parse tree 
-                            ptree.curr->error=-2;
+
+                            popOnErrors(curr, prevLineNo);
                         }
                     }
                     else{
@@ -1772,7 +1848,8 @@ void call_parser(rule* rules, NonT* nont)
                             printf("we ignored %s\n",curr->type);
                             prevLineNo=curr->line_no;
                             curr=get_next_token();
-                            // skip changes in parse tree ,ight need to error flags
+                            popOnErrors(curr, prevLineNo);
+                            //skip changes in parse tree ,ight need to error flags
                             ptree.curr->error=-2;
                         }
                         else{
@@ -1868,7 +1945,7 @@ int main()
 {
     /* Lexer module calls*/
     FILE* fp;
-    char test_buff[50] = "code_error_case2.txt";
+    char test_buff[50] = "code_error_case1.txt";
 
     fp = fopen(test_buff,"r");
     printf("Running file %s", test_buff);
