@@ -7,8 +7,6 @@
 5. A Sudarshan      2019B4A70744P
 */
 
-#include "lexer.h"
-
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 75
 #define TERMINALS 58

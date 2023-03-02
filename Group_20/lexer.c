@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "lexer.h"
+#include "lexerDef.h"
 
 void printtokens()
 /*This function prints the token number, type and the corresponding lexeme*/
@@ -707,5 +707,7 @@ void call_lexer(FILE* fp,int bufsize)
 
 void removeComments(char *testcaseFile, char *cleanFile)
 {
+    FILE* f1 = fopen(testcaseFile,"r");
+    FILE* f2 = fopen(cleanFile,"w+");
     // populate();   
 }

@@ -7,8 +7,9 @@
 5. A Sudarshan      2019B4A70744P
 */
 
-#include "parser.h"
-
+#include "lexer.h"
+#include <string.h>
+#include "parserDef.h"
 // ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
 void push(Stack* parseStack, ruleNode* element)
 /*Push an element into the parseStack*/

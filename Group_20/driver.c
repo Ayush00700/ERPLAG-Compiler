@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include "lexer.h"
+#include "parser.h"
+#include <string.h>
 
 void timed(){
 
@@ -30,6 +33,7 @@ int main(int argc, char* args[]){ //DRIVER
     int bufferSize = atoi(args[3]);
     int run =1;
     int third = 0; 
+    
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
     printf("Ayush Agarwal(Leader)\t2019B4A70652P\n");
     printf("Rajan Sahu\t\t2019B4A70572P\n");
@@ -62,12 +66,32 @@ int main(int argc, char* args[]){ //DRIVER
                 break;
             case 1:
                 /*Printing code without comments*/
-                //TODO
+                char* cleanFile;
+                printf("Enter name of new clean file where you want the code without comments\n");
+                scanf("%s",cleanFile);
+                removeComments(testcaseFile,cleanFile);
                 printf("\nTask 1 done, again going to Options\n");
                 break;
             case 2:
                 /*Token List by LEXER with Errors*/
                 //TODO
+                FILE* fp = fopen(testcaseFile,"r");
+                printf("Running file %s", testcaseFile);
+                populate_hash_table();
+                call_lexer(fp,4096);
+                current->next_token = (token_node*) malloc(sizeof(token_node)); //need to add dollar in the tokens too at the end
+                current->next_token->next_token = NULL;
+                current->next_token->token = (token_info*)malloc(sizeof(token_info));
+                current->next_token->token->lexeme = "$";
+                strcpy(current->next_token->token->type,"$");
+
+                
+                initialize();
+                printf("TOKENS ARE .... (first to last) \n");
+                printtokens();
+                printf("ERRORS ARE .... (last to first) \n");
+                pop_error_tokens();    
+
                 printf("\nTask 2 done, again going to Options\n");
                 break;
             case 3:
