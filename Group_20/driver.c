@@ -77,7 +77,7 @@ int main(int argc, char* args[]){ //DRIVER
                 postProcessing();
                 printf("TOKENS ARE .... (first to last) \n");
                 printtokens();
-                printf("ERRORS ARE .... (last to first) \n");
+                printf("LEXICAL ERRORS ARE .... (first to last) \n");
                 pop_error_tokens();    
 
                 printf("\nTask 2 done, again going to Options\n");
@@ -104,7 +104,7 @@ int main(int argc, char* args[]){ //DRIVER
                     postProcessing();
                     printf("TOKENS ARE .... (first to last) \n");
                     printtokens();
-                    printf("ERRORS ARE .... (last to first) \n");
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
                     pop_error_tokens();    
                     lflag=1;
                     l_end_time = clock();
@@ -139,7 +139,7 @@ int main(int argc, char* args[]){ //DRIVER
                         postProcessing();
                         printf("TOKENS ARE .... (first to last) \n");
                         printtokens();
-                        printf("ERRORS ARE .... (last to first) \n");
+                        printf("LEXICAL ERRORS ARE .... (first to last) \n");
                         pop_error_tokens();    
                         lflag=1;
                         l_end_time = clock();

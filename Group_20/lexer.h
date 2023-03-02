@@ -1,7 +1,7 @@
 #include "lexerDef.h"
 #include <stdlib.h>
 #include <stdio.h>
-/* THE MATH_CS boiz
+/* Group-20
 --------------------
 1. Rajan Sahu       2019B4A70572P
 2. Yash Goyal       2019B4A70638P

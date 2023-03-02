@@ -1,4 +1,4 @@
-/* THE MATH_CS boiz
+/* Group-20
 --------------------
 1. Rajan Sahu       2019B4A70572P
 2. Yash Goyal       2019B4A70638P
@@ -8,6 +8,7 @@
 */
 
 #include <string.h>
+#include <stdlib.h>
 #include "parser.h"
 
 /* IMPORTANT GLOBAL VARIABLES FOR PARSER MODULE*/
@@ -943,7 +944,7 @@ Ex: Input:        A
 
     // Print parent node if current is leftmost child
     if(current->parent->child == current)
-        printf("%s, ", current->parent->symbol->nodeInfo);
+        fprintf(fp,"%s, ", current->parent->symbol->nodeInfo);
     
         // Print lexeme
         if(current->parent->symbol->isTerminal)
@@ -991,25 +992,17 @@ void print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
 {
     // Open file in append mode
-    FILE* f = fopen(out_file,"a+");
-
-    // If file opened successfully
-    if(f){
-
+    FILE* f = fopen(out_file,"w+");
+    if(f == NULL)
+    {
+        printf("Error opening file:%s\n",out_file);   
+        exit(1);             
+    }
         // Create a pointer to traverse the parse tree
-        treeNodes* p = ptree.root;
-        // Perform inorder traversal
-        in_order_traversal(f, p);
-
-    }
-
-    // File couldn't be opened
-    else{
-
-        printf("Couldn't open %s\n",out_file);
-        return;
-
-    }
+    treeNodes* p = ptree.root;
+    // Perform inorder traversal
+    // in_order_traversal(f, p);
+    fclose(f);
 }
 
 void call_parser(rule* rules, NonT* nont)

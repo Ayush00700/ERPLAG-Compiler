@@ -3,7 +3,7 @@ The language is designed for the course CS F363 and the name of the language is 
 
 ### Group Members:
 
-`THE MATH_CS boiz`
+`Group-20`
 
 1. [Rajan Sahu](https://github.com/RAJAN13-blip)(2019B4A70572P)
 2. [Yash Goyal](https://github.com/YasHGoyaL27)(2019B4A70638P)
@@ -163,7 +163,7 @@ The format for printing each token is as follows.
 
 Also print the lexical errors with lexemes and line numbers appropriately.
 
-3 : For parsing to verify the syntactic correctness of the input source code and printing the parse tree appropriately. This option prints all errors - lexical and syntactic, line number wise, on the console and prints parse tree in the file as mentioned in the command line below. (Invoke both lexer and parser) . 
+3 : For parsing to verify the syntactic correctness of the input source code and printing the parse tree appropriately. This option prints all errors - lexical and syntactic, m (Invoke both lexer and parser) . 
 
 4: For printing (on the console) the total time taken by your stage 1 code of lexer and parser to verify the syntactic correctness. Use <time.h> file as follows
 ```
