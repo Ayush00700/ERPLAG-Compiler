@@ -6,10 +6,10 @@ The language is designed for the course CS F363 and the name of the language is 
 `THE MATH_CS boiz`
 
 1. [Rajan Sahu](https://github.com/RAJAN13-blip)(2019B4A70572P)
-2. [Ayush Agarwal](https://github.com/Ayush00700)(2019B4A70652P)
-3. [Vasu Swaroop](https://github.com/Vhaatever)(2019B4A70638P)
-4. [Yash Goyal](https://github.com/YasHGoyaL27)(2019B4A70638P)
-5. [A Sudarshan](https://github.com/ASudu)(2019B4A70638P)
+2. [Yash Goyal](https://github.com/YasHGoyaL27)(2019B4A70638P)
+3. [Ayush Agarwal](https://github.com/Ayush00700)(2019B4A70652P)
+4. [Vasu Swaroop](https://github.com/Vhaatever)(2019B4A70656P)
+5. [A Sudarshan](https://github.com/ASudu)(2019B4A70744P)
 
 ### Group Number: 20
 
