@@ -2035,13 +2035,13 @@ void tostring(char s[], int n)
 void printer(FILE* fptr, treeNodes* current){
     if(!current->isTerminal){
         if(strcmp(current->symbol->nodeInfo,"eps")){
-            fprintf(fptr, "%s\n",current->symbol->nodeInfo);
+            fprintf(fptr, "%s----\n","<Lexeme: >");
         }
     }
     else{
-       fprintf(fptr,"Type:%s Lexeme:%s Line Number:%d ",current->token->type,current->token->lexeme,current->token->line_no);
-       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"Values :%f\n",current->token->values.rnum);
-       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"Values :%d\n",current->token->values.num);
+       fprintf(fptr,"<Type:%s> <Lexeme:%s> <Line Number:%d> ",current->token->type,current->token->lexeme,current->token->line_no);
+       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
+       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
 
     }
 }
@@ -2066,127 +2066,6 @@ void InOrderTraversal(FILE* fptr, treeNodes* current){
     }
     return;
 }
-
-
-// void in_order_traversal(FILE* fp, treeNodes* current)
-// /*Inorder traversal of the parse tree:
-// If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
-// Ex: Input:        A
-//                  /
-//                 B -- C -- D
-//                     /
-//                    E -- F
-    
-//     Output:  B,A,E,C,F,D*/
-// {
-//     if(!current)
-//         return;
-    
-//     // Check if leftmost child exists
-//     if(current->child)
-//         in_order_traversal(fp, current->child);
-
-//     // If it is a leaf
-//     else{
-//         // Print lexeme
-//         if(current->symbol->isTerminal && strcmp(current->symbol->nodeInfo,"eps")!=0){
-//             fprintf(fp,"%s %s\t","Lexeme:",current->token->lexeme);
-//         }
-//         else{
-//             fprintf(fp,"%s %s\t","Lexeme:","----");
-//             return ;
-//         }
-//         char l_no[10];
-//         memset(l_no, '\0',sizeof(l_no));
-//         tostring(l_no,current->token->line_no);
-//         // Print line number
-//         fprintf(fp,"%s %s\t","Line no.:",l_no);
-
-//         // Print the token type
-//         fprintf(fp,"%s %s\t","Token:",current->token->type);
-
-//         char val[10];
-//         memset(val,'\0',sizeof(val));
-//         // Print value if integer or real
-//         if(!strcmp(current->token->type, "NUM")){
-//             tostring(l_no,current->token->values.num);
-//             fprintf(fp,"%s %s\t","Value:",val);
-//         }
-
-//         else if(!strcmp(current->token->type, "RNUM")){
-//             fprintf(fp,"%s %f\t","Value:",current->token->values.rnum);
-//         }
-        
-//         // Print parent symbol
-//         if(current == ptree.root)
-//             fprintf(fp,"%s %s\t","Parent:","ROOT");
-//         else
-//             fprintf(fp,"%s %s\t","Parent:",current->parent->symbol->nodeInfo);
-        
-//         // Print is leaf or not
-//             fprintf(fp,"%s %s\t","isLeaf:","YES");
-
-//         // Print current node symbol
-//         fprintf(fp,"%s %s\t","Node:",current->symbol->nodeInfo);
-//     }
-
-//     // Print parent node if current is leftmost child
-//     if(current->parent->child == current)
-//         printf("%s, ", current->parent->symbol->nodeInfo);
-    
-//         // Print lexeme
-//         if(current->parent->symbol->isTerminal)
-//             fprintf(fp,"%s %s\t","Lexeme:",current->parent->token->lexeme);
-//         else
-//             fprintf(fp,"%s %s\t","Lexeme:","----");
-        
-//         char l_no[10];
-//         memset(l_no, '\0',sizeof(l_no));
-
-//         if(current->parent->isTerminal)
-//         tostring(l_no,current->parent->token->line_no);
-//         else
-//         tostring(l_no,current->parent->symbol->nodeInfo);
-
-//         // Print line number
-//         fprintf(fp,"%s %s\t","Line no.:",l_no);
-
-//         // Print the token type
-//         fprintf(fp,"%s %s\t","Token:",current->parent->token->type);
-
-//         char val[10];
-//         memset(val, '\0',sizeof(val));
-//         // Print value if integer or real
-//         if(current->parent->isTerminal)
-//         if(!strcmp(current->parent->token->type, "NUM")){
-//             tostring(val,current->parent->token->values.num);
-//             fprintf(fp,"%s %s\t","Value:",val);
-//         }
-//         else if(!strcmp(current->parent->token->type, "RNUM")){
-//             fprintf(fp,"%s %f\t","Value:",current->parent->token->values.rnum);
-//         }
-//         // Print parent symbol
-//         if(current == ptree.root)
-//             fprintf(fp,"%s %s\t","Parent:","ROOT");
-//         else if(current->parent->parent)
-//             fprintf(fp,"%s %s\t","Parent:",current->parent->parent->symbol->nodeInfo);
-//             else
-//             fprintf(fp,"No grangfather exists as the nodes are at level 2");
-        
-//         // Print is leaf or not
-//             fprintf(fp,"%s %s\t","isLeaf:","NO");
-
-//         // Print current node symbol
-//         fprintf(fp,"%s %s\t","Node:",current->parent->symbol->nodeInfo);
-
-//     // Right sibling
-//     treeNodes* temp = current->r_sibling;
-//     if(!temp){
-//         in_order_traversal(fp, temp);
-//     }
-// }
-
-
 
 void print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
@@ -2220,6 +2099,7 @@ int main()
 {
     /* Lexer module calls*/
     FILE* fp;
+    char output_file[50] = "output_file.txt";
     char test_buff[50] = "code_test_case6.txt";
 
     fp = fopen(test_buff,"r");
@@ -2296,6 +2176,6 @@ int main()
 
     call_parser(rules,nont);
   
-    print_parse_tree("output_file.txt");
+    print_parse_tree(output_file);
 
 }
