@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-/*Lexer Module*/
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
 #define MAX_LEN 20
 #define TABLE_SIZE 101

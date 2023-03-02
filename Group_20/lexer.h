@@ -36,14 +36,15 @@ void print_hash_table();
 // Function to find index in hash table at which insertion is to be done
 int hash_table_insert(char* lexeme, char* tk);
 // Function takes an input lexeme and returns the corresponding mapped value from the hash table
+void populate_hash_table();
+/*This function populates the hash table to map the keywords lower case keywords to the ones in upper case*/
 char* lookup(char* lexeme);
 // Function to traverse the buffer(s) and tokenize according to the message
 void copy2lexeme(int f1,int f2,int b1,int b2,char* message,char* buf1,char* buf2,int bufsize);
 // This function gives the cue for Lexical Analysis
 void call_lexer(FILE* fp,int bufsize);
 
-
-
+void removeComments(char *testcaseFile, char *cleanFile);
 
 
 

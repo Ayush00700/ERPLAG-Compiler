@@ -704,3 +704,8 @@ void call_lexer(FILE* fp,int bufsize)
         }
     }
 }
+
+void removeComments(char *testcaseFile, char *cleanFile)
+{
+    // populate();   
+}
