@@ -871,6 +871,19 @@ Ex: Input:        A
     }
 }
 
+void print_parse_tree(char* out_file)
+/*This function uses the inorder traversal and */
+{
+    // Open file in append mode
+    FILE* f = fopen(out_file,"a+");
+
+    // If file opened successfully
+    if(!f){
+
+        // Create a pointer to traverse the parse tree
+
+    }
+}
 
 void call_parser(rule* rules, NonT* nont)
 /*This function gives cue to start the Syntax Analyzer*/

@@ -54,6 +54,8 @@ void goToChild();
 void addRuleToTree(rule* rule);
 // Function to perform the inorder traversal of the parse tree
 void in_order_traversal(treeNodes* current);
+// Function to print the parse tree using inorder traversal
+void print_parse_tree(char* out_file);
 
 // Set Operations
 // Function to add key into the table along with the entry number
