@@ -898,7 +898,7 @@ void printer(FILE* fptr, treeNodes* current){
         }
     }
     else{
-       fprintf(fptr,"<Type:%s> <Lexeme:%s> <Line Number:%d> ",current->token->type,current->token->lexeme,current->token->line_no);
+       fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
        if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
        if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
     }

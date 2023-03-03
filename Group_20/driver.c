@@ -44,6 +44,9 @@ int main(int argc, char* args[]){ //DRIVER
         int choice;
 
         //For testing purpose -->
+        // int choice = 4;
+        // char buffer[50] = "code_error_case1.txt";
+
       
         printf("Enter your choice: ");
         scanf("%d",&choice);
@@ -149,6 +152,7 @@ int main(int argc, char* args[]){ //DRIVER
                         l_end_time = clock();
                         l_total_CPU_time = (double) (l_end_time - l_start_time);
                         l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                        fclose(fp);
                     }
                     p_start_time = clock();
                     parseCompletely(lflag);
@@ -159,7 +163,7 @@ int main(int argc, char* args[]){ //DRIVER
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
                     pflag=1;
-                    fclose(fp);
+                    // fclose(fp);
                 }                
                 printf("Total CPU Time:%f\n",l_total_CPU_time+p_total_CPU_time);
                 printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds+p_total_CPU_time_in_seconds);
