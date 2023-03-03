@@ -118,6 +118,12 @@ int main(int argc, char* args[]){ //DRIVER
                     l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                     fclose(fp);
                 }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
                 p_start_time = clock();
                 parseCompletely(lflag);
                 p_end_time = clock();
@@ -153,6 +159,12 @@ int main(int argc, char* args[]){ //DRIVER
                         l_total_CPU_time = (double) (l_end_time - l_start_time);
                         l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                         fclose(fp);
+                    }
+                    else{
+                        printf("TOKENS ARE .... (first to last) \n");
+                        printtokens();
+                        printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                        pop_error_tokens();    
                     }
                     p_start_time = clock();
                     parseCompletely(lflag);
