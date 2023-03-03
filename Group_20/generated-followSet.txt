@@ -1,0 +1,385 @@
+FOLLOW SETS_---
+prog --> 
+        36      '$':<36>order<1> 
+modDecs --> 
+        57      'DRIVERDEF':<57>order<2> 
+        68      'DEF':<68>order<2> 
+othermods --> 
+        36      '$':<36>order<2> 
+        57      'DRIVERDEF':<57>order<2> 
+driver --> 
+        36      '$':<36>order<2> 
+        68      'DEF':<68>order<2> 
+modDec --> 
+        46      'DECLARE':<46>order<2> 
+        57      'DRIVERDEF':<57>order<2> 
+        68      'DEF':<68>order<3> 
+mod --> 
+        36      '$':<36>order<2> 
+        57      'DRIVERDEF':<57>order<3> 
+        68      'DEF':<68>order<2> 
+modDef --> 
+        36      '$':<36>order<2> 
+        57      'DRIVERDEF':<57>order<3> 
+        68      'DEF':<68>order<3> 
+ip_list --> 
+        69      'SQBC':<69>order<1> 
+ret --> 
+        32      'START':<32>order<2> 
+op_list --> 
+        69      'SQBC':<69>order<1> 
+dataType --> 
+        69      'SQBC':<69>order<2> 
+        71      'COMMA':<71>order<2> 
+        79      'SEMICOL':<79>order<1> 
+N1 --> 
+        69      'SQBC':<69>order<2> 
+type --> 
+        69      'SQBC':<69>order<2> 
+        71      'COMMA':<71>order<2> 
+        79      'SEMICOL':<79>order<4> 
+N2 --> 
+        69      'SQBC':<69>order<2> 
+range_arrays --> 
+        69      'SQBC':<69>order<1> 
+index_arr --> 
+        36      'RANGEOP':<36>order<1> 
+        69      'SQBC':<69>order<2> 
+stmts --> 
+        49      'BREAK':<49>order<1> 
+        84      'END':<84>order<1> 
+stmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<2> 
+        56      'USE':<56>order<7> 
+        63      'ID':<63>order<8> 
+        81      'SQBO':<81>order<10>    'WHILE':<81>order<9> 
+        84      'END':<84>order<3> 
+iostmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+simplestmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+declarestmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+condstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+iterstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+var_print --> 
+        86      'BC':<86>order<1> 
+boolconst --> 
+        4       'AND':<4>order<2> 
+        26      'MUL':<26>order<2> 
+        27      'DIV':<27>order<3> 
+        39      'PLUS':<39>order<4> 
+        42      'OR':<42>order<3> 
+        49      'MINUS':<49>order<5> 
+        69      'SQBC':<69>order<6> 
+        71      'COMMA':<71>order<2> 
+        79      'SEMICOL':<79>order<3> 
+        86      'BC':<86>order<2> 
+id_num_rnum --> 
+        79      'SEMICOL':<79>order<2> 
+arr_ele_print --> 
+P1 --> 
+        86      'BC':<86>order<2> 
+new_index --> 
+        36      'RANGEOP':<36>order<2> 
+        69      'SQBC':<69>order<1> 
+assignstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'SQBO':<81>order<11>    'WHILE':<81>order<10> 
+        84      'END':<84>order<12> 
+modReusestmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'SQBO':<81>order<11>    'WHILE':<81>order<10> 
+        84      'END':<84>order<12> 
+whichstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'WHILE':<81>order<11>   'SQBO':<81>order<10> 
+        84      'END':<84>order<12> 
+lvalueIDstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'SQBO':<81>order<11>    'WHILE':<81>order<10> 
+        84      'END':<84>order<12> 
+lvalueARRstmt --> 
+        5       'SWITCH':<5>order<2> 
+        23      'PRINT':<23>order<3> 
+        28      'FOR':<28>order<4> 
+        29      'GET_VALUE':<29>order<5> 
+        46      'DECLARE':<46>order<6> 
+        49      'BREAK':<49>order<7> 
+        56      'USE':<56>order<8> 
+        63      'ID':<63>order<9> 
+        81      'SQBO':<81>order<11>    'WHILE':<81>order<10> 
+        84      'END':<84>order<12> 
+exp --> 
+        79      'SEMICOL':<79>order<1> 
+element_index_with_expressions --> 
+        69      'SQBC':<69>order<1> 
+sign --> 
+        8       'RNUM':<8>order<2> 
+        15      'TRUE':<15>order<3> 
+        47      'NUM':<47>order<2> 
+        59      'FALSE':<59>order<5> 
+        63      'ID':<63>order<3> 
+optional --> 
+        56      'USE':<56>order<1> 
+paralist --> 
+        79      'SEMICOL':<79>order<1> 
+actual_para_list --> 
+        71      'COMMA':<71>order<2> 
+        79      'SEMICOL':<79>order<2> 
+paralist2 --> 
+        79      'SEMICOL':<79>order<2> 
+N_11 --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        26      'MUL':<26>order<4> 
+        27      'DIV':<27>order<5> 
+        32      'EQ':<32>order<6> 
+        39      'PLUS':<39>order<7> 
+        42      'OR':<42>order<9>       'GE':<42>order<8> 
+        49      'MINUS':<49>order<9> 
+        57      'GT':<57>order<10> 
+        71      'COMMA':<71>order<2> 
+        79      'SEMICOL':<79>order<3> 
+        86      'BC':<86>order<11> 
+        97      'LE':<97>order<12> 
+idList --> 
+        69      'SQBC':<69>order<1> 
+        86      'COLON':<86>order<1> 
+N3 --> 
+        69      'SQBC':<69>order<2> 
+        86      'COLON':<86>order<3> 
+arithOrboolExp --> 
+        79      'SEMICOL':<79>order<2> 
+        86      'BC':<86>order<1> 
+U --> 
+        79      'SEMICOL':<79>order<2> 
+unary_op --> 
+        8       'RNUM':<8>order<2> 
+        47      'NUM':<47>order<3> 
+        63      'ID':<63>order<4> 
+        98      'BO':<98>order<5> 
+new_NT --> 
+        79      'SEMICOL':<79>order<2> 
+arithExp --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        32      'EQ':<32>order<4> 
+        42      'OR':<42>order<3>       'GE':<42>order<5> 
+        57      'GT':<57>order<6> 
+        79      'SEMICOL':<79>order<4> 
+        86      'BC':<86>order<1> 
+        97      'LE':<97>order<7> 
+AnyTerm --> 
+        4       'AND':<4>order<2> 
+        42      'OR':<42>order<3> 
+        79      'SEMICOL':<79>order<2> 
+        86      'BC':<86>order<3> 
+N4 --> 
+        79      'SEMICOL':<79>order<2> 
+        86      'BC':<86>order<3> 
+logOp --> 
+        8       'RNUM':<8>order<2> 
+        15      'TRUE':<15>order<3> 
+        47      'NUM':<47>order<4> 
+        59      'FALSE':<59>order<5> 
+        63      'ID':<63>order<6> 
+        98      'BO':<98>order<7> 
+N5 --> 
+        4       'AND':<4>order<2> 
+        42      'OR':<42>order<3> 
+        79      'SEMICOL':<79>order<4> 
+        86      'BC':<86>order<5> 
+relOp --> 
+        8       'RNUM':<8>order<2> 
+        47      'NUM':<47>order<3> 
+        63      'ID':<63>order<4> 
+        98      'BO':<98>order<5> 
+term --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        32      'EQ':<32>order<4> 
+        39      'PLUS':<39>order<2> 
+        42      'OR':<42>order<6>       'GE':<42>order<5> 
+        49      'MINUS':<49>order<3> 
+        57      'GT':<57>order<6> 
+        79      'SEMICOL':<79>order<9> 
+        86      'BC':<86>order<7> 
+        97      'LE':<97>order<8> 
+N6 --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        32      'EQ':<32>order<4> 
+        42      'OR':<42>order<6>       'GE':<42>order<5> 
+        57      'GT':<57>order<6> 
+        79      'SEMICOL':<79>order<9> 
+        86      'BC':<86>order<7> 
+        97      'LE':<97>order<8> 
+op1 --> 
+        8       'RNUM':<8>order<2> 
+        15      'TRUE':<15>order<2> 
+        47      'NUM':<47>order<3> 
+        59      'FALSE':<59>order<4> 
+        63      'ID':<63>order<4> 
+        98      'BO':<98>order<5> 
+factor --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        26      'MUL':<26>order<2> 
+        27      'DIV':<27>order<3> 
+        32      'EQ':<32>order<4> 
+        39      'PLUS':<39>order<5> 
+        42      'OR':<42>order<7>       'GE':<42>order<6> 
+        49      'MINUS':<49>order<7> 
+        57      'GT':<57>order<8> 
+        79      'SEMICOL':<79>order<11> 
+        86      'BC':<86>order<9> 
+        97      'LE':<97>order<10> 
+N7 --> 
+        4       'AND':<4>order<2> 
+        11      'LT':<11>order<2> 
+        18      'NE':<18>order<3> 
+        32      'EQ':<32>order<4> 
+        39      'PLUS':<39>order<5> 
+        42      'OR':<42>order<7>       'GE':<42>order<6> 
+        49      'MINUS':<49>order<7> 
+        57      'GT':<57>order<8> 
+        79      'SEMICOL':<79>order<11> 
+        86      'BC':<86>order<9> 
+        97      'LE':<97>order<10> 
+op2 --> 
+        8       'RNUM':<8>order<2> 
+        15      'TRUE':<15>order<2> 
+        47      'NUM':<47>order<3> 
+        59      'FALSE':<59>order<4> 
+        63      'ID':<63>order<4> 
+        98      'BO':<98>order<5> 
+arr_element --> 
+N_10 --> 
+        69      'SQBC':<69>order<2> 
+arrExpr --> 
+        69      'SQBC':<69>order<2> 
+        86      'BC':<86>order<1> 
+arrTerm --> 
+        39      'PLUS':<39>order<2> 
+        49      'MINUS':<49>order<3> 
+        69      'SQBC':<69>order<2> 
+        86      'BC':<86>order<3> 
+arr_N4 --> 
+        69      'SQBC':<69>order<2> 
+        86      'BC':<86>order<3> 
+arrFactor --> 
+        26      'MUL':<26>order<2> 
+        27      'DIV':<27>order<3> 
+        39      'PLUS':<39>order<2> 
+        49      'MINUS':<49>order<3> 
+        69      'SQBC':<69>order<4> 
+        86      'BC':<86>order<5> 
+arr_N5 --> 
+        39      'PLUS':<39>order<2> 
+        49      'MINUS':<49>order<3> 
+        69      'SQBC':<69>order<4> 
+        86      'BC':<86>order<5> 
+caseStmts --> 
+        84      'END':<84>order<1>      'DEFAULT':<84>order<2> 
+default --> 
+        84      'END':<84>order<1> 
+value --> 
+        86      'COLON':<86>order<1> 
+N9 --> 
+        84      'DEFAULT':<84>order<3>  'END':<84>order<2> 
+range_forloop --> 
+        86      'BC':<86>order<1> 
+index_forloop --> 
+        36      'RANGEOP':<36>order<1> 
+        86      'BC':<86>order<2> 
+sign_forloop --> 
+        47      'NUM':<47>order<2> 
+new_index_forloop --> 
+        36      'RANGEOP':<36>order<2> 
+        86      'BC':<86>order<3>

@@ -1336,4 +1336,7 @@ void parseCompletely(int lflag){
     call_parser(rules,nont);
 
     //TODO Print parseTree
+    // print_first_Sets(nont);
+    // printf("\n");
+    // print_follow_sets(nont);
 }
