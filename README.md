@@ -47,7 +47,7 @@ If not installed, install
 ```
 sudo apt update
 sudo apt install build-essential
-sudo apt-get install manpages-dev
+sudo apt get gdb
 sudo apt install make
 ```
 
@@ -56,6 +56,7 @@ sudo apt install make
 
 Compile code using 
 ```
+make clean
 make
 ```
 

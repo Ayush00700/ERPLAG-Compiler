@@ -24,9 +24,9 @@ int main(int argc, char* args[]){ //DRIVER
     // strcpy(buffer,args[1]);
     char* parseBuffer = args[2];
     int bufferSize = atoi(args[3]);
-    printf("arg[1]:%s\n",buffer);
-    printf("arg[2]:%s\n",parseBuffer);
-    printf("arg[3]:%d\n",bufferSize);
+    // printf("arg[1]:%s\n",buffer);
+    // printf("arg[2]:%s\n",parseBuffer);
+    // printf("arg[3]:%d\n",bufferSize);
     int run = 1;
     int third = 0; 
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
