@@ -439,6 +439,7 @@ rule* populate_grammar()
     for(int i=1;i<=lines;i++){
         linepop(fp,i,rules);
     }
+    fclose(fp);
     return rules;
 }
 

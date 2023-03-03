@@ -22,6 +22,9 @@ token_node* get_next_curr;
 hash_table_contents* hash_table[TABLE_SIZE];
 // #endif
 
+
+
+
 char* arr_keywords[30] = {
 "integer","real","boolean","of",
 "array","start","end","declare",
@@ -365,6 +368,10 @@ void call_lexer(FILE* fp,int bufsize)
     char* buf1 = (char*)malloc(bufsize*sizeof(char));
     char* buf2 = (char*)malloc(bufsize*sizeof(char));
     fread(buf1,sizeof(char),bufsize,fp);// first populate the first buffer
+    ll_node = NULL; //LINKED-LIST 
+    stack_head = NULL; //STACK FOR ERRORS 
+    current = NULL; //LAST NODE THAT WAS ADDED
+    get_next_curr = NULL;
 
     int b1,b2,f1,f2; // begin and forward pointers of the twin buffers
 
