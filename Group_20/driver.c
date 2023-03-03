@@ -151,6 +151,7 @@ int main(int argc, char* args[]){ //DRIVER
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                    print_parse_tree(fileForParseTree);
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
                     pflag=1;

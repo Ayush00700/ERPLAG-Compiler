@@ -38,7 +38,7 @@ extern treeNodes* convertToPTreenode(ruleNode* Node);
 // Function to create and initialize parse tree
 extern void createParseTree(ruleNode* prog);
 // Function to set fields of the tree node using token
-extern void addTokenInfo(treeNodes* Node, token_info* token );
+extern void addTokenInfo( token_info* temp );
 // Function to hash a string
 extern unsigned int hash(char* key);
 // Function to print any table in the required format
@@ -99,6 +99,8 @@ extern void compute_follow_Set(rule* rules,NonT* non_terminals_set);
 extern void print_parse_Table(int** arr,NonT* non_terminals_set);
 // Function to create a parse table using info from rules and non-terminals
 extern int** create_parse_table(rule* rules,NonT* non_terminals_set);
+
+extern void popOnErrors(token_info* curr, int prevLineNo);
 
 // Start parser
 // Function to start the Syntax Analyzer

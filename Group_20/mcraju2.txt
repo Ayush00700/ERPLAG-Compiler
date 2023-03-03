@@ -1,0 +1,787 @@
+<Type:DECLARE> <Lexeme:declare> <Line Number:1> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:1> <Type:ID> <Lexeme:readArr> <Line Number:1> <Type:SEMICOL> <Lexeme:;> <Line Number:1> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:DEF> <Lexeme:<<> <Line Number:3> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:3> <Type:ID> <Lexeme:arraySum> <Line Number:3> <Type:ENDDEF> <Lexeme:>>> <Line Number:3> <Type:TAKES> <Lexeme:takes> <Line Number:4> <Type:INPUT> <Lexeme:input> <Line Number:4> <Type:SQBO> <Lexeme:[> <Line Number:4> <Type:ID> <Lexeme:list> <Line Number:4> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:4> <Type:ARRAY> <Lexeme:array> <Line Number:4> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:4> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:4> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:OF> <Lexeme:of> <Line Number:4> <Type:REAL> <Lexeme:real> <Line Number:4> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:4> <Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:4> <Lexeme: >----
+<Type:INTEGER> <Lexeme:integer> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:SEMICOL> <Lexeme:;> <Line Number:4> <Type:RETURNS> <Lexeme:returns> <Line Number:5> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:5> <Type:ID> <Lexeme:sum> <Line Number:5> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:5> <Type:REAL> <Lexeme:real> <Line Number:5> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:5> <Type:SEMICOL> <Lexeme:;> <Line Number:5> <Type:START> <Lexeme:start> <Line Number:6> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:7> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:7> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:8> <Lexeme: >----
+<Type:ID> <Lexeme:t> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:8> <Type:BOOLEAN> <Lexeme:boolean> <Line Number:8> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:9> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:FOR> <Lexeme:for> <Line Number:10> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:10> <Type:ID> <Lexeme:index> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:10> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:10> <Values :15>
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:10> <Type:START> <Lexeme:start> <Line Number:11> <Type:ID> <Lexeme:t> <Line Number:12> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:12> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SWITCH> <Lexeme:switch> <Line Number:13> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:13> <Type:ID> <Lexeme:t> <Line Number:13> <Type:BC> <Lexeme:)> <Line Number:13> <Type:START> <Lexeme:start> <Line Number:14> <Type:CASE> <Lexeme:case> <Line Number:15> <Lexeme: >----
+<Type:TRUE> <Lexeme:true> <Line Number:15> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:15> <Type:PRINT> <Lexeme:print> <Line Number:15> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:15> <Type:ID> <Lexeme:list> <Line Number:15> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:15> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:15> <Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:15> <Type:BC> <Lexeme:)> <Line Number:15> <Type:SEMICOL> <Lexeme:;> <Line Number:15> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:17> <Type:SEMICOL> <Lexeme:;> <Line Number:17> <Type:CASE> <Lexeme:case> <Line Number:18> <Lexeme: >----
+<Type:FALSE> <Lexeme:false> <Line Number:18> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:18> <Type:PRINT> <Lexeme:print> <Line Number:18> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:18> <Type:ID> <Lexeme:sum> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:18> <Type:SEMICOL> <Lexeme:;> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:19> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:19> <Type:ID> <Lexeme:index> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:19> <Type:SEMICOL> <Lexeme:;> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:21> <Type:SEMICOL> <Lexeme:;> <Line Number:21> <Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:22> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:24> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:25> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:25> <Type:ID> <Lexeme:sum> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:25> <Type:SEMICOL> <Lexeme:;> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:26> <Lexeme: >----
+<Lexeme: >----
+<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:27> <Lexeme: >----
+<Type:DRIVER> <Lexeme:driver> <Line Number:27> <Type:PROGRAM> <Lexeme:program> <Line Number:27> <Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:27> <Type:START> <Lexeme:start> <Line Number:28> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:29> <Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:29> <Type:ARRAY> <Lexeme:array> <Line Number:29> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:29> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:29> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:29> <Type:OF> <Lexeme:of> <Line Number:29> <Type:REAL> <Lexeme:real> <Line Number:29> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:30> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:30> <Type:INTEGER> <Lexeme:integer> <Line Number:30> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:31> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:31> <Type:REAL> <Lexeme:real> <Line Number:31> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:GET_VALUE> <Lexeme:get_value> <Line Number:32> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:32> <Type:ID> <Lexeme:k> <Line Number:32> <Type:BC> <Lexeme:)> <Line Number:32> <Type:SEMICOL> <Lexeme:;> <Line Number:32> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:33> <Type:MODULE> <Lexeme:module> <Line Number:33> <Type:ID> <Lexeme:readArr> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:34> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:34> <Type:ASSIGNOP> <Lexeme::=> <Line Number:34> <Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:34> <Type:MODULE> <Lexeme:module> <Line Number:34> <Type:ID> <Lexeme:arraySum> <Line Number:34> <Type:WITH> <Lexeme:with> <Line Number:34> <Type:PARAMETERS> <Lexeme:parameters> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:35> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:36> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:36> <Type:ID> <Lexeme:s> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:37> <Type:DEF> <Lexeme:<<> <Line Number:44> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:44> <Type:ID> <Lexeme:readArr> <Line Number:44> <Type:ENDDEF> <Lexeme:>>> <Line Number:44> <Type:TAKES> <Lexeme:takes> <Line Number:45> <Type:INPUT> <Lexeme:input> <Line Number:45> <Type:SQBO> <Lexeme:[> <Line Number:45> <Type:ID> <Lexeme:arr1> <Line Number:45> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:45> <Type:ARRAY> <Lexeme:array> <Line Number:45> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:45> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:45> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:OF> <Lexeme:of> <Line Number:45> <Type:REAL> <Lexeme:real> <Line Number:45> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:45> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:45> <Type:COLON> <Lexeme::> <Line Number:45> <Type:INTEGER> <Lexeme:integer> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:SEMICOL> <Lexeme:;> <Line Number:45> <Lexeme: >----
+<Type:START> <Lexeme:start> <Line Number:46> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:47> <Lexeme: >----
+<Type:ID> <Lexeme:tempvar> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:47> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:48> <Lexeme: >----
+<Type:ID> <Lexeme:i> <Line Number:48> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Type:DECLARE> <Lexeme:declare> <Line Number:1> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:1> <Type:ID> <Lexeme:readArr> <Line Number:1> <Type:SEMICOL> <Lexeme:;> <Line Number:1> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:DEF> <Lexeme:<<> <Line Number:3> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:3> <Type:ID> <Lexeme:arraySum> <Line Number:3> <Type:ENDDEF> <Lexeme:>>> <Line Number:3> <Type:TAKES> <Lexeme:takes> <Line Number:4> <Type:INPUT> <Lexeme:input> <Line Number:4> <Type:SQBO> <Lexeme:[> <Line Number:4> <Type:ID> <Lexeme:list> <Line Number:4> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:4> <Type:ARRAY> <Lexeme:array> <Line Number:4> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:4> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:4> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:OF> <Lexeme:of> <Line Number:4> <Type:REAL> <Lexeme:real> <Line Number:4> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:4> <Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:4> <Lexeme: >----
+<Type:INTEGER> <Lexeme:integer> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:SEMICOL> <Lexeme:;> <Line Number:4> <Type:RETURNS> <Lexeme:returns> <Line Number:5> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:5> <Type:ID> <Lexeme:sum> <Line Number:5> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:5> <Type:REAL> <Lexeme:real> <Line Number:5> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:5> <Type:SEMICOL> <Lexeme:;> <Line Number:5> <Type:START> <Lexeme:start> <Line Number:6> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:7> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:7> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:8> <Lexeme: >----
+<Type:ID> <Lexeme:t> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:8> <Type:BOOLEAN> <Lexeme:boolean> <Line Number:8> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:9> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:FOR> <Lexeme:for> <Line Number:10> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:10> <Type:ID> <Lexeme:index> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:10> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:10> <Values :15>
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:10> <Type:START> <Lexeme:start> <Line Number:11> <Type:ID> <Lexeme:t> <Line Number:12> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:12> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SWITCH> <Lexeme:switch> <Line Number:13> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:13> <Type:ID> <Lexeme:t> <Line Number:13> <Type:BC> <Lexeme:)> <Line Number:13> <Type:START> <Lexeme:start> <Line Number:14> <Type:CASE> <Lexeme:case> <Line Number:15> <Lexeme: >----
+<Type:TRUE> <Lexeme:true> <Line Number:15> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:15> <Type:PRINT> <Lexeme:print> <Line Number:15> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:15> <Type:ID> <Lexeme:list> <Line Number:15> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:15> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:15> <Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:15> <Type:BC> <Lexeme:)> <Line Number:15> <Type:SEMICOL> <Lexeme:;> <Line Number:15> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:17> <Type:SEMICOL> <Lexeme:;> <Line Number:17> <Type:CASE> <Lexeme:case> <Line Number:18> <Lexeme: >----
+<Type:FALSE> <Lexeme:false> <Line Number:18> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:18> <Type:PRINT> <Lexeme:print> <Line Number:18> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:18> <Type:ID> <Lexeme:sum> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:18> <Type:SEMICOL> <Lexeme:;> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:19> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:19> <Type:ID> <Lexeme:index> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:19> <Type:SEMICOL> <Lexeme:;> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:21> <Type:SEMICOL> <Lexeme:;> <Line Number:21> <Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:22> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:24> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:25> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:25> <Type:ID> <Lexeme:sum> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:25> <Type:SEMICOL> <Lexeme:;> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:26> <Lexeme: >----
+<Lexeme: >----
+<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:27> <Lexeme: >----
+<Type:DRIVER> <Lexeme:driver> <Line Number:27> <Type:PROGRAM> <Lexeme:program> <Line Number:27> <Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:27> <Type:START> <Lexeme:start> <Line Number:28> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:29> <Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:29> <Type:ARRAY> <Lexeme:array> <Line Number:29> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:29> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:29> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:29> <Type:OF> <Lexeme:of> <Line Number:29> <Type:REAL> <Lexeme:real> <Line Number:29> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:30> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:30> <Type:INTEGER> <Lexeme:integer> <Line Number:30> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:31> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:31> <Type:REAL> <Lexeme:real> <Line Number:31> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:GET_VALUE> <Lexeme:get_value> <Line Number:32> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:32> <Type:ID> <Lexeme:k> <Line Number:32> <Type:BC> <Lexeme:)> <Line Number:32> <Type:SEMICOL> <Lexeme:;> <Line Number:32> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:33> <Type:MODULE> <Lexeme:module> <Line Number:33> <Type:ID> <Lexeme:readArr> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:34> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:34> <Type:ASSIGNOP> <Lexeme::=> <Line Number:34> <Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:34> <Type:MODULE> <Lexeme:module> <Line Number:34> <Type:ID> <Lexeme:arraySum> <Line Number:34> <Type:WITH> <Lexeme:with> <Line Number:34> <Type:PARAMETERS> <Lexeme:parameters> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:35> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:36> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:36> <Type:ID> <Lexeme:s> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:37> <Type:DEF> <Lexeme:<<> <Line Number:44> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:44> <Type:ID> <Lexeme:readArr> <Line Number:44> <Type:ENDDEF> <Lexeme:>>> <Line Number:44> <Type:TAKES> <Lexeme:takes> <Line Number:45> <Type:INPUT> <Lexeme:input> <Line Number:45> <Type:SQBO> <Lexeme:[> <Line Number:45> <Type:ID> <Lexeme:arr1> <Line Number:45> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:45> <Type:ARRAY> <Lexeme:array> <Line Number:45> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:45> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:45> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:OF> <Lexeme:of> <Line Number:45> <Type:REAL> <Lexeme:real> <Line Number:45> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:45> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:45> <Type:COLON> <Lexeme::> <Line Number:45> <Type:INTEGER> <Lexeme:integer> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:SEMICOL> <Lexeme:;> <Line Number:45> <Lexeme: >----
+<Type:START> <Lexeme:start> <Line Number:46> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:47> <Lexeme: >----
+<Type:ID> <Lexeme:tempvar> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:47> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:48> <Lexeme: >----
+<Type:ID> <Lexeme:i> <Line Number:48> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Type:DECLARE> <Lexeme:declare> <Line Number:1> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:1> <Type:ID> <Lexeme:readArr> <Line Number:1> <Type:SEMICOL> <Lexeme:;> <Line Number:1> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:DEF> <Lexeme:<<> <Line Number:3> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:3> <Type:ID> <Lexeme:arraySum> <Line Number:3> <Type:ENDDEF> <Lexeme:>>> <Line Number:3> <Type:TAKES> <Lexeme:takes> <Line Number:4> <Type:INPUT> <Lexeme:input> <Line Number:4> <Type:SQBO> <Lexeme:[> <Line Number:4> <Type:ID> <Lexeme:list> <Line Number:4> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:4> <Type:ARRAY> <Lexeme:array> <Line Number:4> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:4> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:4> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:OF> <Lexeme:of> <Line Number:4> <Type:REAL> <Lexeme:real> <Line Number:4> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:4> <Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:4> <Lexeme: >----
+<Type:INTEGER> <Lexeme:integer> <Line Number:4> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:4> <Type:SEMICOL> <Lexeme:;> <Line Number:4> <Type:RETURNS> <Lexeme:returns> <Line Number:5> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:5> <Type:ID> <Lexeme:sum> <Line Number:5> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:5> <Type:REAL> <Lexeme:real> <Line Number:5> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:5> <Type:SEMICOL> <Lexeme:;> <Line Number:5> <Type:START> <Lexeme:start> <Line Number:6> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:7> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:7> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:7> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:8> <Lexeme: >----
+<Type:ID> <Lexeme:t> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:8> <Type:BOOLEAN> <Lexeme:boolean> <Line Number:8> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:8> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:9> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:FOR> <Lexeme:for> <Line Number:10> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:10> <Type:ID> <Lexeme:index> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:10> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:10> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:10> <Values :15>
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:10> <Type:START> <Lexeme:start> <Line Number:11> <Type:ID> <Lexeme:t> <Line Number:12> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:12> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:12> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SWITCH> <Lexeme:switch> <Line Number:13> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:13> <Type:ID> <Lexeme:t> <Line Number:13> <Type:BC> <Lexeme:)> <Line Number:13> <Type:START> <Lexeme:start> <Line Number:14> <Type:CASE> <Lexeme:case> <Line Number:15> <Lexeme: >----
+<Type:TRUE> <Lexeme:true> <Line Number:15> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:15> <Type:PRINT> <Lexeme:print> <Line Number:15> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:15> <Type:ID> <Lexeme:list> <Line Number:15> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:15> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:15> <Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:15> <Type:BC> <Lexeme:)> <Line Number:15> <Type:SEMICOL> <Lexeme:;> <Line Number:15> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:sum> <Line Number:16> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:16> <Lexeme: >----
+<Type:ID> <Lexeme:index> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:16> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:17> <Type:SEMICOL> <Lexeme:;> <Line Number:17> <Type:CASE> <Lexeme:case> <Line Number:18> <Lexeme: >----
+<Type:FALSE> <Lexeme:false> <Line Number:18> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:18> <Type:PRINT> <Lexeme:print> <Line Number:18> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:18> <Type:ID> <Lexeme:sum> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:18> <Type:SEMICOL> <Lexeme:;> <Line Number:18> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:19> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:19> <Type:ID> <Lexeme:index> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:19> <Type:SEMICOL> <Lexeme:;> <Line Number:19> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:BREAK> <Lexeme:break> <Line Number:21> <Type:SEMICOL> <Lexeme:;> <Line Number:21> <Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:22> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:24> <Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:25> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:25> <Type:ID> <Lexeme:sum> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:25> <Type:SEMICOL> <Lexeme:;> <Line Number:25> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:26> <Lexeme: >----
+<Lexeme: >----
+<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:27> <Lexeme: >----
+<Type:DRIVER> <Lexeme:driver> <Line Number:27> <Type:PROGRAM> <Lexeme:program> <Line Number:27> <Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:27> <Type:START> <Lexeme:start> <Line Number:28> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:29> <Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:29> <Type:ARRAY> <Lexeme:array> <Line Number:29> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:29> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:29> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:29> <Type:OF> <Lexeme:of> <Line Number:29> <Type:REAL> <Lexeme:real> <Line Number:29> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:29> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:30> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:30> <Type:INTEGER> <Lexeme:integer> <Line Number:30> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:30> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:31> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:31> <Type:REAL> <Lexeme:real> <Line Number:31> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:31> <Lexeme: >----
+<Lexeme: >----
+<Type:GET_VALUE> <Lexeme:get_value> <Line Number:32> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:32> <Type:ID> <Lexeme:k> <Line Number:32> <Type:BC> <Lexeme:)> <Line Number:32> <Type:SEMICOL> <Lexeme:;> <Line Number:32> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:33> <Type:MODULE> <Lexeme:module> <Line Number:33> <Type:ID> <Lexeme:readArr> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:33> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:34> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:34> <Type:ASSIGNOP> <Lexeme::=> <Line Number:34> <Lexeme: >----
+<Type:USE> <Lexeme:use> <Line Number:34> <Type:MODULE> <Lexeme:module> <Line Number:34> <Type:ID> <Lexeme:arraySum> <Line Number:34> <Type:WITH> <Lexeme:with> <Line Number:34> <Type:PARAMETERS> <Lexeme:parameters> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:A> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:34> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Type:ASSIGNOP> <Lexeme::=> <Line Number:35> <Lexeme: >----
+<Type:ID> <Lexeme:s> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:LE> <Lexeme:<=> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Type:ID> <Lexeme:n> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:35> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:PRINT> <Lexeme:print> <Line Number:36> <Lexeme: >----
+<Type:BO> <Lexeme:(> <Line Number:36> <Type:ID> <Lexeme:s> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Type:BC> <Lexeme:)> <Line Number:36> <Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Lexeme: >----
+<Type:END> <Lexeme:end> <Line Number:37> <Type:DEF> <Lexeme:<<> <Line Number:44> <Lexeme: >----
+<Type:MODULE> <Lexeme:module> <Line Number:44> <Type:ID> <Lexeme:readArr> <Line Number:44> <Type:ENDDEF> <Lexeme:>>> <Line Number:44> <Type:TAKES> <Lexeme:takes> <Line Number:45> <Type:INPUT> <Lexeme:input> <Line Number:45> <Type:SQBO> <Lexeme:[> <Line Number:45> <Type:ID> <Lexeme:arr1> <Line Number:45> <Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:45> <Type:ARRAY> <Lexeme:array> <Line Number:45> <Lexeme: >----
+<Type:SQBO> <Lexeme:[> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:1> <Line Number:45> <Values :1>
+<Lexeme: >----
+<Lexeme: >----
+<Type:RANGEOP> <Lexeme:..> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:NUM> <Lexeme:15> <Line Number:45> <Values :15>
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:OF> <Lexeme:of> <Line Number:45> <Type:REAL> <Lexeme:real> <Line Number:45> <Lexeme: >----
+<Type:COMMA> <Lexeme:,> <Line Number:45> <Lexeme: >----
+<Type:ID> <Lexeme:k> <Line Number:45> <Type:COLON> <Lexeme::> <Line Number:45> <Type:INTEGER> <Lexeme:integer> <Line Number:45> <Lexeme: >----
+<Lexeme: >----
+<Type:SQBC> <Lexeme:]> <Line Number:45> <Type:SEMICOL> <Lexeme:;> <Line Number:45> <Lexeme: >----
+<Type:START> <Lexeme:start> <Line Number:46> <Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:47> <Lexeme: >----
+<Type:ID> <Lexeme:tempvar> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> <Line Number:47> <Lexeme: >----
+<Type:SEMICOL> <Lexeme:;> <Line Number:47> <Lexeme: >----
+<Lexeme: >----
+<Type:DECLARE> <Lexeme:declare> <Line Number:48> <Lexeme: >----
+<Type:ID> <Lexeme:i> <Line Number:48> <Lexeme: >----
+<Lexeme: >----
+<Type:COLON> <Lexeme::> 

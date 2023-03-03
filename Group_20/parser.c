@@ -173,11 +173,17 @@ void createParseTree(ruleNode* start)
     ptree.root->symbol = start;
 }
 
-void addTokenInfo(treeNodes* Node, token_info* token )
+// void addTokenInfo(treeNodes* Node, token_info* token )
+void addTokenInfo( token_info* temp )
 /*Setter function for a tree node*/
 {
+    treeNodes* Node = ptree.curr;
     Node->isTerminal=1;
-    Node->token=token;
+    Node->token= (token_info*)malloc(sizeof(token_info));
+    Node->token->lexeme=temp->lexeme;
+    Node->token->line_no=temp->line_no;
+    strcpy(Node->token->type,temp->type);
+    Node->token->values=temp->values;
 }
 
 
@@ -884,125 +890,121 @@ void addRuleToTree(rule* rule)
     }
 }
 
-void in_order_traversal(FILE* fp, treeNodes* current)
-/*Inorder traversal of the parse tree:
-If it has left child recursively call that, else print the current node, if current is leftmost child print parent, then finally see the right siblings
-Ex: Input:        A
-                 /
-                B -- C -- D
-                    /
-                   E -- F
-    
-    Output:  B,A,E,C,F,D*/
-{
-    if(!current)
-        return;
-    
-    // Check if leftmost child exists
-    if(current->child)
-        in_order_traversal(fp, current->child);
-
-    // If it is a leaf
-    else{
-        // Print lexeme
-        if(current->symbol->isTerminal)
-            fprintf(fp,"%s %s\t","Lexeme:",current->token->lexeme);
-        else
-            fprintf(fp,"%s %s\t","Lexeme:","----");
-        
-        char l_no[10];
-        tostring(l_no,current->token->line_no);
-        // Print line number
-        fprintf(fp,"%s %s\t","Line no.:",l_no);
-
-        // Print the token type
-        fprintf(fp,"%s %s\t","Token:",current->token->type);
-
-        char val[10];
-        // Print value if integer or real
-        if(!strcmp(current->token->type, "NUM")){
-            tostring(l_no,current->token->values.num);
-            fprintf(fp,"%s %s\t","Value:",val);
+void printer(FILE* fptr, treeNodes* current){
+    if(!current->isTerminal){
+        if(strcmp(current->symbol->nodeInfo,"eps")){
+            fprintf(fptr, "%s----\n","<Lexeme: >");
         }
-
-        else if(!strcmp(current->token->type, "RNUM")){
-            fprintf(fp,"%s %f\t","Value:",current->token->values.rnum);
-        }
-        
-        // Print parent symbol
-        if(current == ptree.root)
-            fprintf(fp,"%s %s\t","Parent:","ROOT");
-        else
-            fprintf(fp,"%s %s\t","Parent:",current->parent->symbol->nodeInfo);
-        
-        // Print is leaf or not
-            fprintf(fp,"%s %s\t","isLeaf:","YES");
-
-        // Print current node symbol
-        fprintf(fp,"%s %s\t","Node:",current->symbol->nodeInfo);
     }
-
-    // Print parent node if current is leftmost child
-    if(current->parent->child == current)
-        fprintf(fp,"%s, ", current->parent->symbol->nodeInfo);
-    
-        // Print lexeme
-        if(current->parent->symbol->isTerminal)
-            fprintf(fp,"%s %s\t","Lexeme:",current->parent->token->lexeme);
-        else
-            fprintf(fp,"%s %s\t","Lexeme:","----");
-        
-        char l_no[10];
-        tostring(l_no,current->parent->token->line_no);
-        // Print line number
-        fprintf(fp,"%s %s\t","Line no.:",l_no);
-
-        // Print the token type
-        fprintf(fp,"%s %s\t","Token:",current->parent->token->type);
-
-        char val[10];
-        // Print value if integer or real
-        if(!strcmp(current->parent->token->type, "NUM")){
-            tostring(val,current->parent->token->values.num);
-            fprintf(fp,"%s %s\t","Value:",val);
-        }
-        else if(!strcmp(current->parent->token->type, "RNUM")){
-            fprintf(fp,"%s %f\t","Value:",current->parent->token->values.rnum);
-        }
-        // Print parent symbol
-        if(current == ptree.root)
-            fprintf(fp,"%s %s\t","Parent:","ROOT");
-        else
-            fprintf(fp,"%s %s\t","Parent:",current->parent->parent->symbol->nodeInfo);
-        
-        // Print is leaf or not
-            fprintf(fp,"%s %s\t","isLeaf:","NO");
-
-        // Print current node symbol
-        fprintf(fp,"%s %s\t","Node:",current->parent->symbol->nodeInfo);
-
-    // Right sibling
-    treeNodes* temp = current->r_sibling;
-    if(!temp){
-        in_order_traversal(fp, temp);
+    else{
+       fprintf(fptr,"<Type:%s> <Lexeme:%s> <Line Number:%d> ",current->token->type,current->token->lexeme,current->token->line_no);
+       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
+       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
     }
 }
+
+
+void InOrderTraversal(FILE* fptr, treeNodes* current){
+    int flag = 0;
+    if(current->child == NULL){
+        printer(fptr, current);
+        return;
+    }
+    else{
+        InOrderTraversal(fptr, current->child);
+        printer(fptr,current);
+        if(current->child->r_sibling!=NULL){
+            treeNodes* temp = current->child->r_sibling;
+            while(temp!=NULL){
+                InOrderTraversal(fptr,temp);
+                temp = temp->r_sibling;
+            }
+        }
+        return;
+    }
+    return;
+}
+
 
 void print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
 {
     // Open file in append mode
-    FILE* f = fopen(out_file,"w+");
-    if(f == NULL)
-    {
-        printf("Error opening file:%s\n",out_file);   
-        exit(1);             
-    }
+    FILE* f = fopen(out_file,"a+");
+
+    // If file opened successfully
+    if(f){
+
         // Create a pointer to traverse the parse tree
-    treeNodes* p = ptree.root;
-    // Perform inorder traversal
-    // in_order_traversal(f, p);
-    fclose(f);
+        treeNodes* p = ptree.root;
+        // Perform inorder traversal
+        InOrderTraversal(f, p);
+
+    }
+
+    // File couldn't be opened
+    else{
+
+        printf("Couldn't open %s\n",out_file);
+        return;
+
+    }
+}
+
+void popOnErrors(token_info* curr, int prevLineNo)
+{
+    if(!curr)
+    return;
+    // if(strcmp(curr->type, "SEMICOL")==0)
+    if(prevLineNo!=curr->line_no)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "stmts")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num==1)  //Only dollar left
+            {
+                break;
+            }
+        }
+    }
+    else if(strcmp(curr->type, "SEMICOL")==0)
+    {
+        while(strcmp(top(&parse_stack)->nodeInfo, "stmts")!=0)
+        {
+            pop(&parse_stack);
+            goToNextRight();
+            if(parse_stack.num<=1)  //Only dollar left
+            {
+                break;
+            }
+        }
+    }
+    // else if(strcmp(curr->type, "DRIVERENDDEF")==0)
+    // {
+    //     while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
+    //     {
+    //         pop(&parse_stack);
+    //         goToNextRight();
+    //         if(parse_stack.num<=1)  //Only dollar left
+    //         {
+    //             break;
+    //         }
+    //     }
+    // }
+    // else if(strcmp(curr->type, "ENDDEF")==0)
+    // {
+    //     while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
+    //     {
+    //         pop(&parse_stack);
+    //         goToNextRight();
+    //         if(parse_stack.num<=1)  //Only dollar left
+    //         {
+    //             break;
+    //         }
+    //     }
+    // }
+
 }
 
 void call_parser(rule* rules, NonT* nont)
@@ -1020,8 +1022,25 @@ void call_parser(rule* rules, NonT* nont)
         // Find the top of stack
         ruleNode* stackTop=top(&parse_stack);
         // ParseStack operations
+        if(!stackTop)
+        {
+            printf("Reached the end of Parse Stack");
+            return; 
+        } 
+
         while(!stackTop->isTerminal)
         {    
+            if(!curr)
+            {
+                printf("Reached the end of token inputs due to an syntax error recovery \n");
+                return;   
+            } 
+            if(!stackTop)
+            {
+                printf("Performed error recovery but the stack was popped out. More tokens left as inputs \n");
+                return; 
+            }
+
             int row_no= set_contains(stackTop->nodeInfo, non_Terminals_table);
             int col_no= set_contains(curr->type, Terminals_table);
 
@@ -1031,22 +1050,43 @@ void call_parser(rule* rules, NonT* nont)
             // If no rule found
             if(indexToPush==-1)
             {
-                /* Error Recovery required */
+                //Error Recovery:
+                // If lookahead symbol is in SYNC(A) then pop A from stack and continue 
+                // If lookahead symbol is not in SYNC(A) then record error and move pointer to right
+                // printf(" initial Error recovery performing\n");
                 int index = set_contains(stackTop->nodeInfo,non_Terminals_table);
                 int val = set_contains(curr->type,nont[index-1].follow_set);
 
                 // If lookahead symbol is NOT in FOLLOW(A)
                 if(!val){
-                    // Enters here because user added something extra in the source code
-                    printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
-                    // Printing what was the extra
-                    printf("we ignored %s\n",curr->type);
-                    // Move lookahead
-                    curr=get_next_token();
-
+                    // if(stackTop->nextNode->isTerminal&&strcmp(stackTop->nextNode->nodeInfo, curr->type)==0)
+                    // {
+                    //     printf("Expected %s but got %s at the line no. %d [7] \n",stackTop->nodeInfo,curr->type, curr->line_no);
+                    //     printf("we popped out %s\n",stackTop->nodeInfo);
+                    //     pop(&parse_stack);
+                    //     goToNextRight();
+                    // }
+                    // else
+                   {
+                    //check if line change or semicol and pop untill we get..
+                    popOnErrors(curr, prevLineNo);
+                    if(strcmp(stackTop->nodeInfo, parse_stack.top->nodeInfo)==0)
+                    {
+                        // Enters here because user added something extra in the source code
+                        printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
+                        // Printing what was the extra
+                        printf("we ignored %s\n",curr->type);
+                        // Move lookahead
+                        curr=get_next_token();
+                        ptree.curr->error=-2;
+                    }
+                    else if(!strcmp(curr->type,"SEMICOL")){
+                        curr = get_next_token();
+                    }
+                    stackTop=top(&parse_stack);
+                    }
                     // skip changes in parse tree, gibberish added in the source code
                     //Add the check that if the curr->lineno changes greater than prev; then 
-                    ptree.curr->error=-2;
                 }
 
                 // If lookahead symbol is in FOLLOW(A)
@@ -1069,15 +1109,36 @@ void call_parser(rule* rules, NonT* nont)
 
                         // If terminal mismatch
                         else{
-                            // Enters here because user added something extra in the source code
-                            printf("expected %s but got %s at the line no. %d [3]\n",stackTop->nodeInfo,curr->type, curr->line_no);
-                            // Printing the extra
-                            printf("we ignored %s\n",curr->type);
-                            // Move lookahead
-                            curr=get_next_token();
+                            // // Enters here because user added something extra in the source code
+                            // printf("expected %s but got %s at the line no. %d [3]\n",stackTop->nodeInfo,curr->type, curr->line_no);
+                            // // Printing the extra
+                            // printf("we ignored %s\n",curr->type);
+                            // // Move lookahead
+                            // curr=get_next_token();
 
-                            // skip changes in parse tree 
-                            ptree.curr->error=-2;
+                            popOnErrors(curr, prevLineNo);
+                            if(strcmp(stackTop->nodeInfo, parse_stack.top->nodeInfo)==0)
+                                {
+                                printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
+                                printf("we ignored %s\n",curr->type);
+                                curr=get_next_token();
+                                ptree.curr->error=-2;
+                                }
+                            if(!strcmp(curr->type,"SEMICOL")){
+                                curr = get_next_token();
+                            }
+                            stackTop=top(&parse_stack);
+
+
+                            // popOnErrors(curr, prevLineNo);
+                            // printf("expected %s but got %s at the line no. %d [3]\n",stackTop->nodeInfo,curr->type, curr->line_no);
+                            // printf("we ignored %s\n",curr->type);
+                            // curr=get_next_token();
+                            // // skip changes in parse tree 
+
+                            // ptree.curr->error=-2; //TODO check if this should be a comment or not
+                            // skip changes in parse tree, gibberish added in the source code
+                            //Add the check that if the curr->lineno changes greater than prev; then 
                         }
                     }
 
@@ -1089,18 +1150,31 @@ void call_parser(rule* rules, NonT* nont)
 
                         // If no rule found
                         if(temp == -1){
-                            // Enters here because user added something extra in the source code
-                            printf("expected %s but got %s at the line no. %d [4]\n",stackTop->nodeInfo,curr->type, curr->line_no);                    
-                            // Printing the extra
-                            printf("we ignored %s\n",curr->type);
-                            prevLineNo=curr->line_no;
-                            // Move lookahead
-                            curr=get_next_token();
 
                             // skip changes in parse tree ,ight need to error flags
-                            ptree.curr->error=-2;
-                        }
+                            popOnErrors(curr, prevLineNo);
+                            if(strcmp(stackTop->nodeInfo, parse_stack.top->nodeInfo)==0)
+                                {
+                                printf("expected %s but got %s at the line no. %d [1] \n",stackTop->nodeInfo,curr->type, curr->line_no);
+                                printf("we ignored %s\n",curr->type);
+                                curr=get_next_token();
+                                ptree.curr->error=-2;
+                                }
+                            if(!strcmp(curr->type,"SEMICOL")){
+                                curr = get_next_token();
+                            }
+                            stackTop=top(&parse_stack);
 
+                            // popOnErrors(curr, prevLineNo);
+                            // printf("expected %s but got %s at the line no. %d [4]\n",stackTop->nodeInfo,curr->type, curr->line_no);
+                            // printf("we ignored %s\n",curr->type);
+                            // prevLineNo=curr->line_no;
+                            // curr=get_next_token();
+
+                            // //skip changes in parse tree ,ight need to error flags
+                            // ptree.curr->error=-2;
+
+                        }
                         // If rule found then top of the stack is useless now
                         else{
                             // Enters here because construct generated by the non-terminal on the stack top is missing
@@ -1116,7 +1190,6 @@ void call_parser(rule* rules, NonT* nont)
                     }
                 }
             }
-
             // Safe to push (Rule exists)
             else
             {
@@ -1148,7 +1221,7 @@ void call_parser(rule* rules, NonT* nont)
             if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
                 pop(&parse_stack);//Pop the stack element
-                addTokenInfo(ptree.curr, curr); //Since only a terminal is popped, we map the token info to the parse tree
+                addTokenInfo(curr); //Since only a terminal is popped, we map the token info to the parse tree
                 
                 // Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use,
                 // we need to go the sibling which should ideally be present in the stack at the same time
@@ -1172,8 +1245,21 @@ void call_parser(rule* rules, NonT* nont)
                 pop(&parse_stack);
 
                 // Parse tree changes corresponding to this error case
-                ptree.curr->error=-3;
+                stackTop=top(&parse_stack);
                 goToNextRight();
+                if(stackTop->isTerminal)
+                {
+                    if(strcmp(stackTop->nodeInfo, curr->type)==0)
+                    {
+                        pop(&parse_stack);
+                        goToNextRight();
+                        prevLineNo=curr->line_no;
+                        curr=get_next_token();
+
+                        // popOnErrors(curr, prevLineNo); 
+                    }
+                }
+                ptree.curr->error=-3;
                 flag = 1;
                 
             }
@@ -1198,6 +1284,31 @@ void call_parser(rule* rules, NonT* nont)
         printf("\n%s",parse_stack.top->nodeInfo);
     }
 }
+// void tostring(char s[], int n)
+// /*This function converts num into a string for writing it into the file*/
+// {
+//     int p,e,r,len=0;
+//     p = n;
+//     e = 10;
+
+//     // Find length of the number
+//     while(p != 0){
+//         len++;
+//         p/=10;
+//     }
+
+//     // Convert to string
+//     for(int i=0; i<len; i++){
+//         r = n % 10;
+//         n = n / 10;
+//         s[len - i - 1] = r + '0';
+//     }
+
+//     s[len] = '\0';
+// }
+//TODO Remove toString()
+
+
 void parseCompletely(){
     rule* rules = populate_grammar();
     set_add("$",Terminals_table,57);
@@ -1235,5 +1346,6 @@ void parseCompletely(){
     createParseTree(prog);
     //start symbol add in the parse tree
     call_parser(rules,nont);
+
     //TODO Print parseTree
 }
