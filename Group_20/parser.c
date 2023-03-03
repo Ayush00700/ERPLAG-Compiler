@@ -931,7 +931,7 @@ void print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
 {
     // Open file in append mode
-    FILE* f = fopen(out_file,"a+");
+    FILE* f = fopen(out_file,"w");
 
     // If file opened successfully
     if(f){
@@ -940,6 +940,7 @@ void print_parse_tree(char* out_file)
         treeNodes* p = ptree.root;
         // Perform inorder traversal
         InOrderTraversal(f, p);
+        fclose(f);
 
     }
 

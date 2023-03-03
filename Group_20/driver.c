@@ -1,3 +1,12 @@
+/* Group-20
+--------------------
+1. Rajan Sahu       2019B4A70572P
+2. Yash Goyal       2019B4A70638P
+3. Ayush Agarwal    2019B4A70652P
+4. Vasu Swaroop     2019B4A70656P
+5. A Sudarshan      2019B4A70744P
+*/
+
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
@@ -11,12 +20,12 @@ int main(int argc, char* args[]){ //DRIVER
     double p_total_CPU_time, p_total_CPU_time_in_seconds;
     int lflag=0;
     int pflag=0;
-    char* testcaseFile = args[1];
-    // strcpy(testcaseFile,args[1]);
-    char* fileForParseTree = args[2];
+    char* buffer = args[1];
+    // strcpy(buffer,args[1]);
+    char* parseBuffer = args[2];
     int bufferSize = atoi(args[3]);
-    // printf("Test Case File:%s\n",testcaseFile);
-    // printf("Parse Tree Printing File:%s\n",fileForParseTree);
+    // printf("Test Case File:%s\n",buffer);
+    // printf("Parse Tree Printing File:%s\n",parseBuffer);
     // printf("Buffer Size:%d\n",bufferSize);
     int run = 1;
     int third = 0; 
@@ -46,7 +55,7 @@ int main(int argc, char* args[]){ //DRIVER
         // For testing purpose -->
         // int choice = 4;
         // char buffer[50] = "t1.txt";
-        // testcaseFile = buffer;
+        // char parseBuffer[50] = "o1.txt";
 
       
         printf("Enter your choice: ");
@@ -64,7 +73,7 @@ int main(int argc, char* args[]){ //DRIVER
                 char cleanFile[100];
                 printf("Enter name of new clean file where you want the code without comments\n");
                 scanf("%s",cleanFile);
-                removeComments(testcaseFile,cleanFile);
+                removeComments(buffer,cleanFile);
                 printf("\nTask 1 done, again going to Options\n");
                 break;
 
@@ -72,13 +81,13 @@ int main(int argc, char* args[]){ //DRIVER
             case 2:
                 l_start_time = clock();
                 FILE* fp;
-                fp = fopen(testcaseFile,"r");
+                fp = fopen(buffer,"r");
                 if(fp == NULL)
                 {
-                    printf("Error opening file:%s\n!",testcaseFile);   
+                    printf("Error opening file:%s\n!",buffer);   
                     exit(1);             
                 }
-                printf("Running file %s\n", testcaseFile);
+                printf("Running file %s\n", buffer);
                 populate_hash_table();
                 call_lexer(fp,4096);
                 int a = postProcessing();
@@ -102,14 +111,14 @@ int main(int argc, char* args[]){ //DRIVER
                 if(lflag==0){
                     l_start_time = clock();
                     FILE* fp;
-                    fp = fopen(testcaseFile,"r");
+                    fp = fopen(buffer,"r");
                     if(fp == NULL)
                     {
-                        printf("Error opening file:%s\n!",testcaseFile);   
+                        printf("Error opening file:%s\n!",buffer);   
                         exit(1);             
                     }
 
-                    printf("Running file %s\n", testcaseFile);
+                    printf("Running file %s\n", buffer);
                     populate_hash_table();
                     call_lexer(fp,4096);
                     int a = postProcessing();
@@ -139,7 +148,7 @@ int main(int argc, char* args[]){ //DRIVER
                 p_total_CPU_time = (double) (p_end_time - p_start_time);
                 p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                 /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
-                print_parse_tree(fileForParseTree);
+                print_parse_tree(parseBuffer);
                 printf("\nTask 3 done, again going to Options\n");
                 pflag=1;
                 break;
@@ -149,13 +158,13 @@ int main(int argc, char* args[]){ //DRIVER
                     if(lflag==0){
                         l_start_time = clock();
                         FILE* fp;
-                        fp = fopen(testcaseFile,"r");
+                        fp = fopen(buffer,"r");
                         if(fp == NULL)
                         {
-                            printf("Error opening file:%s\n!",testcaseFile);   
+                            printf("Error opening file:%s\n!",buffer);   
                             exit(1);             
                         }
-                        printf("Running file %s\n", testcaseFile);
+                        printf("Running file %s\n", buffer);
                         populate_hash_table();
                         call_lexer(fp,4096);
                         int a = postProcessing();
@@ -184,7 +193,7 @@ int main(int argc, char* args[]){ //DRIVER
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
-                    print_parse_tree(fileForParseTree);
+                    print_parse_tree(parseBuffer);
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
                     pflag=1;
