@@ -21,7 +21,7 @@ int main(int argc, char* args[]){ //DRIVER
     int run = 1;
     int third = 0; 
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
-    printf("Ayush Agarwal\t2019B4A70652P\n");
+    printf("Ayush Agarwal\t\t2019B4A70652P\n");
     printf("Rajan Sahu\t\t2019B4A70572P\n");
     printf("Yash Goyal\t\t2019B4A70638P\n");
     printf("Vasu Swaroop\t\t2019B4A70656P\n");
@@ -29,7 +29,7 @@ int main(int argc, char* args[]){ //DRIVER
 
     printf("SHORT DESCRIPTION\n");
     printf("(a) FIRST and FOLLOW set have been automated\n");
-    printf("(b)Both lexical and syntax analysis modules implemented\n");
+    printf("(b) Both lexical and syntax analysis modules implemented\n");
     printf("(c) Module works for all test cases\n");
     printf("(d) Module handles errors efficiently and gives correct Parse Tree\n");
     printf("(e) No Segmentation Fault\n\n\n");
@@ -42,6 +42,9 @@ int main(int argc, char* args[]){ //DRIVER
         printf("4. For printing total time taken by LEXER+PARSER\n");
         printf("0. EXIT\n");
         int choice;
+
+        //For testing purpose -->
+      
         printf("Enter your choice: ");
         scanf("%d",&choice);
         fputs("\033c", stdout); //CLEARS STDOUT SCREEN
@@ -85,7 +88,7 @@ int main(int argc, char* args[]){ //DRIVER
                 l_end_time = clock();
                 l_total_CPU_time = (double) (l_end_time - l_start_time);
                 l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
-
+                fclose(fp);
                 break;
             case 3:
                 if(lflag==0){
@@ -110,9 +113,10 @@ int main(int argc, char* args[]){ //DRIVER
                     l_end_time = clock();
                     l_total_CPU_time = (double) (l_end_time - l_start_time);
                     l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
                 }
                 p_start_time = clock();
-                parseCompletely();
+                parseCompletely(lflag);
                 p_end_time = clock();
                 p_total_CPU_time = (double) (p_end_time - p_start_time);
                 p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
@@ -147,7 +151,7 @@ int main(int argc, char* args[]){ //DRIVER
                         l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                     }
                     p_start_time = clock();
-                    parseCompletely();
+                    parseCompletely(lflag);
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
@@ -155,6 +159,7 @@ int main(int argc, char* args[]){ //DRIVER
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
                     pflag=1;
+                    fclose(fp);
                 }                
                 printf("Total CPU Time:%f\n",l_total_CPU_time+p_total_CPU_time);
                 printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds+p_total_CPU_time_in_seconds);

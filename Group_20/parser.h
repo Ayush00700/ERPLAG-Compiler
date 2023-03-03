@@ -13,6 +13,15 @@
 #include "parserDef.h"
 #include <stdlib.h>
 #include <stdio.h>
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+#define RESET "\x1B[0m"
 
 /* FUNCTION DECLARATIONS 
 ----------------------------*/
@@ -98,7 +107,7 @@ extern void compute_follow_Set(rule* rules,NonT* non_terminals_set);
 // Function to print the parse table
 extern void print_parse_Table(int** arr,NonT* non_terminals_set);
 // Function to create a parse table using info from rules and non-terminals
-extern int** create_parse_table(rule* rules,NonT* non_terminals_set);
+extern void create_parse_table(rule* rules,NonT* non_terminals_set);
 
 extern void popOnErrors(token_info* curr, int prevLineNo);
 
@@ -106,6 +115,6 @@ extern void popOnErrors(token_info* curr, int prevLineNo);
 // Function to start the Syntax Analyzer
 extern void call_parser(rule* rules, NonT* nont);
 
-extern void parseCompletely();
+extern void parseCompletely(int lflag);
 
 #endif
