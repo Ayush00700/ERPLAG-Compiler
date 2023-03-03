@@ -1254,6 +1254,10 @@ void call_parser(rule* rules, NonT* nont)
 
                 // Parse tree changes corresponding to this error case
                 stackTop=top(&parse_stack);
+                if(stackTop==NULL){
+                    printf("Encountered end of token $.. exiting");
+                    return ;
+                }
                 goToNextRight();
                 if(stackTop->isTerminal)
                 {
@@ -1333,6 +1337,7 @@ void parseCompletely(int lflag){
     createParseTree(prog);
     ptree.curr = ptree.root;
     //start symbol add in the parse tree
+    printf("\nPARSING ERRORS ARE : \n");
     call_parser(rules,nont);
 
     //TODO Print parseTree

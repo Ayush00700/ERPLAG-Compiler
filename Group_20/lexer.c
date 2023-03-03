@@ -793,13 +793,18 @@ void removeComments(char *testcaseFile, char *cleanFile)
     // populate();   
 }
 
-void postProcessing(){
+int postProcessing(){
+    if(current==NULL){
+        printf("No tokens generated\n");
+        return 0;
+    }
     current->next_token = (token_node*) malloc(sizeof(token_node)); //need to add dollar in the tokens too at the end
     current->next_token->next_token = NULL;
     current->next_token->token = (token_info*)malloc(sizeof(token_info));
     current->next_token->token->lexeme = "$";
     strcpy(current->next_token->token->type,"$");
     initialize();
+    return 1;
 }
 // int main(){
 //     char originalFile[100];

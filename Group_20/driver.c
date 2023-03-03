@@ -43,9 +43,10 @@ int main(int argc, char* args[]){ //DRIVER
         printf("0. EXIT\n");
         int choice;
 
-        //For testing purpose -->
+        // For testing purpose -->
         // int choice = 4;
-        // char buffer[50] = "code_error_case1.txt";
+        // char buffer[50] = "t1.txt";
+        // testcaseFile = buffer;
 
       
         printf("Enter your choice: ");
@@ -80,7 +81,11 @@ int main(int argc, char* args[]){ //DRIVER
                 printf("Running file %s\n", testcaseFile);
                 populate_hash_table();
                 call_lexer(fp,4096);
-                postProcessing();
+                int a = postProcessing();
+                if(!a){
+                    printf("Found no code\n");
+                    exit(0);
+                }
                 printf("TOKENS ARE .... (first to last) \n");
                 printtokens();
                 printf("LEXICAL ERRORS ARE .... (first to last) \n");
@@ -107,7 +112,11 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("Running file %s\n", testcaseFile);
                     populate_hash_table();
                     call_lexer(fp,4096);
-                    postProcessing();
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
                     printf("TOKENS ARE .... (first to last) \n");
                     printtokens();
                     printf("LEXICAL ERRORS ARE .... (first to last) \n");
@@ -117,6 +126,12 @@ int main(int argc, char* args[]){ //DRIVER
                     l_total_CPU_time = (double) (l_end_time - l_start_time);
                     l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                     fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
                 }
                 p_start_time = clock();
                 parseCompletely(lflag);
@@ -143,7 +158,11 @@ int main(int argc, char* args[]){ //DRIVER
                         printf("Running file %s\n", testcaseFile);
                         populate_hash_table();
                         call_lexer(fp,4096);
-                        postProcessing();
+                        int a = postProcessing();
+                        if(!a){
+                            printf("Found no code\n");
+                            exit(0);
+                        }
                         printf("TOKENS ARE .... (first to last) \n");
                         printtokens();
                         printf("LEXICAL ERRORS ARE .... (first to last) \n");
@@ -153,6 +172,12 @@ int main(int argc, char* args[]){ //DRIVER
                         l_total_CPU_time = (double) (l_end_time - l_start_time);
                         l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                         fclose(fp);
+                    }
+                    else{
+                        printf("TOKENS ARE .... (first to last) \n");
+                        printtokens();
+                        printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                        pop_error_tokens();    
                     }
                     p_start_time = clock();
                     parseCompletely(lflag);

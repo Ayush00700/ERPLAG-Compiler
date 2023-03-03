@@ -1,15 +1,10 @@
-<<<driver program>>             **S_Error**
+<<<driver Program>>> **S_ERROR**
 start 
-    declare a,b::integer;       **S_Error** 
-    declare c:boolean; 
-    a:=21; 
-    b:=23: 
-    c:=(b-a>3); 
-    switch(c                    **L_Error*
+    declare num, a, k:integer; 
+    num:=9; 
+    for( k in 2..8) 
     start 
-    case true: b:=100; 
-        break; 
-    case false: b:= -100; 
-        break; 
+        a:=(num k)*(num-k);             **S_Error** 
+        print(a); 
     end 
-end
+end 

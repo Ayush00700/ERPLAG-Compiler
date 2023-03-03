@@ -1,24 +1,24 @@
 **This function is used to find the maximum of the array**
 
 <<module arrayMax>>
-takes input[list:array[3:20] of real];      **L_Error**
-returns [max:real]
+takes input[list:array[3:20] of real];   **S_ERROR**   
+returns [max:real];
 start 
     declare curr_max:real;
     curr_max:=-10000;
     for(index in 3..20)
     start
-        flag=curr_max<arrayMax[index];
+        flag=curr_max<arrayMax[index]; **L_ERROR and S_ERROR**
         switch(flag)
             start
                 case true: curr:=arrayMax[index];
-                break                       **S_Error**
-                case false: break;
+                break;                      **S_Error**
+                case false: break; 
             end
     end
 end
 
-<<<driver Program>>>
+<<<driver Program>>> **S_ERROR**
 start 
     declare A: array[3..20] of real;
     for(k in 3..20)

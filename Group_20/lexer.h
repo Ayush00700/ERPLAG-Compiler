@@ -51,6 +51,6 @@ extern void call_lexer(FILE* fp,int bufsize);
 
 extern void removeComments(char *testcaseFile, char *cleanFile);
 
-extern void postProcessing();
+extern int postProcessing();
 
 #endif
