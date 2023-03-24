@@ -68,6 +68,8 @@ extern void addRuleToTree(rule* rule);
 extern void in_order_traversal(FILE* fp, treeNodes* current);
 // Function to print the parse tree using inorder traversal
 extern void print_parse_tree(char* out_file);
+// Function to return parse tree (ptree)
+extern parse_tree* get_ptree();
 
 // Set Operations
 // Function to add key into the table along with the entry number

@@ -18,6 +18,7 @@ typedef enum Boolean {False,True}Boolean;
 typedef struct ruleNode{
     char* nodeInfo; 
     Boolean isTerminal;
+    int rule_no;//add
     struct ruleNode* nextNode;
 }ruleNode;
 
@@ -39,18 +40,32 @@ typedef struct entry{
     struct entry* next;
 }entry;
 
+typedef struct ast_node{
+    char* name;
+    int no_of_children;
+    struct ast_node** child_pointers;
+    struct ast_node* next;
+    Boolean isTerminal;
+    token_info* token;
+}ast_node;
+
 typedef struct treeNodes{
     ruleNode* symbol;
     struct treeNodes* parent;
     struct treeNodes* r_sibling;
     struct treeNodes* child;
     Boolean isTerminal;
+    int rule_no;//add
+    int no_of_children;
+    struct treeNodes** child_pointers;
     int error; //tetntatively error=0 is no error, error =-1 iss the error that the parse tree below is missing 
     //and going to nextRight, error==-3 is the case when we assume the existence of the terminal 
     //construct but was not recieved from the code, error=-2 gibberish in the source code following 
     //the node containing this flag
     token_info* token;
+    ast_node* inh;
 }treeNodes;
+
 
 typedef struct parse_tree{
     treeNodes* root;
