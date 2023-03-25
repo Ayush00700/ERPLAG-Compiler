@@ -22,8 +22,8 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "PROGRAM";
             parent->isTerminal = False;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->no_of_children = 4;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->next = NULL;
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = child2;
@@ -155,6 +155,72 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
         case 46:
             free(root->child_pointers[0]);
             return copier(root->inh);
+        case 47:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            free(root->child_pointers[0]);
+            return child1;
+        case 48:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            free(root->child_pointers[0]);
+            return child1;
+        case 49:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[0]->token;
+            root->child_pointers[1]->inh = temp;
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            free(root->child_pointers[1]);
+            return child1;
+        case 50:
+            root->child_pointers[0]->inh = root->inh;
+            ast_node* temp = create_ast(root->child_pointers[0]);
+            free(root->child_pointers[0]);
+            return temp;
+        case 51:
+            root->child_pointers[0]->inh = root->inh;
+            ast_node* temp = create_ast(root->child_pointers[0]);
+            free(root->child_pointers[0]);
+            return temp;
+        case 52:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "ASSIGN";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->next = NULL;
+            parent->child_pointers[0] = root->inh;
+            parent->child_pointers[1] = create_ast(root->child_pointers[1]);
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            return parent;
+        case 53:
+            ast_node* left = (ast_node*)malloc(sizeof(ast_node));
+            left->name = "ARRAY_ASSIGN";
+            left->isTerminal = False;
+            left->no_of_children = 2;
+            left->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            left->next = NULL;
+            left->child_pointers[0] = root->inh;
+            left->child_pointers[1] = create_ast(root->child_pointers[1]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "ASSIGN";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->next = NULL;
+            parent->child_pointers[0] = left;
+            parent->child_pointers[1] = create_ast(root->child_pointers[4]);
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            free(root->child_pointers[5]);
+            return parent;
+        case 54: 
+
         case 55:
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
@@ -167,6 +233,8 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
+        
+        
         
 
         
