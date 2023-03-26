@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "parser.h"
+#include "ast.h"
 #include <string.h>
 
 int main(int argc, char* args[]){ //DRIVER
@@ -190,12 +190,14 @@ int main(int argc, char* args[]){ //DRIVER
                     }
                     p_start_time = clock();
                     parseCompletely(lflag);
+                    create_abstract_tree();//creation of abstract syntax tree 
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                     print_parse_tree(parseBuffer);
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
+
                     pflag=1;
                     // fclose(fp);
                 }                
