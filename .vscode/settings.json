@@ -4,6 +4,7 @@
         "string.h": "c",
         "lexer.h": "c",
         "lexerdef.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "typeinfo": "c"
     }
 }

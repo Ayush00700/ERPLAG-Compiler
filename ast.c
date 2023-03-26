@@ -1,5 +1,6 @@
 #include "ast.h"
 
+int astNodeCount=1;
 ast_node* copier(ast_node* temp)
 /*This function returns a deep copy of the passed node*/
 {
@@ -87,14 +88,23 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             return NULL;}
         case 7:
             // Creating AST node's children subtree
-           { ast_node* toreturn = create_ast(root->child_pointers[4]);
+           {
+            ast_node* child1 = create_ast(root->child_pointers[4]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "DRIVER";
+            parent->isTerminal = False;
+            parent->no_of_children = 1;
+            parent->next = NULL;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = child1;
+            
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
-            return toreturn;}
+            return parent;}
         case 8:
             {// Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
@@ -155,7 +165,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             ast_node* child2 = create_ast(root->child_pointers[3]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             // Assigning node members to group the subtrees
-            parent->name = "IPLIST";
+            parent->name = "IPLIST_HEAD";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
@@ -206,7 +216,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             ast_node* child2 = create_ast(root->child_pointers[3]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             // Assigning node members to group the subtrees
-            parent->name = "OPLIST";
+            parent->name = "OPLIST_HEAD";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
@@ -329,7 +339,12 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             return parent;}
         case 25:
             // Creating AST child subtree
-            {ast_node* parent = create_ast(root->child_pointers[1]);
+            {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            parent->name = "STATEMENTS";
+            parent->isTerminal = False;
+            parent->next= child1;
+            parent->no_of_children = 0;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
@@ -382,7 +397,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
         case 33:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "INPUT";
+            parent->name = "INPUT_ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[2]->token;
             // Collapsing unnecessary non-terminals
@@ -396,7 +411,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             {ast_node* child1 = create_ast(root->child_pointers[2]);
             // Discuss if we require the node
             // Maybe required for ignoring this type of io in
-            // case of type checking - CHECK
+            // case of type checking - CHECK TODO
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "OUTPUT";
             parent->isTerminal = False;
@@ -778,12 +793,18 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "ID_LIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 1;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
             // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[1]);
-            temp->next = child1;
+            parent->next= child1;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
-            return temp;}
+            return parent;}
         case 71:
             {ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
@@ -1177,42 +1198,42 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
         case 120:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "LT";
+            parent->name = "LT_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 121:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "LE";
+            parent->name = "LE_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 122:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "GT";
+            parent->name = "GT_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 123:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "GE";
+            parent->name = "GE_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 124:
             // Create node for terminal token
             {ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "EQ";
+            parent->name = "EQ_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 125:
             {// Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "NE";
+            parent->name = "NE_result";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;}
@@ -1259,15 +1280,20 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             free(root->child_pointers[7]);
             return parent;}
         case 128:
-{            ast_node* child1 = create_ast(root->child_pointers[1]);
+{           ast_node* child1 = create_ast(root->child_pointers[1]);
+            ast_node* statement = (ast_node*)malloc(sizeof(ast_node));
             ast_node* child2 = create_ast(root->child_pointers[3]);
+            statement->name = "STATEMENTS";
+            statement->isTerminal = False;
+            statement->next= child2;
+            statement->no_of_children = 0;
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "CASE";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
+            parent->child_pointers[1] = statement;
             ast_node* child3 = create_ast(root->child_pointers[6]);
             parent->next= child3;
             free(root->child_pointers[0]);
@@ -1279,15 +1305,21 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             free(root->child_pointers[6]);
             return parent;}
         case 129:
-{            ast_node* child1 = create_ast(root->child_pointers[1]);
+{           ast_node* child1 = create_ast(root->child_pointers[1]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
+            ast_node* statement = (ast_node*)malloc(sizeof(ast_node));
+            statement->name = "STATEMENTS";
+            statement->isTerminal = False;
+            statement->next= child2;
+            statement->no_of_children = 0;
+
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "CASE";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
+            parent->child_pointers[1] = statement;
             ast_node* child3 = create_ast(root->child_pointers[6]);
             parent->next= child3;
             free(root->child_pointers[0]);
@@ -1325,13 +1357,18 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             return parent;}
         case 134:
 {            ast_node* child1 = create_ast(root->child_pointers[2]);
+            ast_node* statement = (ast_node*)malloc(sizeof(ast_node));
+            statement->name = "STATEMENTS";
+            statement->isTerminal = False;
+            statement->next= child1;
+            statement->no_of_children = 0;
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "DEFAULTCASE";
             parent->isTerminal = False;
             parent->next= NULL;
             parent->no_of_children = 1;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = child1;
+            parent->child_pointers[0] = statement;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -1350,15 +1387,20 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             // root->child_pointers[1]->inh = temp; //check 
             ast_node* child1 = create_ast(root->child_pointers[4]);
             ast_node* child2 = create_ast(root->child_pointers[7]);
+            ast_node* statement = (ast_node*)malloc(sizeof(ast_node));
+            statement->name = "STATEMENTS";
+            statement->isTerminal = False;
+            statement->next= child2;
+            statement->no_of_children = 0;
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "FOR";
+            parent->name = "FORLOOP";
             parent->isTerminal = False;
             parent->next= NULL;
             parent->no_of_children = 3;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
-            parent->child_pointers[2] = child2;
+            parent->child_pointers[2] = statement;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[3]);
@@ -1369,16 +1411,21 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             free(root->child_pointers[8]);
             return parent;}
         case 137:
-  {          ast_node* child1 = create_ast(root->child_pointers[2]);
+  {         ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[5]);
+            ast_node* statement = (ast_node*)malloc(sizeof(ast_node));
+            statement->name = "STATEMENTS";
+            statement->isTerminal = False;
+            statement->next= child2;
+            statement->no_of_children = 0;
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "WHILE";
+            parent->name = "WHILELOOP";
             parent->isTerminal = False;
             parent->next= NULL;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
+            parent->child_pointers[1] = statement;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -1469,39 +1516,74 @@ void change_tree(treeNodes* root)
     }
 }
 
-    // printf("PRINTING AST RULES\n");
-void recursive_print_tree(ast_node* root){
-    if(root==NULL) return ;
+void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
+    int currentNodeCount = astNodeCount;
+    if(root==NULL) {
+        fprintf(fp,"//This node was made NULL and thereby does not exist!:");
+        return;}
     
     int num_of_children = root->no_of_children;
-    printf("\n%s\n",root->name);
-    printf("No of children: %d ",root->no_of_children);
-    printf("Childrens:");
+    if(root->isTerminal && root->token!=NULL){
+        if(root->token->lexeme!=NULL)
+           fprintf(fp,"\n\t%s\n",root->token->lexeme);
+        // if((root->token->values)!=NULL)//TODO add
+        //     fprintf(fp,"\n\t%d\n",root->token->values);
+ 
+    }
+    
+    fprintf(fp,"\n%d\t%s\n",astNodeCount,root->name);
+    fprintf(fp,"No of children: %d \n",root->no_of_children);
+    fprintf(fp,"Childrens:");
 
     for(int i=0;i<num_of_children;i++){
         if(root->child_pointers[i]!=NULL)
-        printf("%s ,",root->child_pointers[i]->name);
+        fprintf(fp,"%s ,",root->child_pointers[i]->name);
     } 
-    printf("\n") ;
+    fprintf(fp,"\n");
 
-    printf("Next pointers:");
+    fprintf(fp,"Next pointers:");
     ast_node * temp=root->next;
-
+    Boolean emptyList = 1;
     while(temp)
-        {printf("%s ,",temp->name);
+    {
+        if(emptyList)
+            emptyList=0;
+        fprintf(fp,"%s ,",temp->name);
         temp=temp->next;
-    }  
-    printf("\n");
-
-    for(int i=0;i<num_of_children;i++){
-        recursive_print_tree(root->child_pointers[i]);
     }
-
+    if(emptyList)
+        fprintf(fp,"NULL");    
+    fprintf(fp,"\n");
+    
+    
+    ast_node * temp2=root->next;
+    astNodeCount++;
+    for(int i=0;i<num_of_children;i++){
+        fprintf(fp,"\nIterating over next child of Node %d:\n",currentNodeCount);
+        recursive_print_tree(root->child_pointers[i],0,fp);
+    }
+    if(listcount==0){
+        while(temp2)
+        {
+            fprintf(fp,"\nIterating over next list element of node %d:\n",currentNodeCount);
+            recursive_print_tree(temp2,listcount+1,fp);
+            temp2=temp2->next;
+        }
+    }
 }
 
 void create_abstract_tree(){
     parse_tree* ptree = get_ptree();
     change_tree(ptree->root);
     ast_node* new_root = create_ast(ptree->root);
-    recursive_print_tree(new_root);
+    printf("\nPRINTING AST RULES\n");
+    FILE* fp;
+    fp = fopen("ast.txt","w+");
+    if(fp == NULL)
+    {
+        printf("Error opening file:ast.txt\n!");   
+        exit(1);             
+    }
+    recursive_print_tree(new_root,0,fp);   
+    fclose(fp);
 }
