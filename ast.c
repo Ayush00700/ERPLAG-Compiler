@@ -11,7 +11,7 @@ ast_node* copier(ast_node* temp){
     return new_node;
 }
 
-ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
+ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
     int rule_no = root->rule_no;
     switch(rule_no){
         case 1:
@@ -34,6 +34,36 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             return parent;
+        case 2: 
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            ast_node* child2 = create_ast(root->child_pointers[1]);
+            child1->next = child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            return child1;
+        case 3:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 4:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "MOD_DEC_ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[2]->token;
+            temp->next= NULL;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[3]);
+            return temp;
+        case 5:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            ast_node* child2 = create_ast(root->child_pointers[1]);
+            child1->next = child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            return child1;
+        case 6:
+            free(root->child_pointers[0]);
+            return NULL;
         case 7:
             ast_node* toreturn = create_ast(root->child_pointers[4]);
             free(root->child_pointers[0]);
@@ -42,15 +72,203 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
             return toreturn;
-        case 25:
-            ast_node* child1 = create_ast(root->child_pointers[1]);
+        case 8:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[2]->token;
+            // root->child_pointers[1]->inh = temp; //check 
+            ast_node* child1 = create_ast(root->child_pointers[7]);
+            ast_node* child2 = create_ast(root->child_pointers[10]);
+            ast_node* child3 = create_ast(root->child_pointers[11]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "STATEMENTS";
+            parent->name = "MODULE";
             parent->isTerminal = False;
-            parent->no_of_children = 1;
+            parent->next= NULL;
+            parent->no_of_children = 4;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->child_pointers[2] = child2;
+            parent->child_pointers[3] = child3;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            free(root->child_pointers[5]);
+            free(root->child_pointers[6]);
+            free(root->child_pointers[7]);
+            free(root->child_pointers[8]);
+            free(root->child_pointers[9]);
+            free(root->child_pointers[10]);
+            free(root->child_pointers[11]);
+            return parent;
+        case 9:
+            ast_node* child1 = create_ast(root->child_pointers[2]);
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            return child1;
+        case 10:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 11:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[0]->token;
+            ast_node* child1 = create_ast(root->child_pointers[2]);
+            ast_node* child2 = create_ast(root->child_pointers[3]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "IPLIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->next= child2;
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            return parent;
+        case 12:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[1]->token;
+            ast_node* child1 = create_ast(root->child_pointers[3]);
+            ast_node* child2 = create_ast(root->child_pointers[4]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "IPLIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->next= child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            return parent;
+        case 13:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 14:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[0]->token;
+            ast_node* child1 = create_ast(root->child_pointers[2]);
+            ast_node* child2 = create_ast(root->child_pointers[3]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "OPLIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->next= child2;
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            return parent;
+        case 15:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[1]->token;
+            ast_node* child1 = create_ast(root->child_pointers[3]);
+            ast_node* child2 = create_ast(root->child_pointers[4]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "OPLIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->next= child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            return parent;
+        case 16:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 17:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "INTEGER";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 18:    
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "REAL";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 19:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "BOOLEAN";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 20:
+            ast_node* child1 = create_ast(root->child_pointers[2]);
+            ast_node* child2 = create_ast(root->child_pointers[5]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "ARRAY_DATATYPE";
+            parent->isTerminal = False;
+            parent->next= NULL;
+            parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
-            parent->next = NULL;
+            parent->child_pointers[1] = child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            free(root->child_pointers[4]);
+            free(root->child_pointers[5]);
+            return parent;
+        case 21:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            ast_node* child2 = create_ast(root->child_pointers[2]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "ARRAY_RANGE";
+            parent->isTerminal = False;
+            parent->next= NULL;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = child1;
+            parent->child_pointers[1] = child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            return parent;
+        case 22:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "INTEGER";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 23:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "REAL";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 24:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "BOOLEAN";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 25:
+            ast_node* parent = create_ast(root->child_pointers[1]);
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -97,11 +315,18 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             return parent;
         case 34:
             ast_node* child1 = create_ast(root->child_pointers[2]);
+            parent->name = "OUTPUT";
+            parent->isTerminal = False;
+            parent->next= NULL;
+            parent->no_of_children = 1;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = child1;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
-            return child1;
+            return parent;
         case 35:
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "TRUE";
@@ -274,6 +499,131 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 59:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 60:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[3]->token;
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            ast_node* child2 = create_ast(root->child_pointers[6]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "MODULEREUSE";
+            parent->isTerminal = False;
+            parent->next= NULL;
+            parent->no_of_children = 3;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            parent->child_pointers[2] = child2;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[4]);
+            free(root->child_pointers[5]);
+            free(root->child_pointers[6]);
+            free(root->child_pointers[7]);
+            return parent;
+        case 61:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            ast_node* child2 = create_ast(root->child_pointers[1]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "PARALIST_HEAD";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = child1;
+            parent->child_pointers[1] = child2;
+            ast_node* child3 = create_ast(root->child_pointers[2]);
+            parent->next= child3;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            return parent;
+        case 62:
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            ast_node* child2 = create_ast(root->child_pointers[2]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "PARALIST";
+            parent->isTerminal = False;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = child1;
+            parent->child_pointers[1] = child2;
+            ast_node* child3 = create_ast(root->child_pointers[3]);
+            parent->next= child3;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            return parent;
+        case 63:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 64:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "NUM";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 65:
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "RNUM";
+            parent->isTerminal = True;
+            parent->token = root->child_pointers[0]->token;
+            return parent;
+        case 66:
+            ast_node* child1 = create_ast(root->child_pointers[0]);
+            free(root->child_pointers[0]);
+            return child1;
+        case 67:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[0]->token;
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            parent->name = "NON_CONST_PARAMETER";
+            parent->isTerminal = False;
+            parent->next= NULL;
+            parent->no_of_children = 2;
+            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            parent->child_pointers[0] = temp;
+            parent->child_pointers[1] = child1;
+            free(root->child_pointers[1]);
+            return parent;
+        case 68:
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            free(root->child_pointers[2]);
+            free(root->child_pointers[3]);
+            return child1;
+
+        case 69:
+            free(root->child_pointers[0]);
+            return NULL;
+        case 70:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[0]->token;
+            ast_node* child1 = create_ast(root->child_pointers[1]);
+            temp->next = child1;
+            free(root->child_pointers[1]);
+            return temp;
+        case 71:
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID";
+            temp->isTerminal = True;
+            temp->token = root->child_pointers[1]->token;
+            ast_node* child1 = create_ast(root->child_pointers[2]);
+            temp->next = child1;
+            free(root->child_pointers[0]);
+            free(root->child_pointers[1]);
+            return temp;
+        case 72:
             free(root->child_pointers[0]);
             return NULL;
         case 73: 
@@ -655,360 +1005,7 @@ ast_node* create_ast(treeNodes* root/*,treeNodes* root_parent*/){
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
-        
-        
-        // AYUSH PART
 
-        case 2: 
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            ast_node* child2 = create_ast(root->child_pointers[1]);
-            child1->next = child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            return child1;
-        case 3:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 4:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[2]->token;
-            temp->next= NULL;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[3]);
-            return temp;
-        case 5:
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            ast_node* child2 = create_ast(root->child_pointers[1]);
-            child1->next = child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            return child1;
-        case 6:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 8:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[2]->token;
-            // root->child_pointers[1]->inh = temp; //check 
-            ast_node* child1 = create_ast(root->child_pointers[7]);
-            ast_node* child2 = create_ast(root->child_pointers[10]);
-            ast_node* child3 = create_ast(root->child_pointers[11]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "MODULE";
-            parent->isTerminal = False;
-            parent->next= NULL;
-            parent->no_of_children = 4;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->child_pointers[2] = child2;
-            parent->child_pointers[3] = child3;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[3]);
-            free(root->child_pointers[4]);
-            free(root->child_pointers[5]);
-            free(root->child_pointers[6]);
-            free(root->child_pointers[7]);
-            free(root->child_pointers[8]);
-            free(root->child_pointers[9]);
-            free(root->child_pointers[10]);
-            free(root->child_pointers[11]);
-            return parent;
-        case 9:
-            ast_node* child1 = create_ast(root->child_pointers[2]);
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            free(root->child_pointers[4]);
-            return child1;
-        case 10:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 11:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[0]->token;
-            ast_node* child1 = create_ast(root->child_pointers[2]);
-            ast_node* child2 = create_ast(root->child_pointers[3]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "IPLIST";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->next= child2;
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            return parent;
-        case 12:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[1]->token;
-            ast_node* child1 = create_ast(root->child_pointers[3]);
-            ast_node* child2 = create_ast(root->child_pointers[4]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "IP_PARAMETER";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->next= child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            free(root->child_pointers[4]);
-            return parent;
-        case 13:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 14:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[0]->token;
-            ast_node* child1 = create_ast(root->child_pointers[2]);
-            ast_node* child2 = create_ast(root->child_pointers[3]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "OPLIST";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->next= child2;
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            return parent;
-        case 15:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[1]->token;
-            ast_node* child1 = create_ast(root->child_pointers[3]);
-            ast_node* child2 = create_ast(root->child_pointers[4]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "OP_PARAMETER";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->next= child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            free(root->child_pointers[4]);
-            return parent;
-        case 16:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 17:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "INTEGER";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 18:    
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "REAL";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 19:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "BOOLEAN";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 20:
-            ast_node* child1 = create_ast(root->child_pointers[2]);
-            ast_node* child2 = create_ast(root->child_pointers[5]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "ARRAY_DATATYPE";
-            parent->isTerminal = False;
-            parent->next= NULL;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            free(root->child_pointers[4]);
-            free(root->child_pointers[5]);
-            return parent;
-        case 21:
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            ast_node* child2 = create_ast(root->child_pointers[2]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "ARRAY_RANGE";
-            parent->isTerminal = False;
-            parent->next= NULL;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            return parent;
-        case 22:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "INTEGER";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 23:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "REAL";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 24:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "BOOLEAN";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 60:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[3]->token;
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            ast_node* child2 = create_ast(root->child_pointers[6]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "MODULEREUSE";
-            parent->isTerminal = False;
-            parent->next= NULL;
-            parent->no_of_children = 3;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            parent->child_pointers[2] = child2;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[4]);
-            free(root->child_pointers[5]);
-            free(root->child_pointers[6]);
-            free(root->child_pointers[7]);
-            return parent;
-        case 61:
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            ast_node* child2 = create_ast(root->child_pointers[1]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "PARALIST_HEAD";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
-            ast_node* child3 = create_ast(root->child_pointers[2]);
-            parent->next= child3;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            return parent;
-        case 62:
-            ast_node* child1 = create_ast(root->child_pointers[1]);
-            ast_node* child2 = create_ast(root->child_pointers[2]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "PARALIST";
-            parent->isTerminal = False;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = child1;
-            parent->child_pointers[1] = child2;
-            ast_node* child3 = create_ast(root->child_pointers[3]);
-            parent->next= child3;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            return parent;
-        case 63:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 64:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "NUM";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 65:
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "RNUM";
-            parent->isTerminal = True;
-            parent->token = root->child_pointers[0]->token;
-            return parent;
-        case 66:
-            ast_node* child1 = create_ast(root->child_pointers[0]);
-            free(root->child_pointers[0]);
-            return child1;
-        case 67:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[0]->token;
-            ast_node* child1 = create_ast(root->child_pointers[1]);
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "NON_CONST_PARAMETER";
-            parent->isTerminal = False;
-            parent->next= NULL;
-            parent->no_of_children = 2;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            parent->child_pointers[1] = child1;
-            free(root->child_pointers[1]);
-            return parent;
-        case 68:
-            ast_node* child1 = create_ast(root->child_pointers[1]);
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            free(root->child_pointers[2]);
-            free(root->child_pointers[3]);
-            return child1;
-
-        case 69:
-            free(root->child_pointers[0]);
-            return NULL;
-        case 70:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[0]->token;
-            ast_node* child1 = create_ast(root->child_pointers[1]);
-            temp->next = child1;
-            free(root->child_pointers[1]);
-            return temp;
-        case 71:
-            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[1]->token;
-            ast_node* child1 = create_ast(root->child_pointers[2]);
-            temp->next = child1;
-            free(root->child_pointers[0]);
-            free(root->child_pointers[1]);
-            return temp;
-        case 72:
-            free(root->child_pointers[0]);
-            return NULL;
         case 126:
             ast_node* child1 = create_ast(root->child_pointers[1]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
@@ -1235,7 +1232,7 @@ void change_tree(treeNodes* root){
     }
     treeNodes* temp = root->child;
     int num=0;
-    while(temp!=NULL){
+    while(temp!=NULL){                                                                                           
         change_tree(temp);
         temp = temp->r_sibling;
         num++;
