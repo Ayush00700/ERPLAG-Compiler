@@ -200,4 +200,6 @@ Also print the lexical errors with lexemes and line numbers appropriately.
     - Code Cleaning.
 
 - Stage 2 Submission
-    - Semantic Analysis
+    - AST (Abstract Syntax Tree) creation
+    - Semantic Analyzer
+    - Code Generation
