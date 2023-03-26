@@ -1,6 +1,8 @@
 #include "ast.h"
 
-ast_node* copier(ast_node* temp){
+ast_node* copier(ast_node* temp)
+/*This function returns a deep copy of the passed node*/
+{
     ast_node* new_node = (ast_node*)malloc(sizeof(ast_node));
     new_node->child_pointers = temp->child_pointers;
     new_node->isTerminal = temp->isTerminal;
@@ -11,15 +13,19 @@ ast_node* copier(ast_node* temp){
     return new_node;
 }
 
-ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
+ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
+/*This function creates the AST based on the semantic rules for each grammar rule*/
+{
     int rule_no = root->rule_no;
     switch(rule_no){
         case 1:
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[1]);
             ast_node* child3 = create_ast(root->child_pointers[2]);
             ast_node* child4 = create_ast(root->child_pointers[3]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "PROGRAM";
             parent->isTerminal = False;
             parent->no_of_children = 4;
@@ -29,43 +35,56 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[1] = child2;
             parent->child_pointers[2] = child3;
             parent->child_pointers[3] = child4;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             return parent;
-        case 2: 
+        case 2:
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[1]);
+            // Inserting child1 at beginning of child2 list
             child1->next = child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             return child1;
         case 3:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 4:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "MOD_DEC_ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
             temp->next= NULL;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[3]);
             return temp;
         case 5:
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[1]);
+            // Inserting child1 at the beginning of child2 list
             child1->next = child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             return child1;
         case 6:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 7:
+            // Creating AST node's children subtree
             ast_node* toreturn = create_ast(root->child_pointers[4]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -73,15 +92,18 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[4]);
             return toreturn;
         case 8:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
             // root->child_pointers[1]->inh = temp; //check 
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[7]);
             ast_node* child2 = create_ast(root->child_pointers[10]);
             ast_node* child3 = create_ast(root->child_pointers[11]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "MODULE";
             parent->isTerminal = False;
             parent->next= NULL;
@@ -91,6 +113,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[1] = child1;
             parent->child_pointers[2] = child2;
             parent->child_pointers[3] = child3;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[3]);
@@ -104,7 +127,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[11]);
             return parent;
         case 9:
+            // Creating AST node's child subtree
             ast_node* child1 = create_ast(root->child_pointers[2]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -112,16 +137,20 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[4]);
             return child1;
         case 10:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 11:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "IPLIST";
             parent->isTerminal = False;
             parent->no_of_children = 2;
@@ -129,18 +158,22 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
             parent->next= child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             return parent;
         case 12:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[1]->token;
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[3]);
             ast_node* child2 = create_ast(root->child_pointers[4]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group subtrees
             parent->name = "IPLIST";
             parent->isTerminal = False;
             parent->no_of_children = 2;
@@ -148,22 +181,27 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
             parent->next= child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
             return parent;
         case 13:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 14:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "OPLIST";
             parent->isTerminal = False;
             parent->no_of_children = 2;
@@ -171,18 +209,22 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
             parent->next= child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             return parent;
         case 15:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[1]->token;
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[3]);
             ast_node* child2 = create_ast(root->child_pointers[4]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "OPLIST";
             parent->isTerminal = False;
             parent->no_of_children = 2;
@@ -190,36 +232,43 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
             parent->next= child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[2]);
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
             return parent;
         case 16:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 17:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "INTEGER";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 18:    
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "REAL";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 19:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "BOOLEAN";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 20:
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[5]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "ARRAY_DATATYPE";
             parent->isTerminal = False;
             parent->next= NULL;
@@ -227,6 +276,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -235,9 +285,11 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[5]);
             return parent;
         case 21:
+            // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[2]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members to group the subtrees
             parent->name = "ARRAY_RANGE";
             parent->isTerminal = False;
             parent->next= NULL;
@@ -245,82 +297,109 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             return parent;
         case 22:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "INTEGER";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 23:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "REAL";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 24:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "BOOLEAN";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 25:
+            // Creating AST child subtree
             ast_node* parent = create_ast(root->child_pointers[1]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             return parent;
         case 26:
+            // Creating AST node's children subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[1]);
+            // Inserting child1 to the beginning of child2 list
             child1->next = child2;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             return child1;
         case 27:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 28:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 29:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 30:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 31:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 32:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 33:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "INPUT";
             parent->isTerminal = True;
             parent->token = root->child_pointers[2]->token;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[3]);
             free(root->child_pointers[4]);
             return parent;
         case 34:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[2]);
+            // Discuss if we require the node
+            // Maybe required for ignoring this type of io in
+            // case of type checking - CHECK
             parent->name = "OUTPUT";
             parent->isTerminal = False;
             parent->next= NULL;
             parent->no_of_children = 1;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -328,30 +407,35 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[4]);
             return parent;
         case 35:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "TRUE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 36:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "FALSE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 37:
+        // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 38:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 39:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "RNUM";
             parent->isTerminal = True;
@@ -359,61 +443,86 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             return parent;
     // case 40: (REDUNDANT) 
         case 41:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            // This node is required in the sibling subtree
+            // So we pass as inherited attribute
             root->child_pointers[1]->inh = temp;
+            // Creating AST node child subtree
             ast_node* child1 = create_ast(root->child_pointers[1]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
             return child1;
         case 42:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 43:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "RNUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 44:
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 45:
+            // Creating AST node's child subtree
             ast_node* child1 = create_ast(root->child_pointers[1]);
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // Assigning node members
             parent->name = "ARRAY";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            // Get a copy of the current parse tree node's inherited attribute
             parent->child_pointers[0] = copier(root->inh);
             parent->child_pointers[1] = child1;
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
             return parent;
         case 46:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return copier(root->inh);
         case 47:
+            // Maybe we need a node to indicate the type of simplestatement
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 48:
+            // Maybe we need a node to indicate the type of simplestatement
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[0]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             return child1;
         case 49:
+            // Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            // This node is required in the sibling subtree
+            // So we pass as inherited attribute
             root->child_pointers[1]->inh = temp;
+            // Create AST subtree
             ast_node* child1 = create_ast(root->child_pointers[1]);
+            // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
             return child1;
         case 50:
@@ -475,30 +584,35 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[1]);
             return parent;
         case 55:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 56:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 57:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "PLUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 58:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "MINUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 59:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 60:
@@ -559,15 +673,18 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[3]);
             return parent;
         case 63:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 64:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 65:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "RNUM";
             parent->isTerminal = True;
@@ -602,6 +719,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             return child1;
 
         case 69:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 70:
@@ -624,6 +742,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[1]);
             return temp;
         case 72:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 73: 
@@ -642,12 +761,14 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[1]);
             return parent;
         case 76:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "PLUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 77:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "MINUS";
             parent->isTerminal = True;
@@ -701,7 +822,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 82:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 83:
             ast_node* temp = create_ast(root->child_pointers[0]);
@@ -728,7 +851,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[1]);
             return parent;
         case 86:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 87:
             ast_node* temp = create_ast(root->child_pointers[0]);
@@ -754,7 +879,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 89:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 90:
             ast_node* temp = create_ast(root->child_pointers[0]);
@@ -780,7 +907,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 92:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 93:
             ast_node* temp = create_ast(root->child_pointers[1]);
@@ -789,12 +918,14 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return temp;
         case 94:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 95:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "RNUM";
             parent->isTerminal = True;
@@ -823,7 +954,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 98:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         // case 99: (REDUNDANT)
         case 100:
@@ -883,7 +1016,9 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 106:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 107:
             ast_node* temp = create_ast(root->child_pointers[0]);
@@ -909,15 +1044,19 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 109:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
+            // Return inherited attribute as the synthesized attribute
             return root->inh;
         case 110:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 111:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
@@ -934,72 +1073,84 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[2]);
             return parent;
         case 114:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "PLUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 115:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "MINUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 116:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "MUL";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 117:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "DIV";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 118:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "AND";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 119:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "OR";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 120:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "LT";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 121:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "LE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 122:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "GT";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 123:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "GE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 124:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "EQ";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 125:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NE";
             parent->isTerminal = True;
@@ -1088,21 +1239,25 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[6]);
             return parent;
         case 130:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 131:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 132:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "TRUE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 133:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "FALSE";
             parent->isTerminal = True;
@@ -1124,6 +1279,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             free(root->child_pointers[4]);
             return parent;
         case 135:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
         case 136:
@@ -1202,31 +1358,38 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/){
             return parent;
 
         case 140:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 141:
+            // Create node for terminal token
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "PLUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 142:
+            // Create node for terminal token        
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
             parent->name = "MINUS";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
             return parent;
         case 143:
+            // Since epsilon, just free the parse tree node "eps"
             free(root->child_pointers[0]);
             return NULL;
 
     }
 }
 
-void change_tree(treeNodes* root){
+void change_tree(treeNodes* root)
+/*This function modifies the parse tree so that parent has pointer to all its children
+ instead of just the left most child*/
+{
     if(root->isTerminal){
         return;
     }
