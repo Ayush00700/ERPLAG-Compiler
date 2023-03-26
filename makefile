@@ -6,8 +6,8 @@
 # 4. Vasu Swaroop     2019B4A70656P
 # 5. A Sudarshan      2019B4A70744P
 
-stage1exe: lexer.o parser.o driver.o
-	gcc lexer.o parser.o driver.o -o stage1exe
+stage1exe: lexer.o parser.o driver.o ast.o
+	gcc lexer.o parser.o driver.o ast.o -o stage2exe
 
 driver.o: driver.c
 	gcc -c driver.c
@@ -21,6 +21,8 @@ parser.o: parser.c parser.h
 driver.o: driver.c
 	gcc -c driver.c
 	
+ast.o: ast.c
+	gcc -c ast.c	
 clean:
-	rm *.o stage1exe
+	rm *.o stage2exe
 

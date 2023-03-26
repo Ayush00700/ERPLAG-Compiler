@@ -138,6 +138,7 @@ treeNodes* convertToPTreenode(ruleNode* Node)
 {
     treeNodes* generated =(treeNodes*)malloc(sizeof(treeNodes));
     generated->symbol=Node;
+    generated->isTerminal = Node->isTerminal;
     return generated;
 }
 
@@ -874,23 +875,26 @@ void addRuleToTree(rule* rule)
 }
 
 void printer(FILE* fptr, treeNodes* current){
-    if(!current->isTerminal){
-        if(strcmp(current->symbol->nodeInfo,"eps")){
+    if(current->isTerminal){
+        if(strcmp(current->symbol->nodeInfo,"eps")==0){
             fprintf(fptr, "%s----\n","<Lexeme: >");
+        }else{
+        fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
+       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
+       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
+    
         }
     }
     else{
-       fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
-       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
-       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
-    }
+        fprintf(fptr,"NT[<Type:%s>]",current->symbol->nodeInfo);
+      }
 }
 
 
 void InOrderTraversal(FILE* fptr, treeNodes* current){
     int flag = 0;
-    if(current->child == NULL){
-        printer(fptr, current);
+    if(!current->child){
+        // printer(fptr, current);
         return;
     }
     else{
@@ -1204,13 +1208,17 @@ void call_parser(rule* rules, NonT* nont)
             }
             stackTop=top(&parse_stack);
         }
-
-        // the case when it goes out of the above statement i.e. there is a terminal to match
+        // the case when it goes out of the 4above statement i.e. there is a terminal to match
         {
             // If there is a match
+            if(prevLineNo==27) {
+                int a =2;
+                a++;
+            }
             if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
                 pop(&parse_stack);//Pop the stack element
+                if(strcmp(curr->type,"$")==1)
                 addTokenInfo(curr); //Since only a terminal is popped, we map the token info to the parse tree
                 
                 // Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use,
@@ -1218,7 +1226,6 @@ void call_parser(rule* rules, NonT* nont)
                 goToNextRight();
                
             }
-
             // Terminal mismatch
             else
             {
