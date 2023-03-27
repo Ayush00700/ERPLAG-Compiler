@@ -185,6 +185,7 @@ void print_tables(entry* table[])
             printf("\t%d\t---\n",i);
         }
 
+
         else
         {
             entry* current;

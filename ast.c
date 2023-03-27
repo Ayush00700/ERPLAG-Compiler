@@ -1537,6 +1537,7 @@ void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
         }
     }
     
+    
     fprintf(fp,"\n%d\t%s\n",astNodeCount,root->name);
     fprintf(fp,"No of children: %d \n",root->no_of_children);
     fprintf(fp,"Childrens:");
