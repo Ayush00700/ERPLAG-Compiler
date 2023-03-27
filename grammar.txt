@@ -42,7 +42,7 @@
 <var_print> - NUM
 <var_print> - RNUM
 <var_print> - <boolconst>
-<P1> - SQBO <new_index> SQBC
+<P1> - SQBO <index_arr> SQBC
 <P1> - eps
 <simplestmt> - <assignstmt>
 <simplestmt> - <modReusestmt>
