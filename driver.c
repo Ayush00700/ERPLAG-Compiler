@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "parser.h"
+#include "ast.h"
 #include <string.h>
 
 int main(int argc, char* args[]){ //DRIVER
@@ -43,6 +43,7 @@ int main(int argc, char* args[]){ //DRIVER
     printf("(d) Module handles errors efficiently and gives correct Parse Tree\n");
     printf("(e) No Segmentation Fault\n\n\n");
     while(run){
+        run=0;//COMMENT OUT LATER TODO
     printf("################WELCOME TO ERPLAG COMPILER MENU######################\n\n");
     printf("OPTIONS\n");
         printf("\n1. Printing code without comments\n");
@@ -50,7 +51,7 @@ int main(int argc, char* args[]){ //DRIVER
         printf("3. Parsing and Displaying PARSE TREE by PARSER (with Errors)\n");
         printf("4. For printing total time taken by LEXER+PARSER\n");
         printf("0. EXIT\n");
-        int choice;
+        int choice = 4;
 
         // For testing purpose -->
         // int choice = 4;
@@ -58,8 +59,8 @@ int main(int argc, char* args[]){ //DRIVER
         // char parseBuffer[50] = "o1.txt";
 
       
-        printf("Enter your choice: ");
-        scanf("%d",&choice);
+        // printf("Enter your choice: ");
+        // scanf("%d",&choice);
         fputs("\033c", stdout); //CLEARS STDOUT SCREEN
         switch (choice)
             {
@@ -194,8 +195,11 @@ int main(int argc, char* args[]){ //DRIVER
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                     print_parse_tree(parseBuffer);
+                    create_abstract_tree();//creation of abstract syntax tree 
+
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
+
                     pflag=1;
                     // fclose(fp);
                 }                

@@ -22,30 +22,8 @@ entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
 Stack parse_stack;
 parse_tree ptree;
 
-void tostring(char s[], int n)
-/*This function converts num into a string for writing it into the file*/
-{
-    int p,e,r,len=0;
-    p = n;
-    e = 10;
-
-    // Find length of the number
-    while(p != 0){
-        len++;
-        p/=10;
-    }
-
-    // Convert to string
-    for(int i=0; i<len; i++){
-        r = n % 10;
-        n = n / 10;
-        s[len - i - 1] = r + '0';
-    }
-
-    s[len] = '\0';
-}
-
 // ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
+
 void push(Stack* parseStack, ruleNode* element)
 /*Push an element into the parseStack*/
 {
@@ -160,6 +138,7 @@ treeNodes* convertToPTreenode(ruleNode* Node)
 {
     treeNodes* generated =(treeNodes*)malloc(sizeof(treeNodes));
     generated->symbol=Node;
+    generated->isTerminal = Node->isTerminal;
     return generated;
 }
 
@@ -329,6 +308,7 @@ void linepop(FILE* fp,int i,rule* rules)
     r1->nodeInfo = buff;
     r1->isTerminal = False;
     r1->nextNode = NULL;
+    r1->rule_no = i;
     (rules+i-1)->head = r1;
     rules[i-1].tail = r1;
     rules[i-1].lineNo = i;
@@ -392,7 +372,7 @@ void linepop(FILE* fp,int i,rule* rules)
 
         if(c==EOF)
             break;
-        }
+    }
 }
 
 void print_grammar(rule* rules)
@@ -866,6 +846,9 @@ void goToChild()
 void addRuleToTree(rule* rule)
 /*Add the "rule" to the parse tree*/
 {
+    int rule_no = rule->lineNo;
+    rule->head->rule_no = rule_no;
+    ptree.curr->rule_no = rule_no;
     if(strcmp(rule->head->nodeInfo,ptree.curr->symbol->nodeInfo)==0)
     {
         ruleNode* temp=rule->head->nextNode;//Finds the first ruleNode to be added. The second element in the rule chain 
@@ -892,23 +875,26 @@ void addRuleToTree(rule* rule)
 }
 
 void printer(FILE* fptr, treeNodes* current){
-    if(!current->isTerminal){
-        if(strcmp(current->symbol->nodeInfo,"eps")){
+    if(current->isTerminal){
+        if(strcmp(current->symbol->nodeInfo,"eps")==0){
             fprintf(fptr, "%s----\n","<Lexeme: >");
+        }else{
+        fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
+       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
+       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
+    
         }
     }
     else{
-       fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
-       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
-       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
-    }
+        fprintf(fptr,"NT[<Type:%s>]",current->symbol->nodeInfo);
+      }
 }
 
 
 void InOrderTraversal(FILE* fptr, treeNodes* current){
     int flag = 0;
-    if(current->child == NULL){
-        printer(fptr, current);
+    if(!current->child){
+        // printer(fptr, current);
         return;
     }
     else{
@@ -1222,13 +1208,17 @@ void call_parser(rule* rules, NonT* nont)
             }
             stackTop=top(&parse_stack);
         }
-
-        // the case when it goes out of the above statement i.e. there is a terminal to match
+        // the case when it goes out of the 4above statement i.e. there is a terminal to match
         {
             // If there is a match
+            if(prevLineNo==27) {
+                int a =2;
+                a++;
+            }
             if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
                 pop(&parse_stack);//Pop the stack element
+                if(strcmp(curr->type,"$")==1)
                 addTokenInfo(curr); //Since only a terminal is popped, we map the token info to the parse tree
                 
                 // Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use,
@@ -1236,7 +1226,6 @@ void call_parser(rule* rules, NonT* nont)
                 goToNextRight();
                
             }
-
             // Terminal mismatch
             else
             {
@@ -1299,6 +1288,10 @@ void call_parser(rule* rules, NonT* nont)
     
 }
 
+parse_tree* get_ptree(){
+    return &ptree;
+}
+
 void parseCompletely(int lflag){
     rule* rules = populate_grammar();
     set_add("$",Terminals_table,57);
@@ -1345,4 +1338,5 @@ void parseCompletely(int lflag){
     // print_first_Sets(nont);
     // printf("\n");
     // print_follow_sets(nont);
+
 }
