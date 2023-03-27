@@ -3,6 +3,8 @@
 #include <string.h>
 
 int astNodeCount=1;
+ast_node* new_root;
+
 ast_node* copier(ast_node* temp)
 /*This function returns a deep copy of the passed node*/
 {
@@ -791,22 +793,26 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             return NULL;}
         case 70:
             // Create node for terminal token
-            {ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
-            temp->isTerminal = True;
-            temp->token = root->child_pointers[0]->token;
-            ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "ID_LIST";
-            parent->isTerminal = False;
-            parent->no_of_children = 1;
-            parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
-            parent->child_pointers[0] = temp;
-            // Create AST subtree
+            {
             ast_node* child1 = create_ast(root->child_pointers[1]);
-            parent->next= child1;
+            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+            temp->name = "ID_LIST_HEAD";
+            temp->isTerminal = True;
+            temp->next = child1;
+            temp->token = root->child_pointers[0]->token;
+            // ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
+            // parent->name = "ID_LIST";
+            // parent->isTerminal = False;
+            // parent->no_of_children = 1;
+            // parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
+            // parent->child_pointers[0] = temp;
+            // Create AST subtree
+            // ast_node* child1 = create_ast(root->child_pointers[1]);
+            // parent->next= child1;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[1]);
-            return parent;}
+            // return parent;}
+            return temp;}
         case 71:
             {ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
@@ -1579,10 +1585,11 @@ void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
     }
 }
 
+
 void create_abstract_tree(){
     parse_tree* ptree = get_ptree();
     change_tree(ptree->root);
-    ast_node* new_root = create_ast(ptree->root);
+    new_root = create_ast(ptree->root);
     printf("\nPRINTING AST RULES\n");
     FILE* fp;
     fp = fopen("ast.txt","w+");
@@ -1593,4 +1600,8 @@ void create_abstract_tree(){
     }
     recursive_print_tree(new_root,0,fp);   
     fclose(fp);
+}
+
+ast_node* get_ast_root(){
+    return new_root;
 }
