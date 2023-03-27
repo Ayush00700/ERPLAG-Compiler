@@ -875,43 +875,50 @@ void addRuleToTree(rule* rule)
 }
 
 void printer(FILE* fptr, treeNodes* current){
-    if(current->isTerminal){
-        if(strcmp(current->symbol->nodeInfo,"eps")==0){
+    if(current->symbol->isTerminal){
+        if(!strcmp(current->symbol->nodeInfo,"eps")){
             fprintf(fptr, "%s----\n","<Lexeme: >");
         }else{
         fprintf(fptr,"TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
-       if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
-       if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
-    
+        if(!strcmp(current->token->type,"RNUM"))fprintf(fptr,"<Values :%f>\n",current->token->values.rnum);
+        if(!strcmp(current->token->type,"NUM")) fprintf(fptr,"<Values :%d>\n",current->token->values.num);
+
+        //  if(!strcmp(current->symbol->nodeInfo,"eps")){
+        //     printf("%s----\n","<Lexeme: >");
+        // }else{
+        // printf("TK[<Type:%s> <Lexeme:%s> <Line Number:%d>]",current->token->type,current->token->lexeme,current->token->line_no);
+        // if(!strcmp(current->token->type,"RNUM"))printf("<Values :%f>\n",current->token->values.rnum);
+        // if(!strcmp(current->token->type,"NUM")) printf("<Values :%d>\n",current->token->values.num);
+
         }
     }
     else{
-        fprintf(fptr,"NT[<Type:%s>]",current->symbol->nodeInfo);
+        fprintf(fptr,"NT[<Type:%s>]\n",current->symbol->nodeInfo);
       }
 }
+
+
 
 
 void InOrderTraversal(FILE* fptr, treeNodes* current){
     int flag = 0;
     if(!current->child){
-        // printer(fptr, current);
+        printer(fptr, current);
+        if(current->r_sibling!=NULL){
+            InOrderTraversal(fptr,current->r_sibling);
+        }
         return;
     }
     else{
         InOrderTraversal(fptr, current->child);
         printer(fptr,current);
-        if(current->child->r_sibling!=NULL){
-            treeNodes* temp = current->child->r_sibling;
-            while(temp!=NULL){
-                InOrderTraversal(fptr,temp);
-                temp = temp->r_sibling;
-            }
+        if(current->r_sibling!=NULL){
+            InOrderTraversal(fptr,current->r_sibling);
         }
         return;
     }
     return;
 }
-
 
 void print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
@@ -1217,9 +1224,9 @@ void call_parser(rule* rules, NonT* nont)
             }
             if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
+                if(strcmp(stackTop->nodeInfo,"$"))
+                {addTokenInfo(curr);} //Since only a terminal is popped, we map the token info to the parse tree
                 pop(&parse_stack);//Pop the stack element
-                if(strcmp(curr->type,"$")==1)
-                addTokenInfo(curr); //Since only a terminal is popped, we map the token info to the parse tree
                 
                 // Else we go to the uncle, i.e. sibling of the parent. Since we are only coming to this stage when Parent has no use,
                 // we need to go the sibling which should ideally be present in the stack at the same time

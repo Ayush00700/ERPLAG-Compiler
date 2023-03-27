@@ -1,4 +1,6 @@
 #include "ast.h"
+#include <stdlib.h>
+#include <string.h>
 
 int astNodeCount=1;
 ast_node* copier(ast_node* temp)
@@ -1524,11 +1526,15 @@ void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
     
     int num_of_children = root->no_of_children;
     if(root->isTerminal && root->token!=NULL){
-        if(root->token->lexeme!=NULL)
+        if(root->token->lexeme!=NULL){
            fprintf(fp,"\n\t%s\n",root->token->lexeme);
-        // if((root->token->values)!=NULL)//TODO add
-        //     fprintf(fp,"\n\t%d\n",root->token->values);
- 
+        }
+        if(!strcmp(root->token->type,"RNUM")){//TODO add
+            fprintf(fp,"\n\t%f\n",root->token->values.rnum);
+        }
+        if(!strcmp(root->token->type,"NUM")){
+            fprintf(fp,"\n\t%d\n",root->token->values.num);
+        }
     }
     
     fprintf(fp,"\n%d\t%s\n",astNodeCount,root->name);

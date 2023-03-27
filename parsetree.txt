@@ -1,1 +1,457 @@
-NT[<Type:modDec>]NT[<Type:modDecs>]NT[<Type:modDecs>]NT[<Type:prog>]NT[<Type:othermods>]NT[<Type:driver>]NT[<Type:modDef>]NT[<Type:declarestmt>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:N3>]NT[<Type:N3>]NT[<Type:dataType>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:declarestmt>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:dataType>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:declarestmt>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:dataType>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:declarestmt>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:dataType>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:iostmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:factor>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:arithOrboolExp>]NT[<Type:N4>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:unary_op>]NT[<Type:U>]NT[<Type:new_NT>]NT[<Type:factor>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:optional>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:N3>]NT[<Type:N3>]NT[<Type:modReusestmt>]NT[<Type:sign>]NT[<Type:paralist>]NT[<Type:actual_para_list>]NT[<Type:N_11>]NT[<Type:paralist2>]NT[<Type:sign>]NT[<Type:actual_para_list>]NT[<Type:N_11>]NT[<Type:paralist2>]NT[<Type:sign>]NT[<Type:actual_para_list>]NT[<Type:N_11>]NT[<Type:paralist2>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:stmts>]NT[<Type:mod>]NT[<Type:ip_list>]NT[<Type:dataType>]NT[<Type:N1>]NT[<Type:dataType>]NT[<Type:N1>]NT[<Type:dataType>]NT[<Type:N1>]NT[<Type:ret>]NT[<Type:op_list>]NT[<Type:type>]NT[<Type:N2>]NT[<Type:type>]NT[<Type:N2>]NT[<Type:type>]NT[<Type:N2>]NT[<Type:modDef>]NT[<Type:declarestmt>]NT[<Type:idList>]NT[<Type:N3>]NT[<Type:dataType>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:unary_op>]NT[<Type:U>]NT[<Type:new_NT>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:op2>]NT[<Type:N7>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:op1>]NT[<Type:N6>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:op2>]NT[<Type:N7>]NT[<Type:factor>]NT[<Type:N7>]NT[<Type:N6>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:factor>]NT[<Type:factor>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:op1>]NT[<Type:N6>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:arithOrboolExp>]NT[<Type:N4>]NT[<Type:term>]NT[<Type:op2>]NT[<Type:N7>]NT[<Type:factor>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:op1>]NT[<Type:N6>]NT[<Type:factor>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:arithOrboolExp>]NT[<Type:N4>]NT[<Type:term>]NT[<Type:op2>]NT[<Type:N7>]NT[<Type:factor>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:arithOrboolExp>]NT[<Type:N4>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:arithOrboolExp>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:boolconst>]NT[<Type:AnyTerm>]NT[<Type:N4>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:assignstmt>]NT[<Type:lvalueIDstmt>]NT[<Type:factor>]NT[<Type:boolconst>]NT[<Type:AnyTerm>]NT[<Type:arithOrboolExp>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:N4>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:arithOrboolExp>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:factor>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:arithOrboolExp>]NT[<Type:logOp>]NT[<Type:N4>]NT[<Type:factor>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:relOp>]NT[<Type:N5>]NT[<Type:factor>]NT[<Type:N_11>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:arithOrboolExp>]NT[<Type:N4>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:N4>]NT[<Type:term>]NT[<Type:N7>]NT[<Type:arithExp>]NT[<Type:N6>]NT[<Type:AnyTerm>]NT[<Type:N5>]NT[<Type:N4>]NT[<Type:exp>]NT[<Type:whichstmt>]NT[<Type:simplestmt>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:iostmt>]NT[<Type:var_print>]NT[<Type:P1>]NT[<Type:stmt>]NT[<Type:stmts>]NT[<Type:stmts>]NT[<Type:othermods>]NT[<Type:othermods>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:3>]TK[<Type:MODULE> <Lexeme:module> <Line Number:3>]TK[<Type:ID> <Lexeme:compute> <Line Number:3>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:3>]NT[<Type:modDec>]
+<Lexeme: >----
+NT[<Type:modDecs>]
+NT[<Type:modDecs>]
+<Lexeme: >----
+NT[<Type:othermods>]
+TK[<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:4>]TK[<Type:DRIVER> <Lexeme:driver> <Line Number:4>]TK[<Type:PROGRAM> <Lexeme:program> <Line Number:4>]TK[<Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:4>]TK[<Type:START> <Lexeme:start> <Line Number:5>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:6>]TK[<Type:ID> <Lexeme:var_1_> <Line Number:6>]TK[<Type:COMMA> <Lexeme:,> <Line Number:6>]TK[<Type:ID> <Lexeme:var_2_> <Line Number:6>]TK[<Type:COMMA> <Lexeme:,> <Line Number:6>]TK[<Type:ID> <Lexeme:var_3_> <Line Number:6>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:N3>]
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:6>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:6>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:6>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:7>]TK[<Type:ID> <Lexeme:R1_abc> <Line Number:7>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:7>]TK[<Type:BOOLEAN> <Lexeme:boolean> <Line Number:7>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:7>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:8>]TK[<Type:ID> <Lexeme:r2_ABC> <Line Number:8>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:8>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:8>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:8>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:9>]TK[<Type:ID> <Lexeme:R3_abc> <Line Number:9>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:9>]TK[<Type:REAL> <Lexeme:real> <Line Number:9>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:9>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:GET_VALUE> <Lexeme:get_value> <Line Number:10>]TK[<Type:BO> <Lexeme:(> <Line Number:10>]TK[<Type:ID> <Lexeme:var_1_> <Line Number:10>]TK[<Type:BC> <Lexeme:)> <Line Number:10>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:10>]NT[<Type:iostmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:var_2_> <Line Number:11>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:11>]TK[<Type:NUM> <Lexeme:10> <Line Number:11>]<Values :10>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:11>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:var_3_> <Line Number:12>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:12>]TK[<Type:MINUS> <Lexeme:-> <Line Number:12>]NT[<Type:unary_op>]
+TK[<Type:BO> <Lexeme:(> <Line Number:12>]TK[<Type:NUM> <Lexeme:6> <Line Number:12>]<Values :6>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:12>]NT[<Type:new_NT>]
+NT[<Type:U>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:12>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:SQBO> <Lexeme:[> <Line Number:13>]TK[<Type:ID> <Lexeme:R1_abc> <Line Number:13>]TK[<Type:COMMA> <Lexeme:,> <Line Number:13>]TK[<Type:ID> <Lexeme:r2_ABC> <Line Number:13>]TK[<Type:COMMA> <Lexeme:,> <Line Number:13>]TK[<Type:ID> <Lexeme:R3_abc> <Line Number:13>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:N3>]
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:13>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:13>]NT[<Type:optional>]
+TK[<Type:USE> <Lexeme:use> <Line Number:13>]TK[<Type:MODULE> <Lexeme:module> <Line Number:13>]TK[<Type:ID> <Lexeme:compute> <Line Number:13>]TK[<Type:WITH> <Lexeme:with> <Line Number:13>]TK[<Type:PARAMETERS> <Lexeme:parameters> <Line Number:13>]<Lexeme: >----
+NT[<Type:sign>]
+TK[<Type:ID> <Lexeme:var_1_> <Line Number:13>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:actual_para_list>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:13>]<Lexeme: >----
+NT[<Type:sign>]
+TK[<Type:ID> <Lexeme:var_2_> <Line Number:13>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:actual_para_list>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:13>]<Lexeme: >----
+NT[<Type:sign>]
+TK[<Type:ID> <Lexeme:var_34> <Line Number:13>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:actual_para_list>]
+<Lexeme: >----
+NT[<Type:paralist2>]
+NT[<Type:paralist2>]
+NT[<Type:paralist2>]
+NT[<Type:paralist>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:13>]NT[<Type:modReusestmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+<Lexeme: >----
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+TK[<Type:END> <Lexeme:end> <Line Number:15>]NT[<Type:modDef>]
+NT[<Type:driver>]
+TK[<Type:DEF> <Lexeme:<<> <Line Number:16>]TK[<Type:MODULE> <Lexeme:module> <Line Number:16>]TK[<Type:ID> <Lexeme:compute> <Line Number:16>]TK[<Type:ENDDEF> <Lexeme:>>> <Line Number:16>]TK[<Type:TAKES> <Lexeme:takes> <Line Number:17>]TK[<Type:INPUT> <Lexeme:input> <Line Number:17>]TK[<Type:SQBO> <Lexeme:[> <Line Number:17>]TK[<Type:ID> <Lexeme:a> <Line Number:17>]TK[<Type:COLON> <Lexeme::> <Line Number:17>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:17>]NT[<Type:dataType>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:17>]TK[<Type:ID> <Lexeme:b> <Line Number:17>]TK[<Type:COLON> <Lexeme::> <Line Number:17>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:17>]NT[<Type:dataType>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:17>]TK[<Type:ID> <Lexeme:c> <Line Number:17>]TK[<Type:COLON> <Lexeme::> <Line Number:17>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:17>]NT[<Type:dataType>]
+<Lexeme: >----
+NT[<Type:N1>]
+NT[<Type:N1>]
+NT[<Type:N1>]
+NT[<Type:ip_list>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:17>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:17>]TK[<Type:RETURNS> <Lexeme:returns> <Line Number:18>]TK[<Type:SQBO> <Lexeme:[> <Line Number:18>]TK[<Type:ID> <Lexeme:res_1> <Line Number:18>]TK[<Type:COLON> <Lexeme::> <Line Number:18>]TK[<Type:BOOLEAN> <Lexeme:boolean> <Line Number:18>]NT[<Type:type>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:18>]TK[<Type:ID> <Lexeme:res_2_a> <Line Number:18>]TK[<Type:COLON> <Lexeme::> <Line Number:18>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:18>]NT[<Type:type>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:18>]TK[<Type:ID> <Lexeme:res_2__b> <Line Number:18>]TK[<Type:COLON> <Lexeme::> <Line Number:18>]TK[<Type:REAL> <Lexeme:real> <Line Number:18>]NT[<Type:type>]
+<Lexeme: >----
+NT[<Type:N2>]
+NT[<Type:N2>]
+NT[<Type:N2>]
+NT[<Type:op_list>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:18>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:18>]NT[<Type:ret>]
+TK[<Type:START> <Lexeme:start> <Line Number:19>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:20>]TK[<Type:ID> <Lexeme:b> <Line Number:20>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:20>]TK[<Type:BOOLEAN> <Lexeme:boolean> <Line Number:20>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:20>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:res_2_a> <Line Number:21>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:21>]TK[<Type:MINUS> <Lexeme:-> <Line Number:21>]NT[<Type:unary_op>]
+TK[<Type:BO> <Lexeme:(> <Line Number:21>]TK[<Type:ID> <Lexeme:a> <Line Number:21>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+TK[<Type:MUL> <Lexeme:*> <Line Number:21>]NT[<Type:op2>]
+TK[<Type:ID> <Lexeme:b> <Line Number:21>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:MINUS> <Lexeme:-> <Line Number:21>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:c> <Line Number:21>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+TK[<Type:DIV> <Lexeme:/> <Line Number:21>]NT[<Type:op2>]
+TK[<Type:NUM> <Lexeme:5> <Line Number:21>]<Values :5>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:21>]NT[<Type:new_NT>]
+NT[<Type:U>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:21>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:res_2__b> <Line Number:22>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:22>]TK[<Type:BO> <Lexeme:(> <Line Number:22>]TK[<Type:BO> <Lexeme:(> <Line Number:22>]TK[<Type:ID> <Lexeme:res_2_a> <Line Number:22>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:PLUS> <Lexeme:+> <Line Number:22>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:a> <Line Number:22>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:22>]NT[<Type:factor>]
+TK[<Type:MUL> <Lexeme:*> <Line Number:22>]NT[<Type:op2>]
+TK[<Type:NUM> <Lexeme:12> <Line Number:22>]<Values :12>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:PLUS> <Lexeme:+> <Line Number:22>]NT[<Type:op1>]
+TK[<Type:RNUM> <Lexeme:22.34E-2> <Line Number:22>]<Values :0.223400>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:22>]NT[<Type:factor>]
+TK[<Type:DIV> <Lexeme:/> <Line Number:22>]NT[<Type:op2>]
+TK[<Type:NUM> <Lexeme:13> <Line Number:22>]<Values :13>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:22>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:b> <Line Number:23>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:23>]TK[<Type:ID> <Lexeme:a> <Line Number:23>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:LE> <Lexeme:<=> <Line Number:23>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:b> <Line Number:23>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+TK[<Type:AND> <Lexeme:AND> <Line Number:23>]NT[<Type:logOp>]
+TK[<Type:ID> <Lexeme:c> <Line Number:23>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:GE> <Lexeme:>=> <Line Number:23>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:a> <Line Number:23>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+TK[<Type:OR> <Lexeme:OR> <Line Number:23>]NT[<Type:logOp>]
+TK[<Type:ID> <Lexeme:a> <Line Number:23>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:LT> <Lexeme:<> <Line Number:23>]NT[<Type:relOp>]
+TK[<Type:NUM> <Lexeme:0> <Line Number:23>]<Values :0>
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+TK[<Type:AND> <Lexeme:AND> <Line Number:23>]NT[<Type:logOp>]
+TK[<Type:FALSE> <Lexeme:false> <Line Number:23>]NT[<Type:boolconst>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:23>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:res_1> <Line Number:24>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:24>]TK[<Type:BO> <Lexeme:(> <Line Number:24>]TK[<Type:TRUE> <Lexeme:true> <Line Number:24>]NT[<Type:boolconst>]
+NT[<Type:AnyTerm>]
+TK[<Type:AND> <Lexeme:AND> <Line Number:24>]NT[<Type:logOp>]
+TK[<Type:ID> <Lexeme:c> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:EQ> <Lexeme:==> <Line Number:24>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:b> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:24>]NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+TK[<Type:OR> <Lexeme:OR> <Line Number:24>]NT[<Type:logOp>]
+TK[<Type:BO> <Lexeme:(> <Line Number:24>]TK[<Type:ID> <Lexeme:b> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:GT> <Lexeme:>> <Line Number:24>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:p> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+TK[<Type:AND> <Lexeme:AND> <Line Number:24>]NT[<Type:logOp>]
+TK[<Type:BO> <Lexeme:(> <Line Number:24>]TK[<Type:ID> <Lexeme:a> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:LE> <Lexeme:<=> <Line Number:24>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:c> <Line Number:24>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:24>]NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:24>]NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+<Lexeme: >----
+NT[<Type:N5>]
+NT[<Type:AnyTerm>]
+<Lexeme: >----
+NT[<Type:N4>]
+NT[<Type:N4>]
+NT[<Type:arithOrboolExp>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:24>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:PRINT> <Lexeme:print> <Line Number:26>]TK[<Type:BO> <Lexeme:(> <Line Number:26>]TK[<Type:ID> <Lexeme:res_1> <Line Number:26>]<Lexeme: >----
+NT[<Type:P1>]
+NT[<Type:var_print>]
+TK[<Type:BC> <Lexeme:)> <Line Number:26>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:26>]NT[<Type:iostmt>]
+NT[<Type:stmt>]
+<Lexeme: >----
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+TK[<Type:END> <Lexeme:end> <Line Number:27>]NT[<Type:modDef>]
+NT[<Type:mod>]
+<Lexeme: >----
+NT[<Type:othermods>]
+NT[<Type:othermods>]
+NT[<Type:prog>]
