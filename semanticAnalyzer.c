@@ -8,16 +8,16 @@
 #define POINTER_OFFSET 4
 
 func_entry* global_func_table[TABLE_SIZE];
-sym_tab_entry* global_symbol_table[TABLE_SIZE];
+
 // ----------------------------------------------HELPER FUNCTIONS FOR SET OPERATIONS ----------------------------------------------//
-int sym_tab_entry_add(char* key,sym_tab_entry* table[],type_exp temp)
+int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp)
 /*This function adds the key into the table along with the entry number
 0 => need not be added since it already exists
 1 => needs to be added*/
 {
     // Hash the key to get the index
     unsigned int index = hash(key);
-    sym_tab_entry* current = table[index];
+    sym_tab_entry* current = local_table->entries[index];
 
     // first checks whether it is already present or not 
     while(current!=NULL){
@@ -30,18 +30,18 @@ int sym_tab_entry_add(char* key,sym_tab_entry* table[],type_exp temp)
     // else need to add the element
     sym_tab_entry* new_node = (sym_tab_entry*)malloc(sizeof(sym_tab_entry));
     new_node -> name = key;
-    new_node -> next = table[index];
-    table[index] = new_node;
+    new_node -> next = local_table->entries[index];
+    local_table->entries[index] = new_node;
     new_node->type = temp;
-    new_node->offset = offset;
+    new_node->offset = local_table->offset;
     if(!strcmp(temp.datatype,"integer")){
-        offset += INT_OFFSET;
+        local_table->offset += INT_OFFSET;
     }
     else if(!strcmp(temp.datatype,"real")){
-        offset += REAL_OFFSET;
+        local_table->offset += REAL_OFFSET;
     }
     else if(!strcmp(temp.datatype,"boolean")){
-        offset += BOOL_OFFSET;
+        local_table->offset += BOOL_OFFSET;
     }
     else if(!strcmp(temp.datatype,"array")){
         if(temp.is_static){
@@ -51,10 +51,10 @@ int sym_tab_entry_add(char* key,sym_tab_entry* table[],type_exp temp)
             else{x=INT_OFFSET;}
             int l = temp.arr_data->lower_bound;
             int u = temp.arr_data->upper_bound;
-            offset += (u-l+1)*x;
+            local_table->offset += (u-l+1)*x;
         }
         else{
-            offset += POINTER_OFFSET;
+            local_table->offset += POINTER_OFFSET;
         }
     }
     return index;
@@ -80,7 +80,7 @@ int sym_tab_entry_contains(char* key,sym_tab_entry* table[])
 
 // function table
 
-func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* input_list,sym_tab_entry* ouput_list)
+func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* input_list,sym_tab_entry* ouput_list,int* offset)
 /*This function adds the key into the table along with the entry number
 0 => need not be added since it already exists
 1 => needs to be added*/
@@ -106,12 +106,12 @@ func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* inpu
     new_node->ouput_list = ouput_list;
     new_node->func_root = (var_record*) malloc(sizeof(var_record));
     new_node->func_curr = new_node->func_root;
-    new_node->offset = ouput_list->offset;
+    new_node->offset = *offset;
     new_node->func_root->offset = new_node->offset;
     return new_node;
 }
 
-void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset){
+void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset,int initial){
     type_exp temp;
     if(strcmp(ast_root->child_pointers[1]->name,"ARRAY_DATATYPE")){
         temp.datatype = ast_root->child_pointers[1]->token->lexeme;
@@ -131,8 +131,7 @@ void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset){
             temp.is_static = 0;
         }
     }
-    if(list == NULL){
-        list = (sym_tab_entry*) malloc(sizeof(sym_tab_entry));
+    if(!initial){
         list->name = ast_root->child_pointers[0]->token->lexeme;
         list->next = NULL;
         list->type = temp;
@@ -143,10 +142,10 @@ void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset){
             list = list->next;
         }
         list->next = (sym_tab_entry*) malloc(sizeof(sym_tab_entry));
-        list->name = ast_root->child_pointers[0]->token->lexeme;
-        list->next = NULL;
-        list->type = temp;
-        list->offset = *offset;
+        list->next->name = ast_root->child_pointers[0]->token->lexeme;
+        list->next->next = NULL;
+        list->next->type = temp;
+        list->next->offset = *offset;
     }
     if(!strcmp(temp.datatype,"integer")){
         *offset += INT_OFFSET;
@@ -211,14 +210,14 @@ int index_finder(ast_node* node){
     }
 }
 
-void populate_symbol_table(ast_node* temp_node,type_exp temp){
-    int a = sym_tab_entry_add(temp_node->token->lexeme,global_symbol_table,temp);
+void populate_symbol_table(ast_node* temp_node,type_exp temp,var_record* local_table){
+    int a = sym_tab_entry_add(temp_node->token->lexeme,local_table,temp);
     if(a == -1){ // to change as the abstraction is increased
         printf("already present in the symbol table\n");
     }
 }
 
-void compute_expression(ast_node* ast_root){
+void compute_expression(ast_node* ast_root,var_record* local_table){
     type_exp temp;
     if(strcmp(ast_root->child_pointers[1]->name,"ARRAY_DATATYPE")){
         temp.datatype = ast_root->child_pointers[1]->token->lexeme;
@@ -241,29 +240,60 @@ void compute_expression(ast_node* ast_root){
     ast_node* temp_node = ast_root;
     temp_node = temp_node->child_pointers[0];
     while(temp_node!=NULL){
-        populate_symbol_table(temp_node,temp);
+        populate_symbol_table(temp_node,temp,local_table);
         temp_node = temp_node->next;
     }
     return;
 }
 
 sym_tab_entry* getlist(ast_node* ast_root,int* offset){
-    sym_tab_entry* list_head; 
+    sym_tab_entry* list_head = (sym_tab_entry*) malloc(sizeof(sym_tab_entry));
+    sym_tab_entry* temp = list_head;
     ast_node* temp_node = ast_root;
-    while(temp_node!=NULL){
-        sym_tab_entry* temp = list_head; 
-        list_add(temp,temp_node,offset);
+    int initial = 0;
+    while(temp_node!=NULL){ 
+        list_add(temp,temp_node,offset,initial);
+        temp = list_head;
         temp_node = temp_node->next;
+        initial++;
     }
     return list_head;
+}
+
+void local_populate(var_record* local_table,ast_node* ast_root){
+    if(!ast_root){
+        return;
+    }
+    else if(!strcmp(ast_root->name,"DECLARE")){
+        compute_expression(ast_root,local_table);
+        local_populate(local_table,ast_root->next);
+    }
+    else if(ast_root->isTerminal){
+        local_populate(local_table,ast_root->next);
+        return;
+    }
+    else{
+        int num = ast_root->no_of_children;
+        for(int i=0;i<num;i++){
+            local_populate(local_table,ast_root->child_pointers[i]);
+        }
+        local_populate(local_table,ast_root->next);
+        return;
+    }
 }
 
 void func_def(ast_node* ast_root){
     int offset = 0;
     sym_tab_entry* ip_list = getlist(ast_root->child_pointers[1],&offset);
     sym_tab_entry* op_list = getlist(ast_root->child_pointers[2],&offset);
-    func_entry* local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_func_table,ip_list,op_list);
-    local_populate(local->func_root,ast_root->child_pointers[3]);
+    func_entry* local;
+    if(!strcmp(ast_root->name,"DRIVER")){
+        local = func_tab_entry_add("DRIVER",global_func_table,ip_list,op_list,&offset);
+        local_populate(local->func_root,ast_root->child_pointers[0]);
+    }else{
+        local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_func_table,ip_list,op_list,&offset);
+        local_populate(local->func_root,ast_root->child_pointers[3]);
+    }
 }
 
 void populate_(ast_node* ast_root){
@@ -277,14 +307,6 @@ void populate_(ast_node* ast_root){
         func_def(ast_root);
         populate_(ast_root->next);
     }
-    // else if(!strcmp(ast_root->name,"DECLARE")){
-    //     compute_expression(ast_root);
-    //     populate_(ast_root->next);
-    // }
-    // else if(ast_root->isTerminal){
-    //     populate_(ast_root->next);
-    //     return;
-    // }
     else{
         int num = ast_root->no_of_children;
         for(int i=0;i<num;i++){
@@ -297,7 +319,6 @@ void populate_(ast_node* ast_root){
 
 void semantic(){
     ast_node* ast_root = get_ast_root();
-
 
     populate_(ast_root);
 
