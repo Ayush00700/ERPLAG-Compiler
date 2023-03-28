@@ -323,7 +323,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch->child = NULL;
         local_switch->r_sibiling = NULL;
         local_switch->offset = local_table->offset;
-        local_switch->construct_name = "SWITCH_CASE_HEAD";
+        local_switch->construct_name = "CASE";
         if(local_table->child == NULL){
             local_table->child = local_switch;
         }
