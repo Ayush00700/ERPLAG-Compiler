@@ -112,7 +112,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
         case 8:
             {// Create node for terminal token
             ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
-            temp->name = "ID";
+            temp->name = "FUNC_ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
             // root->child_pointers[1]->inh = temp; //check 

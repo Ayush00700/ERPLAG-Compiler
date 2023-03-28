@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "ast.h"
+#include "semanticAnalyzer.h"
 #include <string.h>
 
 int main(int argc, char* args[]){ //DRIVER
@@ -196,6 +196,7 @@ int main(int argc, char* args[]){ //DRIVER
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                     print_parse_tree(parseBuffer);
                     create_abstract_tree();//creation of abstract syntax tree 
+                    semantic();
 
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE

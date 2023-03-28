@@ -77,7 +77,6 @@ ruleNode* top(Stack* parseStack)
         ruleNode* temp=parseStack->top;
         return temp;
     }
-
 }
 
 
