@@ -140,43 +140,76 @@ NT[<Type:whichstmt>]
 NT[<Type:assignstmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:17>]TK[<Type:ID> <Lexeme:index> <Line Number:17>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:17>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:17>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:17>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:BREAK> <Lexeme:break> <Line Number:17>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:17>]TK[<Type:CASE> <Lexeme:case> <Line Number:18>]TK[<Type:FALSE> <Lexeme:false> <Line Number:18>]NT[<Type:value>]
-TK[<Type:COLON> <Lexeme::> <Line Number:18>]TK[<Type:PRINT> <Lexeme:print> <Line Number:18>]TK[<Type:BO> <Lexeme:(> <Line Number:18>]TK[<Type:ID> <Lexeme:sum> <Line Number:18>]<Lexeme: >----
-NT[<Type:P1>]
-NT[<Type:var_print>]
-TK[<Type:BC> <Lexeme:)> <Line Number:18>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:18>]NT[<Type:iostmt>]
-NT[<Type:stmt>]
-TK[<Type:PRINT> <Lexeme:print> <Line Number:19>]TK[<Type:BO> <Lexeme:(> <Line Number:19>]TK[<Type:ID> <Lexeme:index> <Line Number:19>]<Lexeme: >----
+NT[<Type:stmts>]
+TK[<Type:BREAK> <Lexeme:break> <Line Number:18>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:18>]TK[<Type:CASE> <Lexeme:case> <Line Number:19>]TK[<Type:FALSE> <Lexeme:false> <Line Number:19>]NT[<Type:value>]
+TK[<Type:COLON> <Lexeme::> <Line Number:19>]TK[<Type:PRINT> <Lexeme:print> <Line Number:19>]TK[<Type:BO> <Lexeme:(> <Line Number:19>]TK[<Type:ID> <Lexeme:sum> <Line Number:19>]<Lexeme: >----
 NT[<Type:P1>]
 NT[<Type:var_print>]
 TK[<Type:BC> <Lexeme:)> <Line Number:19>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:19>]NT[<Type:iostmt>]
 NT[<Type:stmt>]
+TK[<Type:PRINT> <Lexeme:print> <Line Number:20>]TK[<Type:BO> <Lexeme:(> <Line Number:20>]TK[<Type:ID> <Lexeme:index> <Line Number:20>]<Lexeme: >----
+NT[<Type:P1>]
+NT[<Type:var_print>]
+TK[<Type:BC> <Lexeme:)> <Line Number:20>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:20>]NT[<Type:iostmt>]
+NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:21>]TK[<Type:ID> <Lexeme:A> <Line Number:21>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:21>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:21>]TK[<Type:SQBO> <Lexeme:[> <Line Number:21>]<Lexeme: >----
+NT[<Type:sign>]
+TK[<Type:NUM> <Lexeme:1> <Line Number:21>]<Values :1>
+NT[<Type:new_index>]
+NT[<Type:index_arr>]
+TK[<Type:RANGEOP> <Lexeme:..> <Line Number:21>]<Lexeme: >----
+NT[<Type:sign>]
+TK[<Type:NUM> <Lexeme:15> <Line Number:21>]<Values :15>
+NT[<Type:new_index>]
+NT[<Type:index_arr>]
+NT[<Type:range_arrays>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:21>]TK[<Type:OF> <Lexeme:of> <Line Number:21>]TK[<Type:REAL> <Lexeme:real> <Line Number:21>]NT[<Type:type>]
+NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:21>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:22>]TK[<Type:ID> <Lexeme:index> <Line Number:22>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:22>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:22>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:22>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:BREAK> <Lexeme:break> <Line Number:21>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:21>]<Lexeme: >----
+NT[<Type:stmts>]
+NT[<Type:stmts>]
+TK[<Type:BREAK> <Lexeme:break> <Line Number:24>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:24>]<Lexeme: >----
 NT[<Type:N9>]
 NT[<Type:N9>]
 NT[<Type:caseStmts>]
 <Lexeme: >----
 NT[<Type:default>]
-TK[<Type:END> <Lexeme:end> <Line Number:22>]NT[<Type:condstmt>]
+TK[<Type:END> <Lexeme:end> <Line Number:25>]NT[<Type:condstmt>]
 NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:END> <Lexeme:end> <Line Number:24>]NT[<Type:iterstmt>]
+TK[<Type:END> <Lexeme:end> <Line Number:27>]NT[<Type:iterstmt>]
 NT[<Type:stmt>]
-TK[<Type:PRINT> <Lexeme:print> <Line Number:25>]TK[<Type:BO> <Lexeme:(> <Line Number:25>]TK[<Type:ID> <Lexeme:sum> <Line Number:25>]<Lexeme: >----
+TK[<Type:PRINT> <Lexeme:print> <Line Number:28>]TK[<Type:BO> <Lexeme:(> <Line Number:28>]TK[<Type:ID> <Lexeme:sum> <Line Number:28>]<Lexeme: >----
 NT[<Type:P1>]
 NT[<Type:var_print>]
-TK[<Type:BC> <Lexeme:)> <Line Number:25>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:25>]NT[<Type:iostmt>]
+TK[<Type:BC> <Lexeme:)> <Line Number:28>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:28>]NT[<Type:iostmt>]
 NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
@@ -185,87 +218,87 @@ NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:END> <Lexeme:end> <Line Number:26>]NT[<Type:modDef>]
+TK[<Type:END> <Lexeme:end> <Line Number:29>]NT[<Type:modDef>]
 NT[<Type:mod>]
 <Lexeme: >----
 NT[<Type:othermods>]
 NT[<Type:othermods>]
-TK[<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:27>]TK[<Type:DRIVER> <Lexeme:driver> <Line Number:27>]TK[<Type:PROGRAM> <Lexeme:program> <Line Number:27>]TK[<Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:27>]TK[<Type:START> <Lexeme:start> <Line Number:28>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:29>]TK[<Type:ID> <Lexeme:A> <Line Number:29>]<Lexeme: >----
+TK[<Type:DRIVERDEF> <Lexeme:<<<> <Line Number:30>]TK[<Type:DRIVER> <Lexeme:driver> <Line Number:30>]TK[<Type:PROGRAM> <Lexeme:program> <Line Number:30>]TK[<Type:DRIVERENDDEF> <Lexeme:>>>> <Line Number:30>]TK[<Type:START> <Lexeme:start> <Line Number:31>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:32>]TK[<Type:ID> <Lexeme:A> <Line Number:32>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:29>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:29>]TK[<Type:SQBO> <Lexeme:[> <Line Number:29>]<Lexeme: >----
+TK[<Type:COLON> <Lexeme::> <Line Number:32>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:32>]TK[<Type:SQBO> <Lexeme:[> <Line Number:32>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:NUM> <Lexeme:1> <Line Number:29>]<Values :1>
+TK[<Type:NUM> <Lexeme:1> <Line Number:32>]<Values :1>
 NT[<Type:new_index>]
 NT[<Type:index_arr>]
-TK[<Type:RANGEOP> <Lexeme:..> <Line Number:29>]<Lexeme: >----
+TK[<Type:RANGEOP> <Lexeme:..> <Line Number:32>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:NUM> <Lexeme:15> <Line Number:29>]<Values :15>
+TK[<Type:NUM> <Lexeme:15> <Line Number:32>]<Values :15>
 NT[<Type:new_index>]
 NT[<Type:index_arr>]
 NT[<Type:range_arrays>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:29>]TK[<Type:OF> <Lexeme:of> <Line Number:29>]TK[<Type:REAL> <Lexeme:real> <Line Number:29>]NT[<Type:type>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:32>]TK[<Type:OF> <Lexeme:of> <Line Number:32>]TK[<Type:REAL> <Lexeme:real> <Line Number:32>]NT[<Type:type>]
 NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:29>]NT[<Type:declarestmt>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:32>]NT[<Type:declarestmt>]
 NT[<Type:stmt>]
-TK[<Type:DECLARE> <Lexeme:declare> <Line Number:30>]TK[<Type:ID> <Lexeme:k> <Line Number:30>]<Lexeme: >----
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:33>]TK[<Type:ID> <Lexeme:k> <Line Number:33>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:30>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:30>]NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:30>]NT[<Type:declarestmt>]
+TK[<Type:COLON> <Lexeme::> <Line Number:33>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:33>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:33>]NT[<Type:declarestmt>]
 NT[<Type:stmt>]
-TK[<Type:DECLARE> <Lexeme:declare> <Line Number:31>]TK[<Type:ID> <Lexeme:s> <Line Number:31>]<Lexeme: >----
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:34>]TK[<Type:ID> <Lexeme:s> <Line Number:34>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:31>]TK[<Type:REAL> <Lexeme:real> <Line Number:31>]NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:31>]NT[<Type:declarestmt>]
+TK[<Type:COLON> <Lexeme::> <Line Number:34>]TK[<Type:REAL> <Lexeme:real> <Line Number:34>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:34>]NT[<Type:declarestmt>]
 NT[<Type:stmt>]
-TK[<Type:GET_VALUE> <Lexeme:get_value> <Line Number:32>]TK[<Type:BO> <Lexeme:(> <Line Number:32>]TK[<Type:ID> <Lexeme:k> <Line Number:32>]TK[<Type:BC> <Lexeme:)> <Line Number:32>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:32>]NT[<Type:iostmt>]
+TK[<Type:GET_VALUE> <Lexeme:get_value> <Line Number:35>]TK[<Type:BO> <Lexeme:(> <Line Number:35>]TK[<Type:ID> <Lexeme:k> <Line Number:35>]TK[<Type:BC> <Lexeme:)> <Line Number:35>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:35>]NT[<Type:iostmt>]
 NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:optional>]
-TK[<Type:USE> <Lexeme:use> <Line Number:33>]TK[<Type:MODULE> <Lexeme:module> <Line Number:33>]TK[<Type:ID> <Lexeme:readArr> <Line Number:33>]TK[<Type:WITH> <Lexeme:with> <Line Number:33>]TK[<Type:PARAMETERS> <Lexeme:parameters> <Line Number:33>]<Lexeme: >----
+TK[<Type:USE> <Lexeme:use> <Line Number:36>]TK[<Type:MODULE> <Lexeme:module> <Line Number:36>]TK[<Type:ID> <Lexeme:readArr> <Line Number:36>]TK[<Type:WITH> <Lexeme:with> <Line Number:36>]TK[<Type:PARAMETERS> <Lexeme:parameters> <Line Number:36>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:A> <Line Number:33>]<Lexeme: >----
+TK[<Type:ID> <Lexeme:A> <Line Number:36>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:actual_para_list>]
-TK[<Type:COMMA> <Lexeme:,> <Line Number:33>]<Lexeme: >----
+TK[<Type:COMMA> <Lexeme:,> <Line Number:36>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:k> <Line Number:33>]<Lexeme: >----
+TK[<Type:ID> <Lexeme:k> <Line Number:36>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:actual_para_list>]
 <Lexeme: >----
 NT[<Type:paralist2>]
 NT[<Type:paralist2>]
 NT[<Type:paralist>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:33>]NT[<Type:modReusestmt>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:36>]NT[<Type:modReusestmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
-TK[<Type:SQBO> <Lexeme:[> <Line Number:34>]TK[<Type:ID> <Lexeme:s> <Line Number:34>]<Lexeme: >----
+TK[<Type:SQBO> <Lexeme:[> <Line Number:37>]TK[<Type:ID> <Lexeme:s> <Line Number:37>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:34>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:34>]NT[<Type:optional>]
-TK[<Type:USE> <Lexeme:use> <Line Number:34>]TK[<Type:MODULE> <Lexeme:module> <Line Number:34>]TK[<Type:ID> <Lexeme:arraySum> <Line Number:34>]TK[<Type:WITH> <Lexeme:with> <Line Number:34>]TK[<Type:PARAMETERS> <Lexeme:parameters> <Line Number:34>]<Lexeme: >----
+TK[<Type:SQBC> <Lexeme:]> <Line Number:37>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:37>]NT[<Type:optional>]
+TK[<Type:USE> <Lexeme:use> <Line Number:37>]TK[<Type:MODULE> <Lexeme:module> <Line Number:37>]TK[<Type:ID> <Lexeme:arraySum> <Line Number:37>]TK[<Type:WITH> <Lexeme:with> <Line Number:37>]TK[<Type:PARAMETERS> <Lexeme:parameters> <Line Number:37>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:A> <Line Number:34>]<Lexeme: >----
+TK[<Type:ID> <Lexeme:A> <Line Number:37>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:actual_para_list>]
-TK[<Type:COMMA> <Lexeme:,> <Line Number:34>]<Lexeme: >----
+TK[<Type:COMMA> <Lexeme:,> <Line Number:37>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:k> <Line Number:34>]<Lexeme: >----
+TK[<Type:ID> <Lexeme:k> <Line Number:37>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:actual_para_list>]
 <Lexeme: >----
 NT[<Type:paralist2>]
 NT[<Type:paralist2>]
 NT[<Type:paralist>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:34>]NT[<Type:modReusestmt>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:37>]NT[<Type:modReusestmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
-TK[<Type:PRINT> <Lexeme:print> <Line Number:35>]TK[<Type:BO> <Lexeme:(> <Line Number:35>]TK[<Type:ID> <Lexeme:s> <Line Number:35>]<Lexeme: >----
+TK[<Type:PRINT> <Lexeme:print> <Line Number:38>]TK[<Type:BO> <Lexeme:(> <Line Number:38>]TK[<Type:ID> <Lexeme:s> <Line Number:38>]<Lexeme: >----
 NT[<Type:P1>]
 NT[<Type:var_print>]
-TK[<Type:BC> <Lexeme:)> <Line Number:35>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:35>]NT[<Type:iostmt>]
+TK[<Type:BC> <Lexeme:)> <Line Number:38>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:38>]NT[<Type:iostmt>]
 NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
@@ -276,40 +309,40 @@ NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:END> <Lexeme:end> <Line Number:36>]NT[<Type:modDef>]
+TK[<Type:END> <Lexeme:end> <Line Number:39>]NT[<Type:modDef>]
 NT[<Type:driver>]
-TK[<Type:DEF> <Lexeme:<<> <Line Number:43>]TK[<Type:MODULE> <Lexeme:module> <Line Number:43>]TK[<Type:ID> <Lexeme:readArr> <Line Number:43>]TK[<Type:ENDDEF> <Lexeme:>>> <Line Number:43>]TK[<Type:TAKES> <Lexeme:takes> <Line Number:44>]TK[<Type:INPUT> <Lexeme:input> <Line Number:44>]TK[<Type:SQBO> <Lexeme:[> <Line Number:44>]TK[<Type:ID> <Lexeme:arr1> <Line Number:44>]TK[<Type:COLON> <Lexeme::> <Line Number:44>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:44>]TK[<Type:SQBO> <Lexeme:[> <Line Number:44>]TK[<Type:MINUS> <Lexeme:-> <Line Number:44>]NT[<Type:sign>]
-TK[<Type:NUM> <Lexeme:10> <Line Number:44>]<Values :10>
+TK[<Type:DEF> <Lexeme:<<> <Line Number:46>]TK[<Type:MODULE> <Lexeme:module> <Line Number:46>]TK[<Type:ID> <Lexeme:readArr> <Line Number:46>]TK[<Type:ENDDEF> <Lexeme:>>> <Line Number:46>]TK[<Type:TAKES> <Lexeme:takes> <Line Number:47>]TK[<Type:INPUT> <Lexeme:input> <Line Number:47>]TK[<Type:SQBO> <Lexeme:[> <Line Number:47>]TK[<Type:ID> <Lexeme:arr1> <Line Number:47>]TK[<Type:COLON> <Lexeme::> <Line Number:47>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:47>]TK[<Type:SQBO> <Lexeme:[> <Line Number:47>]TK[<Type:MINUS> <Lexeme:-> <Line Number:47>]NT[<Type:sign>]
+TK[<Type:NUM> <Lexeme:10> <Line Number:47>]<Values :10>
 NT[<Type:new_index>]
 NT[<Type:index_arr>]
-TK[<Type:RANGEOP> <Lexeme:..> <Line Number:44>]<Lexeme: >----
+TK[<Type:RANGEOP> <Lexeme:..> <Line Number:47>]<Lexeme: >----
 NT[<Type:sign>]
-TK[<Type:NUM> <Lexeme:25> <Line Number:44>]<Values :25>
+TK[<Type:NUM> <Lexeme:25> <Line Number:47>]<Values :25>
 NT[<Type:new_index>]
 NT[<Type:index_arr>]
 NT[<Type:range_arrays>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:44>]TK[<Type:OF> <Lexeme:of> <Line Number:44>]TK[<Type:REAL> <Lexeme:real> <Line Number:44>]NT[<Type:type>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:47>]TK[<Type:OF> <Lexeme:of> <Line Number:47>]TK[<Type:REAL> <Lexeme:real> <Line Number:47>]NT[<Type:type>]
 NT[<Type:dataType>]
-TK[<Type:COMMA> <Lexeme:,> <Line Number:44>]TK[<Type:ID> <Lexeme:k> <Line Number:44>]TK[<Type:COLON> <Lexeme::> <Line Number:44>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:44>]NT[<Type:dataType>]
+TK[<Type:COMMA> <Lexeme:,> <Line Number:47>]TK[<Type:ID> <Lexeme:k> <Line Number:47>]TK[<Type:COLON> <Lexeme::> <Line Number:47>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:47>]NT[<Type:dataType>]
 <Lexeme: >----
 NT[<Type:N1>]
 NT[<Type:N1>]
 NT[<Type:ip_list>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:44>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:44>]<Lexeme: >----
+TK[<Type:SQBC> <Lexeme:]> <Line Number:47>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:47>]<Lexeme: >----
 NT[<Type:ret>]
-TK[<Type:START> <Lexeme:start> <Line Number:45>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:46>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:46>]<Lexeme: >----
+TK[<Type:START> <Lexeme:start> <Line Number:48>]TK[<Type:DECLARE> <Lexeme:declare> <Line Number:49>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:49>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:46>]TK[<Type:REAL> <Lexeme:real> <Line Number:46>]NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:46>]NT[<Type:declarestmt>]
+TK[<Type:COLON> <Lexeme::> <Line Number:49>]TK[<Type:REAL> <Lexeme:real> <Line Number:49>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:49>]NT[<Type:declarestmt>]
 NT[<Type:stmt>]
-TK[<Type:DECLARE> <Lexeme:declare> <Line Number:47>]TK[<Type:ID> <Lexeme:i> <Line Number:47>]<Lexeme: >----
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:50>]TK[<Type:ID> <Lexeme:i> <Line Number:50>]<Lexeme: >----
 NT[<Type:N3>]
 NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:47>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:47>]NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:47>]NT[<Type:declarestmt>]
+TK[<Type:COLON> <Lexeme::> <Line Number:50>]TK[<Type:INTEGER> <Lexeme:integer> <Line Number:50>]NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:50>]NT[<Type:declarestmt>]
 NT[<Type:stmt>]
-TK[<Type:ID> <Lexeme:i> <Line Number:49>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:49>]TK[<Type:NUM> <Lexeme:1> <Line Number:49>]<Values :1>
+TK[<Type:ID> <Lexeme:i> <Line Number:52>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:52>]TK[<Type:NUM> <Lexeme:1> <Line Number:52>]<Values :1>
 NT[<Type:factor>]
 <Lexeme: >----
 NT[<Type:N7>]
@@ -324,12 +357,12 @@ NT[<Type:AnyTerm>]
 NT[<Type:N4>]
 NT[<Type:arithOrboolExp>]
 NT[<Type:exp>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:49>]NT[<Type:lvalueIDstmt>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:52>]NT[<Type:lvalueIDstmt>]
 NT[<Type:whichstmt>]
 NT[<Type:assignstmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
-TK[<Type:WHILE> <Lexeme:while> <Line Number:50>]TK[<Type:BO> <Lexeme:(> <Line Number:50>]TK[<Type:ID> <Lexeme:i> <Line Number:50>]<Lexeme: >----
+TK[<Type:WHILE> <Lexeme:while> <Line Number:53>]TK[<Type:BO> <Lexeme:(> <Line Number:53>]TK[<Type:ID> <Lexeme:i> <Line Number:53>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:factor>]
 <Lexeme: >----
@@ -338,8 +371,8 @@ NT[<Type:term>]
 <Lexeme: >----
 NT[<Type:N6>]
 NT[<Type:arithExp>]
-TK[<Type:LE> <Lexeme:<=> <Line Number:50>]NT[<Type:relOp>]
-TK[<Type:ID> <Lexeme:k> <Line Number:50>]<Lexeme: >----
+TK[<Type:LE> <Lexeme:<=> <Line Number:53>]NT[<Type:relOp>]
+TK[<Type:ID> <Lexeme:k> <Line Number:53>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:factor>]
 <Lexeme: >----
@@ -353,9 +386,9 @@ NT[<Type:AnyTerm>]
 <Lexeme: >----
 NT[<Type:N4>]
 NT[<Type:arithOrboolExp>]
-TK[<Type:BC> <Lexeme:)> <Line Number:50>]TK[<Type:START> <Lexeme:start> <Line Number:51>]TK[<Type:GET_VALUE> <Lexeme:get_value> <Line Number:52>]TK[<Type:BO> <Lexeme:(> <Line Number:52>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:52>]TK[<Type:BC> <Lexeme:)> <Line Number:52>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:52>]NT[<Type:iostmt>]
+TK[<Type:BC> <Lexeme:)> <Line Number:53>]TK[<Type:START> <Lexeme:start> <Line Number:54>]TK[<Type:GET_VALUE> <Lexeme:get_value> <Line Number:55>]TK[<Type:BO> <Lexeme:(> <Line Number:55>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:55>]TK[<Type:BC> <Lexeme:)> <Line Number:55>]TK[<Type:SEMICOL> <Lexeme:;> <Line Number:55>]NT[<Type:iostmt>]
 NT[<Type:stmt>]
-TK[<Type:ID> <Lexeme:arr1> <Line Number:53>]TK[<Type:SQBO> <Lexeme:[> <Line Number:53>]TK[<Type:ID> <Lexeme:i> <Line Number:53>]NT[<Type:arrFactor>]
+TK[<Type:ID> <Lexeme:arr1> <Line Number:56>]TK[<Type:SQBO> <Lexeme:[> <Line Number:56>]TK[<Type:ID> <Lexeme:i> <Line Number:56>]NT[<Type:arrFactor>]
 <Lexeme: >----
 NT[<Type:arr_N5>]
 NT[<Type:arrTerm>]
@@ -363,7 +396,7 @@ NT[<Type:arrTerm>]
 NT[<Type:arr_N4>]
 NT[<Type:arrExpr>]
 NT[<Type:element_index_with_expressions>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:53>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:53>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:53>]<Lexeme: >----
+TK[<Type:SQBC> <Lexeme:]> <Line Number:56>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:56>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:56>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:factor>]
 <Lexeme: >----
@@ -378,119 +411,119 @@ NT[<Type:AnyTerm>]
 <Lexeme: >----
 NT[<Type:N4>]
 NT[<Type:arithOrboolExp>]
-NT[<Type:exp>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:53>]NT[<Type:lvalueARRstmt>]
-NT[<Type:whichstmt>]
-NT[<Type:assignstmt>]
-NT[<Type:simplestmt>]
-NT[<Type:stmt>]
-TK[<Type:DECLARE> <Lexeme:declare> <Line Number:54>]TK[<Type:ID> <Lexeme:B> <Line Number:54>]<Lexeme: >----
-NT[<Type:N3>]
-NT[<Type:idList>]
-TK[<Type:COLON> <Lexeme::> <Line Number:54>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:54>]TK[<Type:SQBO> <Lexeme:[> <Line Number:54>]TK[<Type:MINUS> <Lexeme:-> <Line Number:54>]NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:p> <Line Number:54>]NT[<Type:new_index>]
-NT[<Type:index_arr>]
-TK[<Type:RANGEOP> <Lexeme:..> <Line Number:54>]TK[<Type:PLUS> <Lexeme:+> <Line Number:54>]NT[<Type:sign>]
-TK[<Type:ID> <Lexeme:q> <Line Number:54>]NT[<Type:new_index>]
-NT[<Type:index_arr>]
-NT[<Type:range_arrays>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:54>]TK[<Type:OF> <Lexeme:of> <Line Number:54>]TK[<Type:BOOLEAN> <Lexeme:boolean> <Line Number:54>]NT[<Type:type>]
-NT[<Type:dataType>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:54>]NT[<Type:declarestmt>]
-NT[<Type:stmt>]
-TK[<Type:ID> <Lexeme:tempvar> <Line Number:55>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:55>]TK[<Type:MINUS> <Lexeme:-> <Line Number:55>]NT[<Type:unary_op>]
-TK[<Type:BO> <Lexeme:(> <Line Number:55>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:55>]<Lexeme: >----
-NT[<Type:N_11>]
-NT[<Type:factor>]
-<Lexeme: >----
-NT[<Type:N7>]
-NT[<Type:term>]
-TK[<Type:PLUS> <Lexeme:+> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:ID> <Lexeme:B> <Line Number:55>]TK[<Type:SQBO> <Lexeme:[> <Line Number:55>]TK[<Type:ID> <Lexeme:a> <Line Number:55>]NT[<Type:arrFactor>]
-<Lexeme: >----
-NT[<Type:arr_N5>]
-NT[<Type:arrTerm>]
-TK[<Type:PLUS> <Lexeme:+> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:ID> <Lexeme:b> <Line Number:55>]NT[<Type:arrFactor>]
-TK[<Type:MUL> <Lexeme:*> <Line Number:55>]NT[<Type:op2>]
-TK[<Type:ID> <Lexeme:c> <Line Number:55>]NT[<Type:arrFactor>]
-<Lexeme: >----
-NT[<Type:arr_N5>]
-NT[<Type:arr_N5>]
-NT[<Type:arrTerm>]
-<Lexeme: >----
-NT[<Type:arr_N4>]
-NT[<Type:arr_N4>]
-NT[<Type:arrExpr>]
-NT[<Type:element_index_with_expressions>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:55>]NT[<Type:N_11>]
-NT[<Type:factor>]
-<Lexeme: >----
-NT[<Type:N7>]
-NT[<Type:term>]
-TK[<Type:PLUS> <Lexeme:+> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:ID> <Lexeme:A> <Line Number:55>]TK[<Type:SQBO> <Lexeme:[> <Line Number:55>]TK[<Type:PLUS> <Lexeme:+> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:NUM> <Lexeme:5> <Line Number:55>]<Values :5>
-NT[<Type:new_index>]
-NT[<Type:N_10>]
-NT[<Type:element_index_with_expressions>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:55>]NT[<Type:N_11>]
-NT[<Type:factor>]
-<Lexeme: >----
-NT[<Type:N7>]
-NT[<Type:term>]
-TK[<Type:MINUS> <Lexeme:-> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:ID> <Lexeme:A> <Line Number:55>]TK[<Type:SQBO> <Lexeme:[> <Line Number:55>]TK[<Type:MINUS> <Lexeme:-> <Line Number:55>]NT[<Type:op1>]
-TK[<Type:NUM> <Lexeme:10> <Line Number:55>]<Values :10>
-NT[<Type:new_index>]
-NT[<Type:N_10>]
-NT[<Type:element_index_with_expressions>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:55>]NT[<Type:N_11>]
-NT[<Type:factor>]
-<Lexeme: >----
-NT[<Type:N7>]
-NT[<Type:term>]
-<Lexeme: >----
-NT[<Type:N6>]
-NT[<Type:N6>]
-NT[<Type:N6>]
-NT[<Type:N6>]
-NT[<Type:arithExp>]
-TK[<Type:BC> <Lexeme:)> <Line Number:55>]NT[<Type:new_NT>]
-NT[<Type:U>]
-NT[<Type:exp>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:55>]NT[<Type:lvalueIDstmt>]
-NT[<Type:whichstmt>]
-NT[<Type:assignstmt>]
-NT[<Type:simplestmt>]
-NT[<Type:stmt>]
-TK[<Type:ID> <Lexeme:B> <Line Number:56>]TK[<Type:SQBO> <Lexeme:[> <Line Number:56>]TK[<Type:ID> <Lexeme:k> <Line Number:56>]NT[<Type:arrFactor>]
-<Lexeme: >----
-NT[<Type:arr_N5>]
-NT[<Type:arrTerm>]
-<Lexeme: >----
-NT[<Type:arr_N4>]
-NT[<Type:arrExpr>]
-NT[<Type:element_index_with_expressions>]
-TK[<Type:SQBC> <Lexeme:]> <Line Number:56>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:56>]TK[<Type:MINUS> <Lexeme:-> <Line Number:56>]NT[<Type:unary_op>]
-TK[<Type:NUM> <Lexeme:10> <Line Number:56>]<Values :10>
-NT[<Type:id_num_rnum>]
-NT[<Type:new_NT>]
-NT[<Type:U>]
 NT[<Type:exp>]
 TK[<Type:SEMICOL> <Lexeme:;> <Line Number:56>]NT[<Type:lvalueARRstmt>]
 NT[<Type:whichstmt>]
 NT[<Type:assignstmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
-TK[<Type:ID> <Lexeme:i> <Line Number:57>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:57>]TK[<Type:ID> <Lexeme:i> <Line Number:57>]<Lexeme: >----
+TK[<Type:DECLARE> <Lexeme:declare> <Line Number:57>]TK[<Type:ID> <Lexeme:B> <Line Number:57>]<Lexeme: >----
+NT[<Type:N3>]
+NT[<Type:idList>]
+TK[<Type:COLON> <Lexeme::> <Line Number:57>]TK[<Type:ARRAY> <Lexeme:array> <Line Number:57>]TK[<Type:SQBO> <Lexeme:[> <Line Number:57>]TK[<Type:MINUS> <Lexeme:-> <Line Number:57>]NT[<Type:sign>]
+TK[<Type:ID> <Lexeme:p> <Line Number:57>]NT[<Type:new_index>]
+NT[<Type:index_arr>]
+TK[<Type:RANGEOP> <Lexeme:..> <Line Number:57>]TK[<Type:PLUS> <Lexeme:+> <Line Number:57>]NT[<Type:sign>]
+TK[<Type:ID> <Lexeme:q> <Line Number:57>]NT[<Type:new_index>]
+NT[<Type:index_arr>]
+NT[<Type:range_arrays>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:57>]TK[<Type:OF> <Lexeme:of> <Line Number:57>]TK[<Type:BOOLEAN> <Lexeme:boolean> <Line Number:57>]NT[<Type:type>]
+NT[<Type:dataType>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:57>]NT[<Type:declarestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:tempvar> <Line Number:58>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:58>]TK[<Type:MINUS> <Lexeme:-> <Line Number:58>]NT[<Type:unary_op>]
+TK[<Type:BO> <Lexeme:(> <Line Number:58>]TK[<Type:ID> <Lexeme:tempvar> <Line Number:58>]<Lexeme: >----
 NT[<Type:N_11>]
 NT[<Type:factor>]
 <Lexeme: >----
 NT[<Type:N7>]
 NT[<Type:term>]
-TK[<Type:PLUS> <Lexeme:+> <Line Number:57>]NT[<Type:op1>]
-TK[<Type:NUM> <Lexeme:1> <Line Number:57>]<Values :1>
+TK[<Type:PLUS> <Lexeme:+> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:B> <Line Number:58>]TK[<Type:SQBO> <Lexeme:[> <Line Number:58>]TK[<Type:ID> <Lexeme:a> <Line Number:58>]NT[<Type:arrFactor>]
+<Lexeme: >----
+NT[<Type:arr_N5>]
+NT[<Type:arrTerm>]
+TK[<Type:PLUS> <Lexeme:+> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:b> <Line Number:58>]NT[<Type:arrFactor>]
+TK[<Type:MUL> <Lexeme:*> <Line Number:58>]NT[<Type:op2>]
+TK[<Type:ID> <Lexeme:c> <Line Number:58>]NT[<Type:arrFactor>]
+<Lexeme: >----
+NT[<Type:arr_N5>]
+NT[<Type:arr_N5>]
+NT[<Type:arrTerm>]
+<Lexeme: >----
+NT[<Type:arr_N4>]
+NT[<Type:arr_N4>]
+NT[<Type:arrExpr>]
+NT[<Type:element_index_with_expressions>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:58>]NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:PLUS> <Lexeme:+> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:A> <Line Number:58>]TK[<Type:SQBO> <Lexeme:[> <Line Number:58>]TK[<Type:PLUS> <Lexeme:+> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:NUM> <Lexeme:5> <Line Number:58>]<Values :5>
+NT[<Type:new_index>]
+NT[<Type:N_10>]
+NT[<Type:element_index_with_expressions>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:58>]NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:MINUS> <Lexeme:-> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:ID> <Lexeme:A> <Line Number:58>]TK[<Type:SQBO> <Lexeme:[> <Line Number:58>]TK[<Type:MINUS> <Lexeme:-> <Line Number:58>]NT[<Type:op1>]
+TK[<Type:NUM> <Lexeme:10> <Line Number:58>]<Values :10>
+NT[<Type:new_index>]
+NT[<Type:N_10>]
+NT[<Type:element_index_with_expressions>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:58>]NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+<Lexeme: >----
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:N6>]
+NT[<Type:arithExp>]
+TK[<Type:BC> <Lexeme:)> <Line Number:58>]NT[<Type:new_NT>]
+NT[<Type:U>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:58>]NT[<Type:lvalueIDstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:B> <Line Number:59>]TK[<Type:SQBO> <Lexeme:[> <Line Number:59>]TK[<Type:ID> <Lexeme:k> <Line Number:59>]NT[<Type:arrFactor>]
+<Lexeme: >----
+NT[<Type:arr_N5>]
+NT[<Type:arrTerm>]
+<Lexeme: >----
+NT[<Type:arr_N4>]
+NT[<Type:arrExpr>]
+NT[<Type:element_index_with_expressions>]
+TK[<Type:SQBC> <Lexeme:]> <Line Number:59>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:59>]TK[<Type:MINUS> <Lexeme:-> <Line Number:59>]NT[<Type:unary_op>]
+TK[<Type:NUM> <Lexeme:10> <Line Number:59>]<Values :10>
+NT[<Type:id_num_rnum>]
+NT[<Type:new_NT>]
+NT[<Type:U>]
+NT[<Type:exp>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:59>]NT[<Type:lvalueARRstmt>]
+NT[<Type:whichstmt>]
+NT[<Type:assignstmt>]
+NT[<Type:simplestmt>]
+NT[<Type:stmt>]
+TK[<Type:ID> <Lexeme:i> <Line Number:60>]TK[<Type:ASSIGNOP> <Lexeme::=> <Line Number:60>]TK[<Type:ID> <Lexeme:i> <Line Number:60>]<Lexeme: >----
+NT[<Type:N_11>]
+NT[<Type:factor>]
+<Lexeme: >----
+NT[<Type:N7>]
+NT[<Type:term>]
+TK[<Type:PLUS> <Lexeme:+> <Line Number:60>]NT[<Type:op1>]
+TK[<Type:NUM> <Lexeme:1> <Line Number:60>]<Values :1>
 NT[<Type:factor>]
 <Lexeme: >----
 NT[<Type:N7>]
@@ -506,7 +539,7 @@ NT[<Type:AnyTerm>]
 NT[<Type:N4>]
 NT[<Type:arithOrboolExp>]
 NT[<Type:exp>]
-TK[<Type:SEMICOL> <Lexeme:;> <Line Number:57>]NT[<Type:lvalueIDstmt>]
+TK[<Type:SEMICOL> <Lexeme:;> <Line Number:60>]NT[<Type:lvalueIDstmt>]
 NT[<Type:whichstmt>]
 NT[<Type:assignstmt>]
 NT[<Type:simplestmt>]
@@ -519,7 +552,7 @@ NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:END> <Lexeme:end> <Line Number:59>]NT[<Type:iterstmt>]
+TK[<Type:END> <Lexeme:end> <Line Number:62>]NT[<Type:iterstmt>]
 NT[<Type:stmt>]
 <Lexeme: >----
 NT[<Type:stmts>]
@@ -527,7 +560,7 @@ NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
 NT[<Type:stmts>]
-TK[<Type:END> <Lexeme:end> <Line Number:60>]NT[<Type:modDef>]
+TK[<Type:END> <Lexeme:end> <Line Number:63>]NT[<Type:modDef>]
 NT[<Type:mod>]
 <Lexeme: >----
 NT[<Type:othermods>]

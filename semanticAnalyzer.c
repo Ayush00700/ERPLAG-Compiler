@@ -105,6 +105,7 @@ func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* inpu
     new_node->input_list = input_list;
     new_node->ouput_list = ouput_list;
     new_node->func_root = (var_record*) malloc(sizeof(var_record));
+    new_node->func_root->construct_name = key;
     new_node->func_curr = new_node->func_root;
     new_node->offset = *offset;
     new_node->func_root->offset = new_node->offset;
@@ -263,6 +264,100 @@ sym_tab_entry* getlist(ast_node* ast_root,int* offset){
 void local_populate(var_record* local_table,ast_node* ast_root){
     if(!ast_root){
         return;
+    }
+    else if(!strcmp(ast_root->name,"CASE")){
+        local_populate(local_table,ast_root->child_pointers[1]);
+        var_record* local_case = (var_record*) malloc(sizeof(var_record));
+        local_case->parent = local_table->parent;
+        local_case->child = NULL;
+        local_case->r_sibiling = NULL;
+        local_case->offset = local_table->offset;
+        local_case->construct_name = "CASE";
+        local_populate(local_case,ast_root->next);
+        local_table->offset = local_case->offset;
+        local_table->r_sibiling = local_case;
+    }
+    else if(!strcmp(ast_root->name,"FORLOOP")){
+        var_record* local_for = (var_record*) malloc(sizeof(var_record));
+        local_for->parent = local_table;
+        local_for->child = NULL;
+        local_for->r_sibiling = NULL;
+        local_for->offset = local_table->offset;
+        local_for->construct_name = "FORLOOP";
+        if(local_table->child == NULL){
+            local_table->child = local_for;
+        }
+        else{
+            var_record* temp = local_table->child;
+            while(temp->r_sibiling!=NULL){
+                temp = temp->r_sibiling;
+            }
+            temp->r_sibiling = local_for;
+        }
+        local_populate(local_for,ast_root->child_pointers[2]);
+        local_table->offset = local_for->offset;
+    }
+    else if(!strcmp(ast_root->name,"WHILELOOP")){
+        var_record* local_while = (var_record*) malloc(sizeof(var_record));
+        local_while->parent = local_table;
+        local_while->child = NULL;
+        local_while->r_sibiling = NULL;
+        local_while->offset = local_table->offset;
+        local_while->construct_name = "WHILELOOP";
+        if(local_table->child == NULL){
+            local_table->child = local_while;
+        }
+        else{
+            var_record* temp = local_table->child;
+            while(temp->r_sibiling!=NULL){
+                temp = temp->r_sibiling;
+            }
+            temp->r_sibiling = local_while;
+        }
+        local_populate(local_while,ast_root->child_pointers[1]);
+        local_table->offset = local_while->offset; 
+    }
+    else if(!strcmp(ast_root->name,"SWITCH")){
+        var_record* local_switch = (var_record*) malloc(sizeof(var_record));
+        local_switch->parent = local_table;
+        local_switch->child = NULL;
+        local_switch->r_sibiling = NULL;
+        local_switch->offset = local_table->offset;
+        local_switch->construct_name = "SWITCH_CASE_HEAD";
+        if(local_table->child == NULL){
+            local_table->child = local_switch;
+        }
+        else{
+            var_record* temp = local_table->child;
+            while(temp->r_sibiling!=NULL){
+                temp = temp->r_sibiling;
+            }
+            temp->r_sibiling = local_switch;
+        }
+        local_populate(local_switch,ast_root->child_pointers[1]);
+        local_table->offset = local_switch->offset;
+        //naya for default
+        if(ast_root->child_pointers[2] == NULL){
+            return;
+        }
+        var_record* local_switch_default = (var_record*) malloc(sizeof(var_record));
+        local_switch_default->parent = local_table;
+        local_switch_default->child = NULL;
+        local_switch_default->r_sibiling = NULL;
+        local_switch_default->offset = local_table->offset;
+        local_switch->construct_name = "DEFAULT";
+         if(local_table->child == NULL){
+            local_table->child = local_switch_default;
+        }
+        else{
+            var_record* temp = local_table->child;
+            while(temp->r_sibiling!=NULL){
+                temp = temp->r_sibiling;
+            }
+            temp->r_sibiling = local_switch_default;
+        }
+        local_populate(local_switch_default,ast_root->child_pointers[2]);
+        local_table->offset = local_switch_default->offset; 
     }
     else if(!strcmp(ast_root->name,"DECLARE")){
         compute_expression(ast_root,local_table);

@@ -25,6 +25,7 @@ typedef struct var_record{
     struct var_record* child;
     struct var_record* r_sibiling;
     int offset;
+    char* construct_name;
 }var_record;
 
 typedef struct func_entry{
