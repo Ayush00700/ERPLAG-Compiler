@@ -1,5 +1,7 @@
 #include "ast.h"
-
+typedef enum semErrors{
+    TYPE_NOT_MATCHED,OUT_OF_SCOPE_VARIABLE
+} semErrors;
 typedef struct arr_struct{
     int lower_bound;
     int upper_bound;

@@ -412,25 +412,182 @@ void populate_(ast_node* ast_root){
     }
 }
 
-// void type_checking(ast_node* ast_root){
-//     if(isPresentInChecker(ast_root))
-//     {
 
-//     }
-//     else
-//     {
-//         for(int i=0; i<ast_root->no_of_children; i++)
-//         {
-//             type_checking(ast_root->child_pointers[i]);
-//         }
-//     }
-// }
+//create enum
+type_exp* throw_error(semErrors error)
+{
+    //check with enum 
+    type_exp* gen_error=(type_exp*) malloc(sizeof(type_exp));
+    switch(error)
+    {
+        case TYPE_NOT_MATCHED: {
+        gen_error->datatype="TypeNotMatched";
+        return gen_error;}
+        case OUT_OF_SCOPE_VARIABLE: {
+        gen_error->datatype="OutOfScope";
+        return gen_error;
+        }
+        
+    }
+}
 
+type_exp* compare_dTypes(type_exp* left, type_exp* right)
+{
+        if(!strcmp(left->datatype,right->datatype))
+        {
+            if(!strcmp(left->datatype,"array"))
+            {
+                if(!strcmp(left->arr_data->arr_datatype,right->arr_data->arr_datatype))
+                {
+                    if(left->arr_data->lower_bound==right->arr_data->lower_bound
+                    &&left->arr_data->upper_bound==right->arr_data->upper_bound)
+                    {
+                        return left;
+                    }
+                  else return throw_error(TYPE_NOT_MATCHED);
+                }
+                else return throw_error(TYPE_NOT_MATCHED); 
+            }
+            else return left;
+        }
+        else return throw_error(TYPE_NOT_MATCHED);
+}
+
+type_exp* find_in_table(char* key,var_record* table){
+    int index = set_contains(key,table->entries);
+
+    sym_tab_entry* temp = table->entries[index];
+
+    while(temp!=NULL){
+        if(!strcmp(temp->name,key)){
+            return &temp->type;
+        }
+        temp = temp->next;
+    }
+    return throw_error(OUT_OF_SCOPE_VARIABLE);
+
+}
+
+type_exp* find_expr(ast_node* node, func_entry* curr)
+{
+    if(!curr)
+    {
+        return throw_error(OUT_OF_SCOPE_VARIABLE);
+    }
+    var_record* current_rec= curr->func_curr;
+    var_record* temp=current_rec;
+    char * key=node->name;
+    type_exp* type=find_in_table(key, current_rec);
+    if(type)
+    {
+        return type;
+    }    
+    else
+    {
+        curr->func_curr=curr->func_curr->parent;
+        type= find_expr(node,curr);
+        curr->func_curr=temp;
+        return type;
+    }
+
+}
+
+type_exp* type_checking(ast_node* node, func_entry* curr)
+{
+    if(!strcmp(node->name,"ID"))
+    {
+        type_exp* var_exp= find_expr(node, curr);
+        if(!strcmp(var_exp->datatype,"OutOfScope"))
+        printf("Error found at line no %d : Out of scope \n", node->token->line_no);
+        return var_exp;
+    }
+    else if(!strcmp(node->name,"ASSIGN"))
+    {
+        type_exp* left =type_checking(node->child_pointers[0],curr);
+        type_exp* right=type_checking(node->child_pointers[1],curr);
+        type_exp* ret=compare_dTypes(left, right);
+        
+        if(!strcmp(ret->datatype,"TypeNotMatched"))
+        {
+            printf("Error found at line no %d : Type Mismatch \n", node->token->line_no);
+        }
+        return ret;
+    }
+    else if(!strcmp(node->name,"NUM"))
+    {
+        type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
+        temp->datatype="integer";
+        return temp;
+    }
+    else if(!strcmp(node->name,"RNUM"))
+    {
+        type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
+        temp->datatype="real";
+        return temp;
+    }
+    else if(!strcmp(node->name,"TRUE")||!strcmp(node->name,"FALSE"))
+    {
+        type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
+        temp->datatype="boolean";
+        return temp;
+    }
+    else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT"))
+    {
+        type_exp* left =type_checking(node->child_pointers[0],curr);
+        type_exp* right=type_checking(node->child_pointers[1],curr);
+        type_exp* ret=compare_dTypes(left, right);
+    //check that they are both real||int
+        if(!strcmp(ret->datatype,"TypeNotMatched"))
+        {
+            printf("Error found at line no %d : Type Mismatch \n", node->token->line_no);
+        }
+        return ret;
+    
+     }
+    else if(!strcmp(node->name, "DIV"))
+    {
+        //divide by zero check
+    } 
+    else if (!strcmp(node->name, "AND")||!strcmp(node->name, "OR"))
+    {
+        //Check that they are both boolean
+    }
+    else if(!strcmp(node->name, "FORINDEX"))
+    {
+        // check index types
+    }
+    else if(!strcmp(node->name, "FORRANGE"))
+    {
+        //check increasing order
+    }
+    else if(!strcmp(node->name, "FORLOOP"))
+    {
+        //change the current variable record
+        curr->func_curr=curr->func_curr->child;
+
+    }
+    else if(!strcmp(node->name, "WHILELOOP"))
+    {
+        curr->func_curr=curr->func_curr->child;
+
+    }
+    //might need to handle cases and default and switch
+    else if(!strcmp(node->name, "DECLARE"))
+    {
+        //return NULL dont go to child
+    }
+}
+
+/*Functions to add
+    traverse parse tree and cahnge the func_entry
+    searche the variable for variabe symbol_entry in the current func_entry
+    
+*/
 
 void semantic(){
     ast_node* ast_root = get_ast_root();
 
     populate_(ast_root);
-    // type_checking(ast_root);
+     type_checking(ast_root);
 
 }
