@@ -5,7 +5,8 @@
         "lexer.h": "c",
         "lexerdef.h": "c",
         "stdio.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "semanticanalyzerdef.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

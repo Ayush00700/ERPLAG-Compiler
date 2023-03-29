@@ -533,6 +533,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT"))
     {
+        if(node->no_of_children!=0){    //to handle non unary expression 
         type_exp* left =type_checking(node->child_pointers[0],curr);
         type_exp* right=type_checking(node->child_pointers[1],curr);
         type_exp* ret=compare_dTypes(left, right);
@@ -542,7 +543,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             printf("Error found at line no %d : Type Mismatch \n", node->token->line_no);
         }
         return ret;
-    
+        }
      }
     else if(!strcmp(node->name, "DIV"))
     {
@@ -579,15 +580,44 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 }
 
 /*Functions to add
-    traverse parse tree and cahnge the func_entry
+    traverse parse tree and change the func_entry
     searche the variable for variabe symbol_entry in the current func_entry
     
 */
+func_entry* find_module(char* key){
+    int index = func_tab_entry_contains(key, global_func_table);
+    func_entry* function = global_func_table[index];
+
+    while(function!=NULL){
+        if(!strcmp(function->name,key)){
+            return function;
+        }
+        function = function->next;
+    }
+}
+
+
+void perform_type_checking(ast_node* ast_root,func_entry* func){
+
+    if(ast_root==NULL) {return ;}
+    
+    else if(!strcmp(ast_root->name,"DRIVER")){
+        func = find_module("DRIVER");
+    }
+    else if(!strcmp(ast_root->name,"MODULE")){
+        func = find_module(ast_root->child_pointers[0]->token->lexeme);
+    }
+    
+    int num_of_children = ast_root->no_of_children;
+    for(int i=0;i<num_of_children;i++){type_checking(ast_root->child_pointers[i],func);}
+    perform_type_checking(ast_root->next,func);
+    return ;
+}
+
 
 void semantic(){
     ast_node* ast_root = get_ast_root();
 
     populate_(ast_root);
-     type_checking(ast_root);
 
 }
