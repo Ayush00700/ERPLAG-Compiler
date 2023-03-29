@@ -184,7 +184,7 @@ int func_tab_entry_contains(char* key,func_entry* table[])
     while(current!=NULL){
         if(strcmp(current->name,key)==0){
             // printf(" %d %d",current->entry_number,current->order);
-            return 1;
+            return index;
         }
         current = current->next;
     }
@@ -425,8 +425,12 @@ type_exp* throw_error(semErrors error)
         return gen_error;}
         case OUT_OF_SCOPE_VARIABLE: {
         gen_error->datatype="OutOfScope";
+        return gen_error;}
+        case UNSUPPORTED_DTYPE: {
+        gen_error->datatype="OutOfScope";
         return gen_error;
         }
+
         
     }
 }
@@ -454,7 +458,7 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right)
 }
 
 type_exp* find_in_table(char* key,var_record* table){
-    int index = set_contains(key,table->entries);
+    int index = sym_tab_entry_contains(key,table->entries);
 
     sym_tab_entry* temp = table->entries[index];
 
@@ -476,7 +480,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr)
     }
     var_record* current_rec= curr->func_curr;
     var_record* temp=current_rec;
-    char * key=node->name;
+    char * key=node->token->lexeme;
     type_exp* type=find_in_table(key, current_rec);
     if(type)
     {
@@ -484,7 +488,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr)
     }    
     else
     {
-        curr->func_curr=curr->func_curr->parent;
+        curr->func_curr=curr->func_curr->parent; //also need to add for checking variable in the op list and ip list of the function record
         type= find_expr(node,curr);
         curr->func_curr=temp;
         return type;
@@ -509,7 +513,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         
         if(!strcmp(ret->datatype,"TypeNotMatched"))
         {
-            printf("Error found at line no %d : Type Mismatch \n", node->token->line_no);
+            printf("Error found at line no %d : Type Mismatch \n", node->child_pointers[0]->token->line_no);
         }
         return ret;
     }
@@ -530,6 +534,38 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
         temp->datatype="boolean";
         return temp;
+    }else if(!strcmp(node->name,"UNARY")){
+        
+        //CHILD_POINTER[0] just has a plus or minus sign no need to call anything
+        if(!node->child_pointers[0]) return throw_error(UNSUPPORTED_DTYPE);
+        //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or boolean
+        type_exp* temp = type_checking(node->child_pointers[1],curr);
+        //(only primitives)
+        if(!strcmp(temp->datatype,"array")){printf("\nError found at line no %d : Unary operation not supported for array dataype", node->child_pointers[0]->token->line_no);}
+        else if(!strcmp(temp->datatype,"integer")||
+                !strcmp(temp->datatype,"real")/* ||
+                do we need to add other datatypes ?*/){return temp;}
+        else{printf("\nError found at line no %d : Unary operation not supported for the dataype", node->token->line_no);}
+
+        return throw_error(UNSUPPORTED_DTYPE);
+    }
+    else if(!strcmp(node->name, "ARRAY_ACCESS")){
+        //CHILD_POINTER[0] will always be ID of the array (need to check it's type)
+        type_exp* var_id = type_checking(node->child_pointers[0],curr);
+        //CHILD_POINTER[1] will always give an expression, overall type could be 
+        type_exp* arr_expr = type_checking(node->child_pointers[1],curr);
+
+        if(!strcmp(arr_expr->datatype,"integer")){
+            if(!strcmp(var_id->datatype,"array")){
+                type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
+                temp->datatype = var_id->arr_data->arr_datatype;
+                return temp;
+            }else {printf("Error found at line no %d : ID is not of array datatype",node->child_pointers[0]->token->line_no);}
+        }else {printf("Error found at line no %d : array index expression only supports integer type",node->child_pointers[0]->token->line_no);}
+
+        //num or integer
+        return throw_error(UNSUPPORTED_DTYPE);
+        //to return only the type of ID
     }
     else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT"))
     {
@@ -540,7 +576,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     //check that they are both real||int
         if(!strcmp(ret->datatype,"TypeNotMatched"))
         {
-            printf("Error found at line no %d : Type Mismatch \n", node->token->line_no);
+            printf("\nError found at line no %d : Type Mismatch", node->token->line_no);
         }
         return ret;
         }
@@ -573,10 +609,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
     }
     //might need to handle cases and default and switch
-    else if(!strcmp(node->name, "DECLARE"))
-    {
-        //return NULL dont go to child
-    }
+    else return NULL;
 }
 
 /*Functions to add
@@ -607,9 +640,17 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     else if(!strcmp(ast_root->name,"MODULE")){
         func = find_module(ast_root->child_pointers[0]->token->lexeme);
     }
-    
+    else if(!strcmp(ast_root->name,"STATEMENTS")){
+        while(ast_root->next!=NULL){
+        type_checking(ast_root->next,func);
+        ast_root = ast_root->next;
+        }
+        type_checking(ast_root,func);
+    }
     int num_of_children = ast_root->no_of_children;
-    for(int i=0;i<num_of_children;i++){type_checking(ast_root->child_pointers[i],func);}
+    for(int i=0;i<num_of_children;i++){
+        perform_type_checking(ast_root->child_pointers[i],func);
+    }
     perform_type_checking(ast_root->next,func);
     return ;
 }
@@ -619,5 +660,6 @@ void semantic(){
     ast_node* ast_root = get_ast_root();
 
     populate_(ast_root);
+    perform_type_checking( ast_root, NULL);
 
 }
