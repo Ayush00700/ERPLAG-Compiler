@@ -113,6 +113,15 @@ extern void create_parse_table(rule* rules,NonT* non_terminals_set);
 
 extern void popOnErrors(token_info* curr, int prevLineNo);
 
+
+extern void free_recursive_rulenodes(ruleNode* rule_head);
+extern void free_rules(rule* rules);
+extern void free_recursive_entries(entry* entry_head);
+extern void free_sets(entry* table[]);
+extern void free_non_terminals_table(NonT* non_terminals_table);
+extern void free_parser_data(NonT* non_terminals, rule* rules);
+
+
 // Start parser
 // Function to start the Syntax Analyzer
 extern void call_parser(rule* rules, NonT* nont);

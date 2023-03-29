@@ -412,9 +412,25 @@ void populate_(ast_node* ast_root){
     }
 }
 
+// void type_checking(ast_node* ast_root){
+//     if(isPresentInChecker(ast_root))
+//     {
+
+//     }
+//     else
+//     {
+//         for(int i=0; i<ast_root->no_of_children; i++)
+//         {
+//             type_checking(ast_root->child_pointers[i]);
+//         }
+//     }
+// }
+
+
 void semantic(){
     ast_node* ast_root = get_ast_root();
 
     populate_(ast_root);
+    // type_checking(ast_root);
 
 }

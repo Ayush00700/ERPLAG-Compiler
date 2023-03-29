@@ -197,6 +197,8 @@ int main(int argc, char* args[]){ //DRIVER
                     print_parse_tree(parseBuffer);
                     create_abstract_tree();//creation of abstract syntax tree 
                     semantic();
+                    
+                    
 
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE

@@ -6,5 +6,6 @@
         "lexerdef.h": "c",
         "stdio.h": "c",
         "typeinfo": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

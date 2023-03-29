@@ -975,31 +975,6 @@ void popOnErrors(token_info* curr, int prevLineNo)
             }
         }
     }
-    // else if(strcmp(curr->type, "DRIVERENDDEF")==0)
-    // {
-    //     while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
-    //     {
-    //         pop(&parse_stack);
-    //         goToNextRight();
-    //         if(parse_stack.num<=1)  //Only dollar left
-    //         {
-    //             break;
-    //         }
-    //     }
-    // }
-    // else if(strcmp(curr->type, "ENDDEF")==0)
-    // {
-    //     while(strcmp(top(&parse_stack)->nodeInfo, "modDef")!=0)
-    //     {
-    //         pop(&parse_stack);
-    //         goToNextRight();
-    //         if(parse_stack.num<=1)  //Only dollar left
-    //         {
-    //             break;
-    //         }
-    //     }
-    // }
-
 }
 
 void call_parser(rule* rules, NonT* nont)
@@ -1218,10 +1193,7 @@ void call_parser(rule* rules, NonT* nont)
         // the case when it goes out of the 4above statement i.e. there is a terminal to match
         {
             // If there is a match
-            if(prevLineNo==27) {
-                int a =2;
-                a++;
-            }
+      
             if(strcmp(stackTop->nodeInfo,curr->type)==0)
             {
                 if(strcmp(stackTop->nodeInfo,"$"))
@@ -1296,8 +1268,70 @@ void call_parser(rule* rules, NonT* nont)
 }
 
 parse_tree* get_ptree(){
+    
     return &ptree;
 }
+
+
+void free_recursive_rulenodes(ruleNode* rule_head){
+
+    if(rule_head==NULL) {return;}
+
+    free_recursive_rulenodes(rule_head->nextNode);
+    free(rule_head->nodeInfo);
+    free(rule_head);
+}
+
+void free_rules(rule* rules){
+
+    for(int i=0;i<lines;i++){
+        free_recursive_rulenodes((rules+i)->head);
+    }
+}
+
+void free_recursive_entries(entry* entry_head){
+
+     if(entry_head==NULL) {return;}
+
+    free_recursive_entries(entry_head->next);
+    if(!entry_head->key)free(entry_head->key);
+    free(entry_head);
+}
+
+void free_sets(entry* table[]){
+
+    for(int i=0;i<TABLE_SIZE;i++){
+
+        if(table[i]==NULL){continue;}
+        else {
+            free_recursive_entries(table[i]);
+        }
+    }
+}
+
+
+void free_non_terminals_table(NonT* non_terminals_table){
+
+    for(int i=0;i<NON_TERMINALS;i++){
+
+        free_sets(non_terminals_table[i].first_set);
+        free_sets(non_terminals_table[i].follow_set);
+        if(!non_terminals_table[i].label)free(non_terminals_table[i].label);
+        if(!(non_terminals_table+i))free(non_terminals_table+i);
+    }
+}
+
+void free_parser_data(NonT* non_terminals, rule* rules){
+
+    free_rules(rules); //done
+
+    free_sets(non_Terminals_table);
+
+    free_sets(Terminals_table);
+
+    free_non_terminals_table(non_terminals);
+}
+
 
 void parseCompletely(int lflag){
     rule* rules = populate_grammar();
@@ -1345,5 +1379,4 @@ void parseCompletely(int lflag){
     // print_first_Sets(nont);
     // printf("\n");
     // print_follow_sets(nont);
-
 }
