@@ -1,7 +1,7 @@
 #include "ast.h"
 typedef enum semErrors{
     TYPE_NOT_MATCHED,OUT_OF_SCOPE_VARIABLE,
-    UNSUPPORTED_DTYPE,FUNC_NOT_DEFINED
+    UNSUPPORTED_DTYPE,FUNC_NOT_DEFINED, OUT_OF_ORDER_INDEX
 } semErrors;
 typedef struct arr_struct{
     int lower_bound;

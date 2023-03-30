@@ -57,11 +57,13 @@ NT[<Type:whichstmt>]
 NT[<Type:assignstmt>]
 NT[<Type:simplestmt>]
 NT[<Type:stmt>]
-TK[<Type:FOR> <Lexeme:for> <Line Number:10>]TK[<Type:BO> <Lexeme:(> <Line Number:10>]TK[<Type:ID> <Lexeme:index> <Line Number:10>]TK[<Type:IN> <Lexeme:in> <Line Number:10>]TK[<Type:MINUS> <Lexeme:-> <Line Number:10>]NT[<Type:sign_forloop>]
+TK[<Type:FOR> <Lexeme:for> <Line Number:10>]TK[<Type:BO> <Lexeme:(> <Line Number:10>]TK[<Type:ID> <Lexeme:index> <Line Number:10>]TK[<Type:IN> <Lexeme:in> <Line Number:10>]<Lexeme: >----
+NT[<Type:sign_forloop>]
 TK[<Type:NUM> <Lexeme:10> <Line Number:10>]<Values :10>
 NT[<Type:new_index_forloop>]
 NT[<Type:index_forloop>]
-TK[<Type:RANGEOP> <Lexeme:..> <Line Number:10>]TK[<Type:PLUS> <Lexeme:+> <Line Number:10>]NT[<Type:sign_forloop>]
+TK[<Type:RANGEOP> <Lexeme:..> <Line Number:10>]<Lexeme: >----
+NT[<Type:sign_forloop>]
 TK[<Type:NUM> <Lexeme:15> <Line Number:10>]<Values :15>
 NT[<Type:new_index_forloop>]
 NT[<Type:index_forloop>]
