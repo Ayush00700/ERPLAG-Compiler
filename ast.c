@@ -1592,7 +1592,7 @@ void create_abstract_tree(){
     new_root = create_ast(ptree->root);
     printf("\nPRINTING AST RULES\n");
     FILE* fp;
-    fp = fopen("ast.txt","w+");
+    fp = fopen("ast_t9.txt","w+");
     if(fp == NULL)
     {
         printf("Error opening file:ast.txt\n!");   

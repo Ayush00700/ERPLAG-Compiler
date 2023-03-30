@@ -556,6 +556,74 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         printf("Error found at line no %d : Out of scope \n", node->token->line_no);
         return var_exp;
     }
+        else if(!strcmp(node->name,"LT_result")||!strcmp(node->name,"LE_result")){
+        type_exp* op1 = type_checking(node->child_pointers[0],curr);
+        type_exp* op2 = type_checking(node->child_pointers[1],curr);
+        type_exp* compare = compare_dTypes(op1,op2);
+
+        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+          &&strcmp(compare->datatype,"TypeNotMatched")){
+            type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
+            temp->datatype = "boolean";
+            return temp;
+        }else{
+            printf("\nError found at line number %d: expected boolean operation",
+            node->child_pointers[0]->token->line_no);
+            return throw_error(UNSUPPORTED_DTYPE);
+        }
+    }
+        else if(!strcmp(node->name,"GT_result")||!strcmp(node->name,"GE_result")){
+        type_exp* op1 = type_checking(node->child_pointers[0],curr);
+        type_exp* op2 = type_checking(node->child_pointers[1],curr);
+        type_exp* compare = compare_dTypes(op1,op2);
+
+        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+          &&strcmp(compare->datatype,"TypeNotMatched")){
+            type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
+            temp->datatype = "boolean";
+            return temp;
+        }else{
+            printf("\nError found at line number %d: expected boolean operation",
+            node->child_pointers[0]->token->line_no);
+            return throw_error(UNSUPPORTED_DTYPE);
+        }
+    }
+        else if(!strcmp(node->name,"EQ_result")||!strcmp(node->name,"NE_result")){
+        type_exp* op1 = type_checking(node->child_pointers[0],curr);
+        type_exp* op2 = type_checking(node->child_pointers[1],curr);
+        type_exp* compare = compare_dTypes(op1,op2);
+
+        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+          &&strcmp(compare->datatype,"TypeNotMatched")){
+            type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
+            temp->datatype = "boolean";
+            return temp;
+        }else{
+            printf("\nError found at line number %d: expected boolean operation",
+            node->child_pointers[0]->token->line_no);
+            return throw_error(UNSUPPORTED_DTYPE);
+        }
+    }
+        else if(!strcmp(node->name,"AND")||!(strcmp(node->name,"OR"))){
+        type_exp* op1 = type_checking(node->child_pointers[0],curr);
+        type_exp* op2 = type_checking(node->child_pointers[1],curr);
+        type_exp* compare = compare_dTypes(op1,op2);
+
+        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")&&
+        strcmp(compare->datatype,"TypeNotMatched")){
+            type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
+            temp->datatype = "boolean";
+            return temp;
+        }else{
+            printf("\nError found at line number %d: expected boolean operation",
+            node->child_pointers[0]->token->line_no);
+            return throw_error(UNSUPPORTED_DTYPE);
+        }
+        
+    }
+        else if(!strcmp(node->name,"")){
+        
+    }
     else if(!strcmp(node->name,"ASSIGN"))
     {
         type_exp* left =type_checking(node->child_pointers[0],curr);
@@ -663,6 +731,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         curr->func_curr=curr->func_curr->child;
         //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
         type_exp* condition = type_checking(node->child_pointers[0],curr);
+        if(!strcmp(node->child_pointers[0]->name,"ID")
+           && strcmp(condition->datatype,"boolean")){
+            printf("Error found at line no: %d expected boolean expression",
+            node->child_pointers[0]->token->line_no);
+           }
+        perform_type_checking(node->child_pointers[1],curr);
 
     }
     //might need to handle cases and default and switch
