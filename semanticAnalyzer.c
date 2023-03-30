@@ -414,6 +414,22 @@ void populate_(ast_node* ast_root){
 
 
 //create enum
+Boolean isError(semErrors error)
+{
+
+    // switch(error){
+    //     case TYPE_NOT_MATCHED: {
+    //     return True;}
+    //     case OUT_OF_SCOPE_VARIABLE: {
+    //     return True;}
+    //     case UNSUPPORTED_DTYPE: {
+    //     return True;}
+    //     case FUNC_NOT_DEFINED:{
+    //     return True;}
+    //     default: return False;
+    // }
+}
+
 type_exp* throw_error(semErrors error)
 {
     //check with enum 
@@ -428,10 +444,10 @@ type_exp* throw_error(semErrors error)
         return gen_error;}
         case UNSUPPORTED_DTYPE: {
         gen_error->datatype="OutOfScope";
-        return gen_error;
-        }
-
-        
+        return gen_error;}
+        case FUNC_NOT_DEFINED:{
+        gen_error->datatype="FunctionOutofScope";
+        return gen_error;}
     }
 }
 
@@ -457,6 +473,32 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right)
         else return throw_error(TYPE_NOT_MATCHED);
 }
 
+type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr){
+    //extract the lexeme out of ast_root
+    char* key = ast_root->token->lexeme;
+
+    //check in the input list 
+    sym_tab_entry* temp = curr->input_list;
+    while(temp!=NULL){
+        if(!strcmp(temp->name,key)){
+            return &temp->type;
+        }
+        temp = temp->next;
+    }   
+
+    //check in the output list 
+    sym_tab_entry* temp = curr->ouput_list;
+    while(temp!=NULL){
+        if(!strcmp(temp->name,key)){
+            return &temp->type;
+        }
+        temp = temp->next;
+    }
+
+    return throw_error(OUT_OF_SCOPE_VARIABLE);
+}
+
+
 type_exp* find_in_table(char* key,var_record* table){
     int index = sym_tab_entry_contains(key,table->entries);
 
@@ -469,7 +511,6 @@ type_exp* find_in_table(char* key,var_record* table){
         temp = temp->next;
     }
     return throw_error(OUT_OF_SCOPE_VARIABLE);
-
 }
 
 type_exp* find_expr(ast_node* node, func_entry* curr)
@@ -478,8 +519,8 @@ type_exp* find_expr(ast_node* node, func_entry* curr)
     {
         return throw_error(OUT_OF_SCOPE_VARIABLE);
     }
-    var_record* current_rec= curr->func_curr;
-    var_record* temp=current_rec;
+    var_record* current_rec = curr->func_curr;
+    var_record* temp = current_rec;
     char * key=node->token->lexeme;
     type_exp* type=find_in_table(key, current_rec);
     if(type)
@@ -489,15 +530,25 @@ type_exp* find_expr(ast_node* node, func_entry* curr)
     else
     {
         curr->func_curr=curr->func_curr->parent; //also need to add for checking variable in the op list and ip list of the function record
-        type= find_expr(node,curr);
-        curr->func_curr=temp;
+        if(curr->func_curr==NULL){
+            // just check in the function parameter list
+            type = find_in_func_table(node,curr);
+            curr->func_curr = temp;
+            //return from here only
+        }else{
+        type = find_expr(node,curr);
+        }
+        curr->func_curr = temp;
         return type;
     }
-
 }
 
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
+    // if(){ // isError function to be called 
+
+    // }
+    // else 
     if(!strcmp(node->name,"ID"))
     {
         type_exp* var_exp= find_expr(node, curr);
@@ -540,6 +591,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if(!node->child_pointers[0]) return throw_error(UNSUPPORTED_DTYPE);
         //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or boolean
         type_exp* temp = type_checking(node->child_pointers[1],curr);
+        // if()
         //(only primitives)
         if(!strcmp(temp->datatype,"array")){printf("\nError found at line no %d : Unary operation not supported for array dataype", node->child_pointers[0]->token->line_no);}
         else if(!strcmp(temp->datatype,"integer")||
@@ -567,27 +619,28 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         return throw_error(UNSUPPORTED_DTYPE);
         //to return only the type of ID
     }
-    else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT"))
+    else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT")||!strcmp(node->name,"DIV"))
     {
         if(node->no_of_children!=0){    //to handle non unary expression 
         type_exp* left =type_checking(node->child_pointers[0],curr);
         type_exp* right=type_checking(node->child_pointers[1],curr);
         type_exp* ret=compare_dTypes(left, right);
+        
     //check that they are both real||int
         if(!strcmp(ret->datatype,"TypeNotMatched"))
         {
             printf("\nError found at line no %d : Type Mismatch", node->token->line_no);
         }
+        {
+            return throw_error(UNSUPPORTED_DTYPE);
+        }
         return ret;
         }
      }
-    else if(!strcmp(node->name, "DIV"))
-    {
-        //divide by zero check
-    } 
     else if (!strcmp(node->name, "AND")||!strcmp(node->name, "OR"))
     {
         //Check that they are both boolean
+
     }
     else if(!strcmp(node->name, "FORINDEX"))
     {
@@ -612,11 +665,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else return NULL;
 }
 
-/*Functions to add
-    traverse parse tree and change the func_entry
-    searche the variable for variabe symbol_entry in the current func_entry
-    
-*/
+
 func_entry* find_module(char* key){
     int index = func_tab_entry_contains(key, global_func_table);
     func_entry* function = global_func_table[index];
@@ -627,6 +676,7 @@ func_entry* find_module(char* key){
         }
         function = function->next;
     }
+    return NULL; 
 }
 
 
@@ -639,6 +689,8 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     }
     else if(!strcmp(ast_root->name,"MODULE")){
         func = find_module(ast_root->child_pointers[0]->token->lexeme);
+        throw_error(FUNC_NOT_DEFINED);
+        printf("\nError found at line no %d : Function Not Defined",ast_root->child_pointers[0]->token->line_no);
     }
     else if(!strcmp(ast_root->name,"STATEMENTS")){
         while(ast_root->next!=NULL){
