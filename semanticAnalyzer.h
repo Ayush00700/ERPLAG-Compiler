@@ -22,4 +22,5 @@ extern void func_def(ast_node* ast_root);
 extern sym_tab_entry* getlist(ast_node* ast_root,int* offset);
 extern void populate_(ast_node* ast_root);
 extern type_exp* type_checking(ast_node* node, func_entry* curr);
+extern void perform_type_checking(ast_node* ast_root,func_entry* func);
 extern void semantic();

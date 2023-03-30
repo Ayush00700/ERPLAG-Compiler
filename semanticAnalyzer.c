@@ -443,7 +443,7 @@ type_exp* throw_error(semErrors error)
         gen_error->datatype="OutOfScope";
         return gen_error;}
         case UNSUPPORTED_DTYPE: {
-        gen_error->datatype="OutOfScope";
+        gen_error->datatype="NotSupportedDatatype";
         return gen_error;}
         case FUNC_NOT_DEFINED:{
         gen_error->datatype="FunctionOutofScope";
@@ -487,7 +487,7 @@ type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr){
     }   
 
     //check in the output list 
-    sym_tab_entry* temp = curr->ouput_list;
+    temp = curr->ouput_list;
     while(temp!=NULL){
         if(!strcmp(temp->name,key)){
             return &temp->type;
@@ -510,7 +510,7 @@ type_exp* find_in_table(char* key,var_record* table){
         }
         temp = temp->next;
     }
-    return throw_error(OUT_OF_SCOPE_VARIABLE);
+    return throw_error(OUT_OF_SCOPE_VARIABLE);//think should return NULL
 }
 
 type_exp* find_expr(ast_node* node, func_entry* curr)
@@ -523,7 +523,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr)
     var_record* temp = current_rec;
     char * key=node->token->lexeme;
     type_exp* type=find_in_table(key, current_rec);
-    if(type)
+    if(strcmp(type->datatype,"OutOfScope"))
     {
         return type;
     }    
@@ -591,7 +591,6 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if(!node->child_pointers[0]) return throw_error(UNSUPPORTED_DTYPE);
         //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or boolean
         type_exp* temp = type_checking(node->child_pointers[1],curr);
-        // if()
         //(only primitives)
         if(!strcmp(temp->datatype,"array")){printf("\nError found at line no %d : Unary operation not supported for array dataype", node->child_pointers[0]->token->line_no);}
         else if(!strcmp(temp->datatype,"integer")||
@@ -654,11 +653,16 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     {
         //change the current variable record
         curr->func_curr=curr->func_curr->child;
-
+        //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
+        type_exp* id_type = type_checking(node->child_pointers[0],curr);
+        type_exp* range_type = type_checking(node->child_pointers[1],curr);
+        perform_type_checking(node->child_pointers[2],curr);
     }
     else if(!strcmp(node->name, "WHILELOOP"))
     {
         curr->func_curr=curr->func_curr->child;
+        //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
+        type_exp* condition = type_checking(node->child_pointers[0],curr);
 
     }
     //might need to handle cases and default and switch
@@ -689,9 +693,9 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     }
     else if(!strcmp(ast_root->name,"MODULE")){
         func = find_module(ast_root->child_pointers[0]->token->lexeme);
-        throw_error(FUNC_NOT_DEFINED);
+        if(func==NULL){throw_error(FUNC_NOT_DEFINED);
         printf("\nError found at line no %d : Function Not Defined",ast_root->child_pointers[0]->token->line_no);
-    }
+    }}
     else if(!strcmp(ast_root->name,"STATEMENTS")){
         while(ast_root->next!=NULL){
         type_checking(ast_root->next,func);
@@ -712,6 +716,6 @@ void semantic(){
     ast_node* ast_root = get_ast_root();
 
     populate_(ast_root);
-    perform_type_checking( ast_root, NULL);
+    perform_type_checking(ast_root,NULL);
 
 }
