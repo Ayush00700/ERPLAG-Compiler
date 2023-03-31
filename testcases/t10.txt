@@ -10,18 +10,22 @@ start
 	for(index in  10..15)
 	start
 		t:= index<=n;
-		switch(t)
+		switch(index)
 		start
-			case true: print(list[+index]); **Doubt by AYush in AST rule 40 vs 45**
+			case 1: print(list[+index]); **Doubt by AYush in AST rule 40 vs 45**
 				   sum:=sum+list[index];
                    declare index:integer;
 				   break;
-			case false: print(sum);
+			case 2: print(sum);
 				    print(index);
                     declare A:array[1..15] of real;
 					declare index:integer;
 				    **prints the values of sum and index  15-n times**
 				    break;
+			case true: print(sum);
+					break;
+			default: print(sum);
+					 break;
 		end
 		** no need to increment the value of index as it will be taken care by the semantic rules associated with for construct, but an increment statement does not make its syntax incorrect**
 	end

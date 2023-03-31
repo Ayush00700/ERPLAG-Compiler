@@ -295,6 +295,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             }
             temp->r_sibiling = local_for;
         }
+        
         local_populate(local_for,ast_root->child_pointers[2]);
         local_table->offset = local_for->offset;
     }
@@ -346,7 +347,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch_default->child = NULL;
         local_switch_default->r_sibiling = NULL;
         local_switch_default->offset = local_table->offset;
-        local_switch->construct_name = "DEFAULT";
+        local_switch_default->construct_name = "DEFAULT";
          if(local_table->child == NULL){
             local_table->child = local_switch_default;
         }
@@ -739,10 +740,38 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         perform_type_checking(node->child_pointers[1],curr);
         curr->func_curr=temp;
     }
+    else if(!strcmp(node->name, "CASE")){
+
+        type_exp* case_id = type_checking(node->child_pointers[0],curr);
+        int line = node->child_pointers[0]->token->line_no;
+        type_exp* other_cases;
+        if(node->next==NULL){
+            perform_type_checking(node->child_pointers[1],curr);
+            return case_id;
+        }else{
+            var_record* temp = curr->func_curr;
+            curr->func_curr = curr->func_curr->r_sibiling;
+            other_cases = type_checking(node->next,curr);
+            perform_type_checking(node->child_pointers[1],curr);
+
+            if(strcmp(case_id->datatype,other_cases->datatype)){
+                return throw_error(UNSUPPORTED_DTYPE,line);
+            }
+            curr->func_curr = temp;
+            return other_cases;
+        }
+    }
     else if(!strcmp(node->name, "SWITCH")){
         var_record* temp= curr->func_curr;
+        int line = node->child_pointers[0]->token->line_no;
+        type_exp* switch_id = type_checking(node->child_pointers[0],curr);
         curr->func_curr=curr->func_curr->child;
         //switch case needs to be handled apart only 
+        type_exp* case_ids = type_checking(node->child_pointers[1],curr);
+        type_exp* default_ids = type_checking(node->child_pointers[2],curr);
+
+        type_exp* compare = compare_dTypes(switch_id,case_ids,line);
+        return compare;
     }
     else return NULL;
 }

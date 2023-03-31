@@ -194,7 +194,7 @@ int main(int argc, char* args[]){ //DRIVER
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
-                    print_parse_tree(parseBuffer);
+                    // print_parse_tree(parseBuffer);
                     create_abstract_tree();//creation of abstract syntax tree 
                     semantic();
                     

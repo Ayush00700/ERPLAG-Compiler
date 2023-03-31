@@ -1264,7 +1264,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             free(root->child_pointers[4]);
             return parent;}
         case 127:
-{            ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
+{           ast_node* temp = (ast_node*)malloc(sizeof(ast_node));
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
