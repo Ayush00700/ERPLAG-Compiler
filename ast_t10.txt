@@ -1646,12 +1646,12 @@ Iterating over next child of Node 196:
 
 198	ARRAY_ACCESS
 No of children: 2 
-Childrens:ID ,PLUS ,
+Childrens:ID ,ID ,
 Next pointers:NULL
 
 Iterating over next child of Node 198:
 
-	B
+	arr1
 
 199	ID
 No of children: 0 
@@ -1660,229 +1660,197 @@ Next pointers:NULL
 
 Iterating over next child of Node 198:
 
-200	PLUS
-No of children: 2 
-Childrens:ID ,MUL ,
-Next pointers:NULL
+	k
 
-Iterating over next child of Node 200:
-
-	a
-
-201	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 200:
-
-202	MUL
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 202:
-
-	b
-
-203	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 202:
-
-	c
-
-204	ID
+200	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 195:
 
-205	ARRAY_ACCESS
+201	ARRAY_ACCESS
 No of children: 2 
 Childrens:ID ,SIGNED_NUMBER ,
 Next pointers:NULL
 
-Iterating over next child of Node 205:
+Iterating over next child of Node 201:
 
-	A
+	arr1
 
-206	ID
+202	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 205:
+Iterating over next child of Node 201:
 
-207	SIGNED_NUMBER
+203	SIGNED_NUMBER
 No of children: 2 
 Childrens:PLUS ,NUM ,
 Next pointers:NULL
 
-Iterating over next child of Node 207:
+Iterating over next child of Node 203:
 
 	+
 
-208	PLUS
+204	PLUS
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 207:
+Iterating over next child of Node 203:
 
 	5
 
 	5
 
-209	NUM
+205	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 194:
 
-210	ARRAY_ACCESS
+206	ARRAY_ACCESS
 No of children: 2 
 Childrens:ID ,SIGNED_NUMBER ,
 Next pointers:NULL
 
-Iterating over next child of Node 210:
+Iterating over next child of Node 206:
 
-	A
+	arr1
 
-211	ID
+207	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 210:
+Iterating over next child of Node 206:
 
-212	SIGNED_NUMBER
+208	SIGNED_NUMBER
 No of children: 2 
 Childrens:MINUS ,NUM ,
 Next pointers:NULL
 
-Iterating over next child of Node 212:
+Iterating over next child of Node 208:
 
 	-
 
-213	MINUS
+209	MINUS
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 212:
+Iterating over next child of Node 208:
 
 	10
 
 	10
 
-214	NUM
+210	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next list element of node 172:
 
-215	ASSIGN
+211	ASSIGN
 No of children: 2 
 Childrens:ARRAY_ASSIGN ,UNARY ,
 Next pointers:ASSIGN ,
 
-Iterating over next child of Node 215:
+Iterating over next child of Node 211:
 
-216	ARRAY_ASSIGN
+212	ARRAY_ASSIGN
 No of children: 2 
 Childrens:ID ,ID ,
 Next pointers:NULL
 
-Iterating over next child of Node 216:
+Iterating over next child of Node 212:
 
 	B
 
-217	ID
+213	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 216:
+Iterating over next child of Node 212:
 
 	k
 
-218	ID
+214	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 211:
+
+215	UNARY
+No of children: 2 
+Childrens:MINUS ,NUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 215:
+
+	-
+
+216	MINUS
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 215:
 
-219	UNARY
-No of children: 2 
-Childrens:MINUS ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 219:
-
-	-
-
-220	MINUS
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 219:
-
 	10
 
 	10
 
-221	NUM
+217	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next list element of node 172:
 
-222	ASSIGN
+218	ASSIGN
 No of children: 2 
 Childrens:ID ,PLUS ,
 Next pointers:NULL
 
-Iterating over next child of Node 222:
+Iterating over next child of Node 218:
 
 	i
 
-223	ID
+219	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 222:
+Iterating over next child of Node 218:
 
-224	PLUS
+220	PLUS
 No of children: 2 
 Childrens:ID ,NUM ,
 Next pointers:NULL
 
-Iterating over next child of Node 224:
+Iterating over next child of Node 220:
 
 	i
 
-225	ID
+221	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 224:
+Iterating over next child of Node 220:
 
 	1
 
 	1
 
-226	NUM
+222	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL

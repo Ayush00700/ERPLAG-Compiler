@@ -40,5 +40,6 @@ typedef struct func_entry{
     var_record* func_curr;
     struct func_entry* next;
     int offset;
+    int visited;
 }func_entry;
 

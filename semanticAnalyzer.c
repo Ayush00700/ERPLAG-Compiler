@@ -545,6 +545,13 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
     }
 }
 
+int line_number_finder(ast_node* ast_root){
+
+    if(ast_root&& ast_root->isTerminal){
+        return ast_root->token->line_no;
+    }else return line_number_finder(ast_root->child_pointers[0]);
+}
+
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
 
@@ -636,7 +643,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line;
         type_exp* ret;
         if(strcmp(left->datatype,"array")){
-        line=node->child_pointers[0]->token->line_no;
+        line=line_number_finder(node);
         ret=compare_dTypes(left, right,line);}//Might need to check child's line number
         else{line=node->child_pointers[0]->child_pointers[0]->token->line_no;
         if(!strcmp(left->arr_data->arr_datatype,right->datatype));
@@ -669,12 +676,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or boolean
         type_exp* temp = type_checking(node->child_pointers[1],curr);
         //(only primitives)
-        if(!strcmp(temp->datatype,"array")){printf("\nError found at line no %d : Unary operation not supported for array dataype", node->child_pointers[0]->token->line_no);}
-        else if(!strcmp(temp->datatype,"integer")||
-                !strcmp(temp->datatype,"real")/* ||
+        if(temp&&!strcmp(temp->datatype,"array")){
+             int line=node->child_pointers[0]->token->line_no;
+             return throw_error(UNSUPPORTED_DTYPE, line);}
+        else if(temp&&(!strcmp(temp->datatype,"integer")||
+                !strcmp(temp->datatype,"real"))/* ||
                 do we need to add other datatypes ?*/){return temp;}
-        else{printf("\nError found at line no %d : Unary operation not supported for the dataype", node->token->line_no);}
-
         return throw_error(UNSUPPORTED_DTYPE,line);
     }
     else if(!strcmp(node->name, "ARRAY_ACCESS")){
@@ -699,21 +706,22 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name, "SIGNED_NUMBER"))
     {
-
+        type_exp* num=type_checking(node->child_pointers[1],curr);
+        // type_exp* sign=type_checking(node->child_pointers[1],line);
+        int line=node->child_pointers[1]->token->line_no;
+        if(strcmp(num->datatype,"integer"))
+        return throw_error(UNSUPPORTED_DTYPE,line);
+        else return num;
     }
     else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT")||!strcmp(node->name,"DIV"))
     {
         if(node->no_of_children!=0){    //to handle non unary expression 
         type_exp* left =type_checking(node->child_pointers[0],curr);
         type_exp* right=type_checking(node->child_pointers[1],curr);
-        int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
+        int line=line_number_finder(node);//Might need to check child's line number
         //for PLUS operator need not be always line number tractable
         type_exp* ret=compare_dTypes(left, right,line);
         return ret;
-        }
-        else
-        {
-            return ;
         }
      }
     else if(!strcmp(node->name, "FORINDEX"))
@@ -832,13 +840,15 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
         func = find_module(ast_root->child_pointers[0]->token->lexeme);
         if(func==NULL){
         printf("\nError found at line no %d : Function Not Defined",ast_root->child_pointers[0]->token->line_no);
-    }}
+        }else func->visited = 1;
+    }
     else if(!strcmp(ast_root->name,"STATEMENTS")){
         while(ast_root->next!=NULL){
         type_checking(ast_root->next,func);
         ast_root = ast_root->next;
         }
         // type_checking(ast_root,func);
+        return;
     }
     int num_of_children = ast_root->no_of_children;
     for(int i=0;i<num_of_children;i++){
