@@ -38,7 +38,7 @@ start
 		while(t OR r)
 		start
 		get_value(tempvar);
-		arr1[i]:=tempvar; 		**Ayush TODO Check for arr1[-i]**
+		arr1[i]:=tempvar; 		
                 declare B:array[-p..+q] of boolean;
                 tempvar:=-(tempvar+ arr1[k]+arr1[+5]-arr1[-10]);
 		B[k]:=-10;
@@ -48,7 +48,7 @@ start
 
 		switch(index)
 		start
-			case 1: print(list[+index]); **Doubt by AYush in AST rule 40 vs 45**
+			case 1: print(list[+index]);
 				   sum:=sum+list[index];
                    declare index:integer;
 				   break;
