@@ -6,7 +6,7 @@ extern int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp);
 extern int sym_tab_entry_contains(char* key,sym_tab_entry* table[]);
 
 
-//
+//hash functions
 extern func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* input_list,sym_tab_entry* ouput_list,int* offset);
 extern void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset,int initial);
 extern int func_tab_entry_contains(char* key,func_entry* table[]);

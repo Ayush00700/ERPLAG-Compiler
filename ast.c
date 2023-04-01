@@ -1296,7 +1296,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             statement->next= child2;
             statement->no_of_children = 0;
             ast_node* parent = (ast_node*)malloc(sizeof(ast_node));
-            parent->name = "CASE";
+            parent->name = "CASE_HEAD";
             parent->isTerminal = False;
             parent->no_of_children = 2;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));

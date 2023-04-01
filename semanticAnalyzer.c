@@ -267,6 +267,21 @@ void local_populate(var_record* local_table,ast_node* ast_root){
     if(!ast_root){
         return;
     }
+    else if(!strcmp(ast_root->name,"CASE_HEAD")){
+        local_populate(local_table,ast_root->child_pointers[1]);
+        var_record* local_case = (var_record*) malloc(sizeof(var_record));
+        local_case->parent = local_table->parent;
+        local_case->child = NULL;
+        local_case->r_sibiling = NULL;
+        local_case->offset = local_table->offset;
+        local_case->construct_name = "CASE";
+        if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
+        else{
+        local_populate(local_case,ast_root->child_pointers[1]);
+        }
+        local_table->offset = local_case->offset;
+        if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
+    }
     else if(!strcmp(ast_root->name,"CASE")){
         local_populate(local_table,ast_root->child_pointers[1]);
         var_record* local_case = (var_record*) malloc(sizeof(var_record));
@@ -301,6 +316,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         }
 
         local_populate(local_for,ast_root->child_pointers[2]);
+        local_populate(local_table,ast_root->next);
         local_table->offset = local_for->offset;
     }
     else if(!strcmp(ast_root->name,"WHILELOOP")){
@@ -321,6 +337,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_while;
         }
         local_populate(local_while,ast_root->child_pointers[1]);
+        local_populate(local_table,ast_root->next);
         local_table->offset = local_while->offset; 
     }
     else if(!strcmp(ast_root->name,"SWITCH")){
@@ -329,7 +346,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch->child = NULL;
         local_switch->r_sibiling = NULL;
         local_switch->offset = local_table->offset;
-        local_switch->construct_name = "CASE";
+        local_switch->construct_name = "CASE_HEAD";
         if(local_table->child == NULL){
             local_table->child = local_switch;
         }
@@ -363,6 +380,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_switch_default;
         }
         local_populate(local_switch_default,ast_root->child_pointers[2]);
+        local_populate(local_table,ast_root->next);
         local_table->offset = local_switch_default->offset; 
     }
     else if(!strcmp(ast_root->name,"DECLARE")){
@@ -406,7 +424,7 @@ void populate_(ast_node* ast_root){
     }
     else if(!strcmp(ast_root->name,"MODULE")){
         func_def(ast_root);
-        populate_(ast_root->next);
+        populate_(ast_root->next); 
     }
     else{
         int num = ast_root->no_of_children;
@@ -418,18 +436,6 @@ void populate_(ast_node* ast_root){
     }
 }
 
-
-//create enum
-// Boolean isError(type_exp* error)
-// {
-
-//     if(!strcmp(error->datatype,"TypeNotMatched")
-//     ||!strcmp(error->datatype,"OutOfScope")
-//     ||!strcmp(error->datatype,"NotSupportedDatatype")
-//     ||!strcmp(error->datatype,"FunctionOutofScope"))
-//     return True;
-//     return False;
-// }
 
 type_exp* throw_error(semErrors error, int line)
 {
@@ -552,6 +558,29 @@ int line_number_finder(ast_node* ast_root){
     }else return line_number_finder(ast_root->child_pointers[0]);
 }
 
+void check_cases(ast_node* node, func_entry* curr,type_exp* switch_dtype){
+
+    if(!node){
+        return;
+    }
+    type_exp* case_id = type_checking(node->child_pointers[0],curr);
+    int line = node->child_pointers[0]->token->line_no;
+    if(compare_dTypes(case_id,switch_dtype,line)){
+    perform_type_checking(node->child_pointers[1],curr);}
+    if(curr->func_curr->r_sibiling&&
+    (!strcmp(curr->func_curr->r_sibiling->construct_name,"CASE"))){
+    curr->func_curr = curr->func_curr->r_sibiling;
+    check_cases(node->next,curr,switch_dtype);
+    }
+    else if(curr->func_curr->r_sibiling){
+    curr->func_curr->parent->child = curr->func_curr->r_sibiling;
+    curr->func_curr = curr->func_curr->r_sibiling;
+    }else{
+        curr->func_curr = curr->func_curr->parent;
+    }
+}
+
+
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
 
@@ -566,7 +595,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else if(!strcmp(node->name,"ARRAY_ASSIGN")){
         type_exp* arr_data = type_checking(node->child_pointers[0],curr);
         type_exp* arr_index = type_checking(node->child_pointers[1],curr);
-        if( arr_data!=NULL
+        if( arr_data!=NULL && arr_index !=NULL
             && !strcmp(arr_data->datatype,"array")
             && !strcmp(arr_index->datatype,"integer")){
                 return arr_data;
@@ -627,8 +656,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
         type_exp* compare = compare_dTypes(op1,op2,line);
 
-        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")&&
-        compare){
+        if(compare&&op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")        ){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
             return temp;
@@ -642,11 +670,11 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* right=type_checking(node->child_pointers[1],curr);
         int line;
         type_exp* ret;
-        if(strcmp(left->datatype,"array")){
+        if(left&&strcmp(left->datatype,"array")){
         line=line_number_finder(node);
         ret=compare_dTypes(left, right,line);}//Might need to check child's line number
-        else{line=node->child_pointers[0]->child_pointers[0]->token->line_no;
-        if(!strcmp(left->arr_data->arr_datatype,right->datatype));
+        else{line=line_number_finder(node);
+        if(left && right && !strcmp(left->arr_data->arr_datatype,right->datatype));
         return NULL;
         }
         return ret;
@@ -745,6 +773,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         //check for error
         if(!index1||!index2)
         return NULL;
+        //TODO static array check and (check bas)
         int val1 = node->child_pointers[0]->child_pointers[1]->token->values.num;
         int val2 = node->child_pointers[1]->child_pointers[1]->token->values.num;
         if(val1>val2)
@@ -761,6 +790,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* range_type = type_checking(node->child_pointers[1],curr);
         perform_type_checking(node->child_pointers[2],curr);
         curr->func_curr=temp;
+        curr->func_curr->child = curr->func_curr->child->r_sibiling;
     }
     else if(!strcmp(node->name, "WHILELOOP"))
     {
@@ -775,40 +805,29 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
            }
         perform_type_checking(node->child_pointers[1],curr);
         curr->func_curr=temp;
-    }
-    else if(!strcmp(node->name, "CASE")){
-
-        type_exp* case_id = type_checking(node->child_pointers[0],curr);
-        int line = node->child_pointers[0]->token->line_no;
-        type_exp* other_cases;
-        if(node->next==NULL){
-            perform_type_checking(node->child_pointers[1],curr);
-            return case_id;
-        }else{
-            var_record* temp = curr->func_curr;
-            curr->func_curr = curr->func_curr->r_sibiling;
-            other_cases = type_checking(node->next,curr);
-            line = node->next->child_pointers[0]->token->line_no;
-            perform_type_checking(node->child_pointers[1],curr);
-
-            if(other_cases!=NULL&&strcmp(case_id->datatype,other_cases->datatype)){
-                return throw_error(UNSUPPORTED_DTYPE,line);
-            }
-            curr->func_curr = temp;
-            return other_cases;
-        }
+        curr->func_curr->child = curr->func_curr->child->r_sibiling;
     }
     else if(!strcmp(node->name, "SWITCH")){
         var_record* temp= curr->func_curr;
         int line = node->child_pointers[0]->token->line_no;
         type_exp* switch_id = type_checking(node->child_pointers[0],curr);
+        //context change
         curr->func_curr=curr->func_curr->child;
         //switch case needs to be handled apart only 
-        type_exp* case_ids = type_checking(node->child_pointers[1],curr);
+        if(switch_id)check_cases(node->child_pointers[1],curr,switch_id);
+        // type_exp* case_ids = type_checking(node->child_pointers[1],curr);
         type_exp* default_ids = type_checking(node->child_pointers[2],curr);
-        type_exp* compare;
-        if(case_ids)compare = compare_dTypes(switch_id,case_ids,line);
-        return compare;
+        if(curr->func_curr->r_sibiling){
+        curr->func_curr->parent->child = curr->func_curr->r_sibiling;
+        curr->func_curr = temp;
+        }
+        else {curr->func_curr = temp;}
+        // type_exp* compare;
+        // if(case_ids)compare = compare_dTypes(switch_id,case_ids,line);
+        // return compare;
+    }
+    else if(!strcmp(node->name,"DEFAULTCASE")){
+        perform_type_checking(node->child_pointers[0],curr);
     }
     else return NULL;
 }
@@ -863,5 +882,7 @@ void semantic(){
 
     populate_(ast_root);
     perform_type_checking(ast_root,NULL);
+
+    //perform bound checking
 
 }
