@@ -190,6 +190,20 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 
 ### Doubts
 
+### Requirements for Intermediate Code Generation
+Intermediate Representation is required to make the compilation process platform independent and avoid the hassle of repeating all steps of compilation in all machines. These can be language dependent or language independent. The language independent ones are various IRs:
+- Postfix Notation
+- 3 Address Codes
+- Syntax tree
+
+We have used "3 Address Codes" IR. We have generated IR for the following:
+- Assignment statements
+- Conditional Statements
+- Iterative Statements
+- Input Output Statements
+- Boolean Expression
+- Function calls
+
 
 
 ### Left to Implement
