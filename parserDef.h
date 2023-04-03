@@ -16,6 +16,8 @@
 typedef enum Boolean {False,True}Boolean;
 
 //FOR IR CODE
+
+
 typedef enum OPCODE
 {
     ASSIGN,
@@ -42,6 +44,33 @@ typedef enum OPCODE
     LABEL,
     RET
 }OPCODE;
+
+
+static const char * const OPCODE_str[] = {
+    [ASSIGN] = "ASSIGN",
+    [UNARY_PLUS] = "UNARY_PLUS",
+    [UNARY_MINUS] = "UNARY_MINUS",
+    [GET_VALUE] = "GET_VALUE",
+    [PRINT] = "PRINT",
+    [ADD] = "ADD",
+    [SUB] = "SUB",
+    [MUL] = "MUL",
+    [DIV] = "DIV",
+    [LT] = "LT",
+    [LE] = "LE",
+    [GT] = "GT",
+    [GE] = "GE",
+    [EQ] = "EQ",
+    [NEQ] = "NEQ",
+    [OR] = "OR",
+    [AND] = "AND",
+    [FN_CALL] = "FN_CALL",
+    [FUNC] = "FUNC",
+    [GOTO] = "GOTO",
+    [IF] = "IF",
+    [LABEL] = "LABEL",
+    [RET] = "RET"
+};
 
 
 typedef struct ir_code_node

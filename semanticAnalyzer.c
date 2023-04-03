@@ -886,6 +886,6 @@ void semantic(){
     //perform bound checking
 
 }
-void get_global_symbol_table(){
+func_entry** get_global_symbol_table(){
     return global_func_table;    
 }

@@ -191,8 +191,11 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 ### Doubts
 
 Temp variables in Symbol table
+Will the width of activation record get affected by these temp variables
 IR for arrays
-
+Order of entry of actual and formal params
+Is it the responsibility of caller of callee to transfer values?
+Is it okay to print parse tree and ast the way we are doing?
 
 ### Requirements for Intermediate Code Generation
 Intermediate Representation is required to make the compilation process platform independent and avoid the hassle of repeating all steps of compilation in all machines. These can be language dependent or language independent. The language independent ones are various IRs:
