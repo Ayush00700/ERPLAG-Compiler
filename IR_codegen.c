@@ -79,7 +79,7 @@ void IR_inputStmt(){
 
 
 void print_ir_code(FILE* fptr){
-    ir_code* curr = global_ir_code;
+    ir_code_node* curr = global_ir_code;
     while(curr){
         fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
         curr = curr->next;      //TODO Debug for null
