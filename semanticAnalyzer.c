@@ -838,7 +838,7 @@ func_entry* find_module(char* key){
     if(index==-1)return NULL;
     func_entry* function = global_func_table[index];
 
-    while(function!=NULL){
+    while(function!=NULL){      //HASH COLLISION
         if(!strcmp(function->name,key)){
             return function;
         }
@@ -885,4 +885,7 @@ void semantic(){
 
     //perform bound checking
 
+}
+void get_global_symbol_table(){
+    return global_func_table;    
 }

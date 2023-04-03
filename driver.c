@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "semanticAnalyzer.h"
+#include "IR_codegen.h"
 #include <string.h>
 
 int main(int argc, char* args[]){ //DRIVER
@@ -196,10 +196,13 @@ int main(int argc, char* args[]){ //DRIVER
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                     // print_parse_tree(parseBuffer);
                     create_abstract_tree();//creation of abstract syntax tree 
+                    ast_node* ast_root = get_ast_root();
                     semantic();
-                    
-                    
-
+                    func_entry* global_func_table = get_global_symbol_table();
+                    FILE* fptr = fopen("intermediate_code.txt","w+");
+                    ir_code* intermediate_code =  getIRList(ast_root,global_func_table);
+                    print_ir_code(fptr);
+                    fclose(fptr);
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
 

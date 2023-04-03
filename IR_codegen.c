@@ -71,21 +71,12 @@ void IR_switchStmt(ast_node* node){
     
 }
 
-<<<<<<< HEAD
 void IR_iterative(ast_node* node){
     
 }
 
 void IR_booleanExpr(ast_node* node){
     
-=======
-// void print_ir_code(FILE* fptr){
-//     ir_code_node* curr = global_ir_code;
-//     while(curr){
-//         fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
-//         curr = curr->next;      //TODO Debug for null
-//     }
->>>>>>> 17e905aa19d7ff508561c066e41188031dc17101
 }
 
 void IR_arithmenticExpr(ast_node* node){
@@ -112,18 +103,72 @@ void IR_stmts(ast_node* node){
 //     }
 // }
 
-ir_code* getIRList(ast_node* root){
-    IR_codeGen(root); 
+ir_code* getIRList(ast_node* root, func_entry* global_ST){
+    IR_codeGen(root->child_pointers[1],global_ST); 
+    IR_codeGen(root->child_pointers[2],global_ST); 
+    IR_codeGen(root->child_pointers[3],global_ST); 
     return root->code;
 }
-void IR_codeGen(){
-
-    
+void IR_codeGen(ast_node* root,func_entry* global_ST){
+    if(root==NULL){
+        return;
+    }
+    else if(!strcmp(root->name,"DRIVER")){
+        func_entry* local_ST = find_module("DRIVER");
+        generate_IR_for_module(root,local_ST,global_ST);
+    }
+    else if(!strcmp(root->name,"MODULE")){
+        while(root!=NULL){
+            func_entry* local_ST = find_module(root->child_pointers[0]->token->lexeme);
+            generate_IR_for_module(root,local_ST,global_ST);
+            root = root->next;
+        }
+    }
 }
-// int main(){
-//     initialize_ir_code();
-//     FILE* fptr = fopen("intermediate_code.txt","w+");
-//     // print_ir_code(fptr);
-//     fclose(fptr);
-//     return 0;
-// }
+void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry* global_ST){
+
+    if(!strcmp(root->name,"INPUT_ID")){
+        IR_inputStmt(root);
+    }    
+    else if(!strcmp(root->name,"ARRAY_ASSIGN"||!strcmp(root->name,"ARRAY")||!strcmp(root->name,"ARRAY_ACCESS"))){
+        IR_arrayAccess(root);
+    }    
+
+    else if(!strcmp(root->name,"OUTPUT")){
+        IR_outputStmt(root);
+    }    
+
+    else if(!strcmp(root->name,"ASSIGN")){
+        IR_assignmentStmt(root);
+    }    
+
+    else if(!strcmp(root->name,"SWITCH")){
+        IR_switchStmt(root);
+    }    
+
+    else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){
+        IR_iterative(root);
+    }    
+
+    else if(!strcmp(root->name,"INPUT_ID")){
+        IR_booleanExpr(root);
+    }    
+
+    else if(!strcmp(root->name,"INPUT_ID")){
+        IR_arithmenticExpr(root);
+    }    
+
+    else if(!strcmp(root->name,"MODULEREUSE")){
+        IR_functionCall(root);
+    }    
+
+    else if(!strcmp(root->name,"MODULE")){
+        IR_functionCreation(root);
+    }    
+    else if(!strcmp(root->name,"STATEMENTS")){
+        IR_stmts(root);
+    } 
+    else{
+        root->code=NULL;
+    }
+}
