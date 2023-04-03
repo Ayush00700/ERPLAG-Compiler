@@ -12,17 +12,17 @@ start
 		t:= index<=n;
 		switch(index)
 		start
-			case 1: print(list[+index]); **Doubt by AYush in AST rule 40 vs 45**
+			case 1: print(list[+indet]); **Doubt by AYush in AST rule 40 vs 45**
 				   sum:=sum+list[index];
                    declare index:integer;
 				   break;
-			case 2: print(sum);
+			case false: print(list);
 				    print(index);
                     declare A:array[1..15] of real;
 					declare index:integer;
 				    **prints the values of sum and index  15-n times**
 				    break;
-			case true: print(sum);
+			case true: print(list);
 					break;
 			case 3: print(sum);
 				    print(index);
@@ -51,6 +51,7 @@ start
 			case 1: print(list[+index]);
 				   sum:=sum+list[index];
                    declare index:integer;
+				   print(indet);
 				   break;
 			case 2: print(sum);
 				    print(index);
@@ -73,6 +74,7 @@ start
 	declare A:array[1..15] of real;
 	declare k:integer;
 	declare s:real;
+	declare A:array[1..15] of real;
 	get_value(k);
 	use module readArr with parameters A,k;
 	[s]:= use module arraySum with parameters A,k;
@@ -105,4 +107,23 @@ start
 		i:=i+1;
 		** the semantics of while needs an increment and will be taken care of at the second phase**
 	end
+
+	switch(index)
+		start
+			case 1: print(list[+index]);
+				   sum:=sum+list[index];
+                   declare index:integer;
+				   break;
+			case 2: print(sum);
+				    print(index);
+                    declare A:array[1..15] of real;
+					declare index:integer;
+				    **prints the values of sum and index  15-n times**
+				    break;
+			case true: print(sum);
+					break;
+			default: print(sum);
+					 break;
+			
+		end
 end

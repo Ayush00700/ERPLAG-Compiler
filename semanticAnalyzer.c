@@ -9,6 +9,13 @@
 
 func_entry* global_func_table[TABLE_SIZE];
 
+void initialize_global_func_table(){
+
+    for(int i=0;i<TABLE_SIZE;i++){
+        global_func_table[i] = NULL;
+    }
+}
+
 // ----------------------------------------------HELPER FUNCTIONS FOR SET OPERATIONS ----------------------------------------------//
 int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp)
 /*This function adds the key into the table along with the entry number
@@ -80,6 +87,15 @@ int sym_tab_entry_contains(char* key,sym_tab_entry* table[])
 
 // function table
 
+void initialize_var_record(func_entry* new_node){
+    new_node->func_root = (var_record*) malloc(sizeof(var_record));
+    
+    for(int i=0;i<TABLE_SIZE;i++){
+        new_node->func_root->entries[i] = NULL;
+    }
+
+}
+
 func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* input_list,sym_tab_entry* ouput_list,int* offset)
 /*This function adds the key into the table along with the entry number
 0 => need not be added since it already exists
@@ -105,8 +121,11 @@ func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* inpu
     table[index] = new_node;
     new_node->input_list = input_list;
     new_node->ouput_list = ouput_list;
-    new_node->func_root = (var_record*) malloc(sizeof(var_record));
+    initialize_var_record(new_node);
     new_node->func_root->construct_name = key;
+    new_node->func_root->parent = NULL;
+    new_node->func_root->child = NULL;
+    new_node->func_root->r_sibiling = NULL;
     new_node->func_curr = new_node->func_root;
     new_node->offset = *offset;
     new_node->func_root->offset = new_node->offset;
@@ -215,7 +234,8 @@ int index_finder(ast_node* node){
 void populate_symbol_table(ast_node* temp_node,type_exp temp,var_record* local_table){
     int a = sym_tab_entry_add(temp_node->token->lexeme,local_table,temp);
     if(a == -1){ // to change as the abstraction is increased
-        printf("already present in the symbol table\n");
+        printf(" \"%s\" redeclared variable :: Error found at line no %d\n",temp_node->token->lexeme
+        ,temp_node->token->line_no);
     }
 }
 
@@ -262,6 +282,13 @@ sym_tab_entry* getlist(ast_node* ast_root,int* offset){
     if(initial==0)return NULL;
     return list_head;
 }
+void initialize_entries(var_record* local_table){
+
+    for (int i=0;i<TABLE_SIZE;i++){
+        local_table->entries[i] = NULL;
+    }
+}
+
 
 void local_populate(var_record* local_table,ast_node* ast_root){
     if(!ast_root){
@@ -275,6 +302,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->r_sibiling = NULL;
         local_case->offset = local_table->offset;
         local_case->construct_name = "CASE";
+        initialize_entries(local_case);
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
         else{
         local_populate(local_case,ast_root->child_pointers[1]);
@@ -290,6 +318,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->r_sibiling = NULL;
         local_case->offset = local_table->offset;
         local_case->construct_name = "CASE";
+        initialize_entries(local_case);
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
         else{
         local_populate(local_case,ast_root->child_pointers[1]);
@@ -304,6 +333,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_for->r_sibiling = NULL;
         local_for->offset = local_table->offset;
         local_for->construct_name = "FORLOOP";
+        initialize_entries(local_for);
         if(local_table->child == NULL){
             local_table->child = local_for;
         }
@@ -326,6 +356,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_while->r_sibiling = NULL;
         local_while->offset = local_table->offset;
         local_while->construct_name = "WHILELOOP";
+        initialize_entries(local_while);
         if(local_table->child == NULL){
             local_table->child = local_while;
         }
@@ -347,6 +378,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch->r_sibiling = NULL;
         local_switch->offset = local_table->offset;
         local_switch->construct_name = "CASE_HEAD";
+        initialize_entries(local_switch);
         if(local_table->child == NULL){
             local_table->child = local_switch;
         }
@@ -369,6 +401,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch_default->r_sibiling = NULL;
         local_switch_default->offset = local_table->offset;
         local_switch_default->construct_name = "DEFAULT";
+        initialize_entries(local_switch_default);
          if(local_table->child == NULL){
             local_table->child = local_switch_default;
         }
@@ -403,9 +436,10 @@ void local_populate(var_record* local_table,ast_node* ast_root){
 
 void func_def(ast_node* ast_root){
     int offset = 0;
-    sym_tab_entry* ip_list = getlist(ast_root->child_pointers[1],&offset);
-    sym_tab_entry* op_list = getlist(ast_root->child_pointers[2],&offset);
-    func_entry* local;
+    sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
+    if(!strcmp(ast_root->name,"MODULE"))ip_list = getlist(ast_root->child_pointers[1],&offset);
+    if(!strcmp(ast_root->name,"MODULE"))op_list = getlist(ast_root->child_pointers[2],&offset);
+    func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global_func_table,ip_list,op_list,&offset);
         local_populate(local->func_root,ast_root->child_pointers[0]);
@@ -504,6 +538,9 @@ type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr,int line){
         temp = temp->next;
     }
 
+
+    printf(" \"%s\" could not be found ::",key);
+
     return throw_error(OUT_OF_SCOPE_VARIABLE,line);
 }
 
@@ -565,8 +602,9 @@ void check_cases(ast_node* node, func_entry* curr,type_exp* switch_dtype){
     }
     type_exp* case_id = type_checking(node->child_pointers[0],curr);
     int line = node->child_pointers[0]->token->line_no;
-    if(compare_dTypes(case_id,switch_dtype,line)){
-    perform_type_checking(node->child_pointers[1],curr);}
+    if(!compare_dTypes(case_id,switch_dtype,line))printf("--Case type mismatch with Switch type\n");
+    
+    perform_type_checking(node->child_pointers[1],curr);
     if(curr->func_curr->r_sibiling&&
     (!strcmp(curr->func_curr->r_sibiling->construct_name,"CASE"))){
     curr->func_curr = curr->func_curr->r_sibiling;
@@ -591,6 +629,34 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=node->token->line_no;
         type_exp* var_exp= find_expr(node, curr,line);
         return var_exp;
+    }
+    else if(!strcmp(node->name, "ARRAY")){
+        type_exp* var_id = type_checking(node->child_pointers[0],curr);
+        type_exp* index = type_checking(node->child_pointers[1],curr);
+        int line = node->child_pointers[0]->token->line_no;
+
+        if(var_id&& index){
+            if(strcmp(var_id->datatype,"array")||strcmp(index->datatype,"integer")){
+                printf("Array expression needs array variable\
+                to be declared and index expression to consist of integer type\n");
+                return throw_error(UNSUPPORTED_DTYPE,line);
+            }
+        }else if(var_id){
+            printf("Error line no %d Array index expression couldn't be found under scope\n",line);
+        }
+        return NULL;
+
+    }
+    else if(!strcmp(node->name, "OUTPUT")){
+        type_exp* var = type_checking(node->child_pointers[0],curr);
+        int line = line_number_finder(node);
+        if(var){
+            if(!strcmp(var->datatype,"array")){
+                printf("Array ID variable can't be printed ::");
+                return throw_error(UNSUPPORTED_DTYPE,line);
+            }
+        }
+
     }
     else if(!strcmp(node->name,"ARRAY_ASSIGN")){
         type_exp* arr_data = type_checking(node->child_pointers[0],curr);
@@ -737,7 +803,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* num=type_checking(node->child_pointers[1],curr);
         // type_exp* sign=type_checking(node->child_pointers[1],line);
         int line=node->child_pointers[1]->token->line_no;
-        if(strcmp(num->datatype,"integer"))
+        if(num&&strcmp(num->datatype,"integer"))
         return throw_error(UNSUPPORTED_DTYPE,line);
         else return num;
     }
@@ -879,6 +945,7 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
 
 void semantic(){
     ast_node* ast_root = get_ast_root();
+    initialize_global_func_table();
 
     populate_(ast_root);
     perform_type_checking(ast_root,NULL);

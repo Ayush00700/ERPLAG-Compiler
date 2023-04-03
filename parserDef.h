@@ -46,6 +46,9 @@ typedef struct ast_node{
     struct ast_node** child_pointers;
     struct ast_node* next;
     Boolean isTerminal;
+    char* true;
+    char* false;
+    char* nextJump;
     token_info* token;
 }ast_node;
 
