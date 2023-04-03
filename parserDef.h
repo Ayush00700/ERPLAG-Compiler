@@ -15,6 +15,57 @@
 #define TERMINALS 58
 typedef enum Boolean {False,True}Boolean;
 
+//FOR IR CODE
+typedef enum OPCODE
+{
+    ASSIGN,
+    UNARY_PLUS,
+    UNARY_MINUS,
+    GET_VALUE,
+    PRINT,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    LT,
+    LE,
+    GT,
+    GE,
+    EQ,
+    NEQ,
+    OR,
+    AND,
+    FN_CALL,
+    FUNC,
+    GOTO,
+    IF,
+    LABEL,
+    RET
+}OPCODE;
+
+
+typedef struct ir_code_node
+/* The entry will be of the following form
+    +------------+----------+----------+-----------+
+    |  operator  |  result  |  left_op |  right_op |
+    +------------+----------+----------+-----------+
+*/
+{
+    OPCODE operator;
+    char* result;
+    char* left_op;
+    char* right_op;
+    struct ir_code_node* next;
+}ir_code_node;
+
+typedef struct ir_code
+{
+    ir_code_node* head;
+    ir_code_node* tail;
+}ir_code;
+
+//FOR PARSER
+
 typedef struct ruleNode{
     char* nodeInfo; 
     Boolean isTerminal;
@@ -45,6 +96,11 @@ typedef struct ast_node{
     int no_of_children;
     struct ast_node** child_pointers;
     struct ast_node* next;
+    ir_code* code; //FOR INTERMEDIATE CODE GEN
+    char* tempName; //FOR INTERMEDIATE CODE GEN
+    char* true;
+    char* false;
+    char* nextJump;
     Boolean isTerminal;
     token_info* token;
 }ast_node;

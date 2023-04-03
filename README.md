@@ -190,6 +190,10 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 
 ### Doubts
 
+Temp variables in Symbol table
+IR for arrays
+
+
 ### Requirements for Intermediate Code Generation
 Intermediate Representation is required to make the compilation process platform independent and avoid the hassle of repeating all steps of compilation in all machines. These can be language dependent or language independent. The language independent ones are various IRs:
 - Postfix Notation
