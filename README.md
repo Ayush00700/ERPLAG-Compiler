@@ -202,6 +202,7 @@ We have used "3 Address Codes" IR. We have generated IR for the following:
 - Iterative Statements
 - Input Output Statements
 - Boolean Expression
+- Arithmetic Expression
 - Function calls
 
 

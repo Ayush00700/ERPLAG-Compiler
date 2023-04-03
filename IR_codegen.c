@@ -68,9 +68,28 @@ void add_entry(ir_code* list, ir_code_node* entry)
         list->tail = entry;
     }  
 }
+void IR_inputStmt(){
 
-int main()
-{
+}
+
+
+void IR_inputStmt(){
+    
+}
+
+
+void print_ir_code(FILE* fptr){
+    ir_code* curr = global_ir_code;
+    while(curr){
+        fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
+        curr = curr->next;      //TODO Debug for null
+    }
+}
+
+int main(){
     initialize_ir_code();
+    FILE* fptr = fopen("intermediate_code.txt","w+");
+    print_ir_code(fptr);
+    fclose(fptr);
     return 0;
 }
