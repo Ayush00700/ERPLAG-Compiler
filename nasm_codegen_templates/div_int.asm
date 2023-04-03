@@ -23,7 +23,8 @@ main:
         mov     rdi, [r12+8]    ; get the x
         call    atoi            ; x converted to integer and now in eax
 
-        idiv     eax, r13d      ; eax = x / y
+        mov     edx, 0
+        div    r13d      ; eax = x / y
 
         mov     rdi, answer     ; to print the answer
         movsxd  rsi, eax

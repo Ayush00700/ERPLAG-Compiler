@@ -71,12 +71,21 @@ void IR_switchStmt(ast_node* node){
     
 }
 
+<<<<<<< HEAD
 void IR_iterative(ast_node* node){
     
 }
 
 void IR_booleanExpr(ast_node* node){
     
+=======
+// void print_ir_code(FILE* fptr){
+//     ir_code_node* curr = global_ir_code;
+//     while(curr){
+//         fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
+//         curr = curr->next;      //TODO Debug for null
+//     }
+>>>>>>> 17e905aa19d7ff508561c066e41188031dc17101
 }
 
 void IR_arithmenticExpr(ast_node* node){
