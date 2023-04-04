@@ -18,6 +18,7 @@ extern int check_static(ast_node* node);
 extern int index_finder(ast_node* node);
 extern void populate_symbol_table(ast_node* temp_node,type_exp temp,var_record* local_table);
 extern void compute_expression(ast_node* ast_root,var_record* local_table);
+extern void for_populate(var_record* local_table,ast_node* ast_root)
 extern void local_populate(var_record* local_table,ast_node* ast_root);
 extern void func_def(ast_node* ast_root);
 extern sym_tab_entry* getlist(ast_node* ast_root,int* offset);

@@ -296,6 +296,13 @@ void initialize_entries(var_record* local_table){
     }
 }
 
+void for_populate(var_record* local_table,ast_node* ast_root){
+    type_exp temp;
+    temp.datatype = "integer";
+    ast_node* temp_node = ast_root;
+    populate_symbol_table(temp_node,temp,local_table);
+}
+
 
 void local_populate(var_record* local_table,ast_node* ast_root){
     if(!ast_root){
@@ -351,7 +358,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             }
             temp->r_sibiling = local_for;
         }
-
+        for_populate(local_for,ast_root->child_pointers[0]);
         local_populate(local_for,ast_root->child_pointers[2]);
         local_populate(local_table,ast_root->next);
         local_table->offset = local_for->offset;
