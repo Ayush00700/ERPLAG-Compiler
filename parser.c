@@ -1375,6 +1375,8 @@ void parseCompletely(int lflag){
     printf("\nPARSING ERRORS ARE : \n");
     call_parser(rules,nont);
 
+    free_parser_data(nont,rules);
+
     //TODO Print parseTree
     // print_first_Sets(nont);
     // printf("\n");

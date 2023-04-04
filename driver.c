@@ -13,6 +13,8 @@
 #include "IR_codegen.h"
 #include <string.h>
 
+extern func_entry* global_TABLE[TABLE_SIZE];
+
 int main(int argc, char* args[]){ //DRIVER
     clock_t l_start_time, l_end_time;
     double l_total_CPU_time, l_total_CPU_time_in_seconds;
@@ -198,9 +200,9 @@ int main(int argc, char* args[]){ //DRIVER
                     create_abstract_tree();//creation of abstract syntax tree 
                     ast_node* ast_root = get_ast_root();
                     semantic();
-                    func_entry** global_func_table = get_global_symbol_table(ast_root);
+                    get_global_symbol_table(ast_root);
                     FILE* fptr = fopen("intermediate_code.txt","w+");
-                    ir_code* intermediate_code =  getIRList(ast_root,global_func_table);
+                    ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
                     print_ir_code(fptr,intermediate_code);
                     fclose(fptr);
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/

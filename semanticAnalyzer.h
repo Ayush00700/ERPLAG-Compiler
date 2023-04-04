@@ -25,5 +25,4 @@ extern void populate_(ast_node* ast_root);
 extern type_exp* type_checking(ast_node* node, func_entry* curr);
 extern void perform_type_checking(ast_node* ast_root,func_entry* func);
 extern void semantic();
-extern func_entry** get_global_symbol_table();
-extern func_entry** get_global_symbol_table(ast_node* ast_root);
+extern void get_global_symbol_table(ast_node* ast_root);
