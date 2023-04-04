@@ -43,14 +43,14 @@ ir_code* add_node_beg(ir_code_node* entry, ir_code* list)
     }
     return list;
 }
-void add_list_beg(ir_code* entry, ir_code* list)
+ir_code* add_list_beg(ir_code* entry, ir_code* list)
 /* This function adds entry to the end of the list*/
 {  
     if(!list && !entry){
-        return;
+        return NULL;
     }
     else if(!entry){
-        return;
+        return list;
     }
     else if(!list){
         list = initialize_ir_code();
@@ -61,6 +61,7 @@ void add_list_beg(ir_code* entry, ir_code* list)
         ir_code_node* temp = list->head;
         list->head = entry->head;
         entry->tail->next = temp;
+        return list;
     }
 }
 
@@ -70,13 +71,13 @@ ir_code* add_list_end(ir_code* entry, ir_code* list)
     if(!list && !entry){
         list = initialize_ir_code();
     }
+    else if(!entry){
+        return list;
+    }
     else if(!list){
         list = initialize_ir_code();
         list->head = entry->head;
         list->tail = entry->tail;
-    }
-    else if(!entry){
-        return list;
     }
     else{
         list->tail->next = entry->head;
@@ -184,11 +185,9 @@ ir_code* IR_prog(ast_node* root,func_entry** global_ST){
     IR_codeGen(root->child_pointers[1],global_ST); 
     IR_codeGen(root->child_pointers[2],global_ST); 
     IR_codeGen(root->child_pointers[3],global_ST); 
-    // root->code = add_node_beg(root->child_pointers[2]->code->head,root->child_pointers[2]->code);
-    root->code = initialize_ir_code();
     for(int i=3;i>=1;i--){
         if(root->child_pointers[i]==NULL)continue;
-        add_list_beg(root->child_pointers[i]->code,root->code);
+        root->code = add_list_beg(root->child_pointers[i]->code,root->code);
     }
     return root->code;
 }
@@ -201,12 +200,21 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
 }
 
 void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+    ast_node* curr = node;
     generate_IR_for_module(node->child_pointers[3],local_ST,global_ST);//STMTS
     ir_code_node* newNode = getNew_ir_code_node();
     newNode->operator = FUNC;
     // newNode->result = local_ST->name;
     newNode->result = node->child_pointers[0]->token->lexeme;
     node->code = add_node_beg(newNode,node->child_pointers[3]->code);
+    while(curr->next!=NULL){
+        curr= curr->next;
+        char* func_lex = curr->child_pointers[0]->token->lexeme;
+        func_entry* new_local_ST = find_module(func_lex);
+
+        IR_functionCreation(curr,new_local_ST,global_ST);
+        node->code = add_list_end(curr->code,node->code);
+    }
 }
 // void IR_stmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 //     ast_node* curr = node->next;
