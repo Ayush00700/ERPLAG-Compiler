@@ -43,6 +43,23 @@ ir_code* add_node_beg(ir_code_node* entry, ir_code* list)
     }
     return list;
 }
+
+
+ir_code* add_node_end(ir_code_node* entry, ir_code* list)
+/* This function adds entry to the end of the list*/
+{  
+    if(!list){
+        list = initialize_ir_code();
+        list->head = entry;
+        list->tail = entry;
+    }
+    else{
+        list->tail->next = entry;
+        list->tail = entry;
+    }
+    return list;
+}
+
 ir_code* add_list_beg(ir_code* entry, ir_code* list)
 /* This function adds entry to the end of the list*/
 {  
@@ -197,22 +214,28 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     newNode->operator = FUNC;
     sprintf(newNode->result,"main");
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
+    ir_code_node* endNode = getNew_ir_code_node();
+    endNode->operator = RET;
+    node->code = add_node_end(endNode,node->code);
 }
 
-void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global_ST,Boolean listStop){
     ast_node* curr = node;
     generate_IR_for_module(node->child_pointers[3],local_ST,global_ST);//STMTS
     ir_code_node* newNode = getNew_ir_code_node();
+    ir_code_node* endNode = getNew_ir_code_node();
     newNode->operator = FUNC;
     // newNode->result = local_ST->name;
     newNode->result = node->child_pointers[0]->token->lexeme;
     node->code = add_node_beg(newNode,node->child_pointers[3]->code);
-    while(curr->next!=NULL){
+    endNode->operator = RET;
+    node->code = add_node_end(endNode,node->code);
+    while(curr->next!=NULL&&listStop==False){    //To handle the list of module that this module has.
         curr= curr->next;
         char* func_lex = curr->child_pointers[0]->token->lexeme;
         func_entry* new_local_ST = find_module(func_lex);
 
-        IR_functionCreation(curr,new_local_ST,global_ST);
+        IR_functionCreation(curr,new_local_ST,global_ST,True);
         node->code = add_list_end(curr->code,node->code);
     }
 }
@@ -230,6 +253,9 @@ void print_ir_code(FILE* fptr,ir_code* intermediate_code){
     while(curr){
         if(curr->operator==FUNC||curr->operator==GET_VALUE){
             fprintf(fptr,"%s\t%s\n",OPCODE_str[curr->operator],curr->result);
+        }
+        else if(curr->operator==RET){
+            fprintf(fptr,"%s\n",OPCODE_str[curr->operator]);
         }
         // fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
         curr = curr->next;      //TODO Debug for null
@@ -281,7 +307,7 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
     }    
 
     else if(!strcmp(root->name,"MODULE")){
-        IR_functionCreation(root,local_ST,global_ST);
+        IR_functionCreation(root,local_ST,global_ST,False);
     }    
     else if(!strcmp(root->name,"DRIVER")){
         IR_driverCreation(root,local_ST,global_ST);
