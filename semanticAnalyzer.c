@@ -691,7 +691,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
         type_exp* compare = compare_dTypes(op1,op2,line);
 
-        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+        if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
           &&compare){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
@@ -718,7 +718,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         else if(!strcmp(node->name,"AND")||!(strcmp(node->name,"OR"))){
         type_exp* op1 = type_checking(node->child_pointers[0],curr);
         type_exp* op2 = type_checking(node->child_pointers[1],curr);
-        int line=node->child_pointers[0]->token->line_no;
+        int line=line_number_finder(node);
 
         type_exp* compare = compare_dTypes(op1,op2,line);
 
