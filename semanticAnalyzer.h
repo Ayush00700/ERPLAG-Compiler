@@ -10,6 +10,7 @@ extern int sym_tab_entry_contains(char* key,sym_tab_entry* table[]);
 extern func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* input_list,sym_tab_entry* ouput_list,int* offset);
 extern void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset,int initial);
 extern int func_tab_entry_contains(char* key,func_entry* table[]);
+extern func_entry* find_module(char* key);
 
 
 // semantic functions 
@@ -24,4 +25,5 @@ extern void populate_(ast_node* ast_root);
 extern type_exp* type_checking(ast_node* node, func_entry* curr);
 extern void perform_type_checking(ast_node* ast_root,func_entry* func);
 extern void semantic();
-func_entry** get_global_symbol_table();
+extern func_entry** get_global_symbol_table();
+extern func_entry** get_global_symbol_table(ast_node* ast_root);

@@ -9,6 +9,7 @@
 
 func_entry* global_func_table[TABLE_SIZE];
 
+
 // ----------------------------------------------HELPER FUNCTIONS FOR SET OPERATIONS ----------------------------------------------//
 int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp)
 /*This function adds the key into the table along with the entry number
@@ -400,6 +401,19 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         return;
     }
 }
+void func_def_(ast_node* ast_root,func_entry* global[]){
+     int offset = 0;
+    sym_tab_entry* ip_list = getlist(ast_root->child_pointers[1],&offset);
+    sym_tab_entry* op_list = getlist(ast_root->child_pointers[2],&offset);
+    func_entry* local;
+    if(!strcmp(ast_root->name,"DRIVER")){
+        local = func_tab_entry_add("DRIVER",global,ip_list,op_list,&offset);
+        local_populate(local->func_root,ast_root->child_pointers[0]);
+    }else{
+        local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global,ip_list,op_list,&offset);
+        local_populate(local->func_root,ast_root->child_pointers[3]);
+    }
+}
 
 void func_def(ast_node* ast_root){
     int offset = 0;
@@ -415,6 +429,26 @@ void func_def(ast_node* ast_root){
     }
 }
 
+void populate_copy(ast_node* ast_root,func_entry* global[]){
+    if(!ast_root){
+        return;
+    }
+    else if(!strcmp(ast_root->name,"DRIVER")){
+        func_def_(ast_root,global);
+    }
+    else if(!strcmp(ast_root->name,"MODULE")){
+        func_def_(ast_root,global);
+        populate_copy(ast_root->next,global); 
+    }
+    else{
+        int num = ast_root->no_of_children;
+        for(int i=0;i<num;i++){
+            populate_copy(ast_root->child_pointers[i],global);
+        }
+        populate_copy(ast_root->next,global);
+        return;
+    }
+}
 void populate_(ast_node* ast_root){
     if(!ast_root){
         return;
@@ -882,10 +916,12 @@ void semantic(){
 
     populate_(ast_root);
     perform_type_checking(ast_root,NULL);
-
+    
     //perform bound checking
 
 }
-func_entry** get_global_symbol_table(){
-    return global_func_table;    
+func_entry** get_global_symbol_table(ast_node* ast_root){
+    func_entry* global_TABLE[TABLE_SIZE];
+    populate_copy(ast_root,global_TABLE);
+    return global_TABLE;    
 }
