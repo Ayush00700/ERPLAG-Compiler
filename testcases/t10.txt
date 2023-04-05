@@ -75,7 +75,6 @@ start
 	declare k:integer;
 	declare s:real;
 	declare A:array[1..15] of real;
-	get_value(k);
 	use module readArr with parameters A,k;
 	[s]:= use module arraySum with parameters A,k;
 	print(s);
@@ -87,6 +86,49 @@ end
 **use the same locations for array elements**
 
 <<module readArr>>
+takes input [arr1:array[-10..25] of real,k:integer];
+start
+	declare tempvar:real;
+	declare i:integer;
+    declare t:boolean;
+    declare r:boolean;
+    t:= true;
+    r:= false;
+	get_value(k);
+
+	i:=1;
+	while(t OR r)
+	start
+		get_value(tempvar);
+		arr1[i]:=tempvar; 		**Ayush TODO Check for arr1[-i]**
+                declare B:array[-p..+q] of boolean;
+                tempvar:=-(tempvar+ arr1[k]+arr1[+5]-arr1[-10]);
+		B[k]:=-10;
+		i:=i+1;
+		** the semantics of while needs an increment and will be taken care of at the second phase**
+	end
+
+	switch(index)
+		start
+			case 1: print(list[+index]);
+				   sum:=sum+list[index];
+                   declare index:integer;
+				   break;
+			case 2: print(sum);
+				    print(index);
+                    declare A:array[1..15] of real;
+					declare index:integer;
+				    **prints the values of sum and index  15-n times**
+				    break;
+			case true: print(sum);
+					break;
+			default: print(sum);
+					 break;
+			
+		end
+end
+
+<<module readArr2>>
 takes input [arr1:array[-10..25] of real,k:integer];
 start
 	declare tempvar:real;

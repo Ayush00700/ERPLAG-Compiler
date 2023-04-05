@@ -26,3 +26,4 @@ extern type_exp* type_checking(ast_node* node, func_entry* curr);
 extern void perform_type_checking(ast_node* ast_root,func_entry* func);
 extern void semantic();
 extern void get_global_symbol_table(ast_node* ast_root);
+extern int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp);

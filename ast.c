@@ -180,6 +180,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
@@ -203,6 +204,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[1]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[3]);
             ast_node* child2 = create_ast(root->child_pointers[4]);
@@ -231,6 +233,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[2]);
             ast_node* child2 = create_ast(root->child_pointers[3]);
@@ -254,6 +257,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[1]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[3]);
             ast_node* child2 = create_ast(root->child_pointers[4]);
@@ -420,6 +424,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "INPUT_ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[2]->token;
+            
+            parent->tempName = parent->token->lexeme;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
@@ -465,6 +471,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             {ast_node* parent = initializeNewNode();
             parent->name = "ID";
             parent->isTerminal = True;
+            parent->tempName = parent->token->lexeme;
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 38:
@@ -473,6 +480,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 39:
             // Create node for terminal token
@@ -480,6 +488,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "RNUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;
             }
         case 40:{
@@ -491,6 +500,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // This node is required in the sibling subtree
             // So we pass as inherited attribute
             root->child_pointers[1]->inh = temp;
@@ -505,6 +515,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
+
             return parent;}
         case 43:
             // Create node for terminal token
@@ -512,6 +524,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "RNUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 44:
             // Create AST subtree
@@ -561,6 +574,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // This node is required in the sibling subtree
             // So we pass as inherited attribute
             root->child_pointers[1]->inh = temp;
@@ -656,6 +670,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 56:
             // Create node for terminal token
@@ -663,6 +678,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 57:
             // Create node for terminal token
@@ -688,6 +704,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[3]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's children subtrees
             ast_node* child1 = create_ast(root->child_pointers[0]);
             ast_node* child2 = create_ast(root->child_pointers[6]);
@@ -759,6 +776,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 65:
             // Create node for terminal token
@@ -766,6 +784,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "RNUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 66:
             // Create AST subtree
@@ -779,6 +798,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // Creating AST node's child subtree
             ast_node* child1 = create_ast(root->child_pointers[1]);
             ast_node* parent = initializeNewNode();
@@ -816,6 +836,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->isTerminal = True;
             temp->next = child1;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             // ast_node* parent = initializeNewNode();
             // parent->name = "ID_LIST";
             // parent->isTerminal = False;
@@ -834,6 +855,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[1]->token;
+            temp->tempName = temp->token->lexeme;
             ast_node* child1 = create_ast(root->child_pointers[2]);
             temp->next = child1;
             free(root->child_pointers[0]);
@@ -1022,6 +1044,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 95:
             // Create node for terminal token
@@ -1029,12 +1052,14 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "RNUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 96:
  {           ast_node* temp = initializeNewNode();
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[0]->token;
+            temp->tempName = temp->token->lexeme;
             root->child_pointers[1]->inh = temp;
             ast_node* child1 = create_ast(root->child_pointers[1]);
             free(root->child_pointers[1]);
@@ -1159,6 +1184,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "ID";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 111:
             // Create node for terminal token
@@ -1166,6 +1192,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 112:
     {       ast_node* parent = create_ast(root->child_pointers[0]);
@@ -1284,6 +1311,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
+            temp->tempName = temp->token->lexeme;
             ast_node* child1 = create_ast(root->child_pointers[5]);
             ast_node* child2 = create_ast(root->child_pointers[6]);
             ast_node* parent = initializeNewNode();
@@ -1364,6 +1392,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 132:
             // Create node for terminal token
@@ -1408,6 +1437,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             temp->name = "ID";
             temp->isTerminal = True;
             temp->token = root->child_pointers[2]->token;
+            temp->tempName = temp->token->lexeme;
             // root->child_pointers[1]->inh = temp; //check 
             ast_node* child1 = create_ast(root->child_pointers[4]);
             ast_node* child2 = create_ast(root->child_pointers[7]);
@@ -1494,6 +1524,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "NUM";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = parent->token->lexeme;
             return parent;}
         case 141:
             // Create node for terminal token
