@@ -532,7 +532,7 @@ type_exp* throw_error(semErrors error, int line)
         case UNSUPPORTED_DTYPE: {
         printf("Error found at line no %d : Unsupported Datatype \n", line);break;}
         case FUNC_NOT_DEFINED:{
-        printf("Error found at line no %d : Type Mismatch \n", line);break;}
+        printf("Error found at line no %d : Function Not Defined \n", line);break;}
         case OUT_OF_ORDER_INDEX:
         {printf("Error found at line no %d : Index Out of Order \n", line);break;}
         case RECURSION_NOT_ALLOWED:
@@ -669,12 +669,29 @@ void check_cases(ast_node* node, func_entry* curr,type_exp* switch_dtype){
         curr->func_curr = curr->func_curr->parent;
     }
 }
-
+void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
+{
+    while(actual&&formal)
+    {
+        //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
+       type_exp* act= find_expr(actual, curr, line);
+       type_exp* form=&formal->type;
+       compare_dTypes(act, form, line);
+       actual=actual->next;
+       formal=formal->next;
+    }
+    if(actual||formal)
+    {
+        throw_error(PARAMETER_LIST_MISMATCH,line);
+    }
+}
 void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
 {
     while(actual&&formal)
     {
-       type_exp* act= find_expr(actual, curr, line);
+        //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
+       ast_node* temp= actual->child_pointers[1]->child_pointers[0]?actual->child_pointers[1]->child_pointers[0]:actual->child_pointers[1]->child_pointers[1];
+       type_exp* act= find_expr(temp, curr, line);
        type_exp* form=&formal->type;
        compare_dTypes(act, form, line);
        actual=actual->next;
@@ -698,8 +715,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name,"MODULEREUSE"))
     {
-        int line=node->child_pointers[0];
-        func_entry* temp=find_module(node->child_pointers[0]->name);
+        int line=node->child_pointers[0]->token->line_no;
+        func_entry* temp=find_module(node->child_pointers[0]->token->lexeme);
         if(!temp)
         {
             throw_error(FUNC_NOT_DEFINED,line);
@@ -711,15 +728,16 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         }
         else
         {
+            //write abstractions for this
             if(node->child_pointers[1])
             {
                 if(temp->ouput_list)
                 {
-                 perform_type_matching(node->child_pointers[1],temp->ouput_list,curr,line);
+                 perform_type_matching_out(node->child_pointers[1],temp->ouput_list,curr,line);
                 }
                 else
                 {
-                    throw_error(PARAMETER_LIST_MISMATCH, line);
+                 throw_error(PARAMETER_LIST_MISMATCH, line);
                 }
             }
 
@@ -748,6 +766,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 return throw_error(UNSUPPORTED_DTYPE,line);
             }
         }else if(var_id){
+            //Convert this into throw_error()
             printf("Error line no %d Array index expression couldn't be found under scope\n",line);
         }
         return NULL;
@@ -921,7 +940,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=line_number_finder(node);//Might need to check child's line number
         //for PLUS operator need not be always line number tractable
         type_exp* ret=compare_dTypes(left, right,line);
-        if(strcmp(ret,"boolean"))
+        if(ret&&!strcmp(ret->datatype,"boolean"))
         {
             throw_error(UNSUPPORTED_DTYPE, line);
             return NULL;
@@ -1057,12 +1076,11 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
 void semantic(){
     ast_node* ast_root = get_ast_root();
     initialize_global_func_table();
-
+    //get_global_symbol_table(ast_root);
     populate_(ast_root);
     perform_type_checking(ast_root,NULL);
     
     //perform bound checking
-
 }
 void get_global_symbol_table(ast_node* ast_root){
 
