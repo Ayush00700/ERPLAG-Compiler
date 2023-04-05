@@ -37,7 +37,7 @@ typedef struct func_entry{
     var_record* func_root; 
     char* name;
     // input and output
-    sym_tab_entry* input_list;
+    sym_tab_entry* input_list; //use 
     sym_tab_entry* ouput_list;
     var_record* func_curr; //initialized to func_root
     struct func_entry* next; // hash collision

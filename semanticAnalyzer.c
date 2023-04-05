@@ -296,6 +296,13 @@ void initialize_entries(var_record* local_table){
     }
 }
 
+void for_populate(var_record* local_table,ast_node* ast_root){
+    type_exp temp;
+    temp.datatype = "integer";
+    ast_node* temp_node = ast_root;
+    populate_symbol_table(temp_node,temp,local_table);
+}
+
 
 void local_populate(var_record* local_table,ast_node* ast_root){
     if(!ast_root){
@@ -351,7 +358,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             }
             temp->r_sibiling = local_for;
         }
-
+        for_populate(local_for,ast_root->child_pointers[0]);
         local_populate(local_for,ast_root->child_pointers[2]);
         local_populate(local_table,ast_root->next);
         local_table->offset = local_for->offset;
@@ -443,8 +450,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
 void func_def_(ast_node* ast_root,func_entry* global[]){
      int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
-    if(!strcmp(ast_root->name,"MODULE"))ip_list = getlist(ast_root->child_pointers[1],&offset);
-    if(!strcmp(ast_root->name,"MODULE"))op_list = getlist(ast_root->child_pointers[2],&offset);
+    if(!strcmp(ast_root->name,"MODULE")){ip_list = getlist(ast_root->child_pointers[1],&offset);}
+    if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global,ip_list,op_list,&offset);
@@ -458,8 +465,8 @@ void func_def_(ast_node* ast_root,func_entry* global[]){
 void func_def(ast_node* ast_root){
     int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
-    if(!strcmp(ast_root->name,"MODULE"))ip_list = getlist(ast_root->child_pointers[1],&offset);
-    if(!strcmp(ast_root->name,"MODULE"))op_list = getlist(ast_root->child_pointers[2],&offset);
+    if(!strcmp(ast_root->name,"MODULE")){ip_list = getlist(ast_root->child_pointers[1],&offset);}
+    if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global_func_table,ip_list,op_list,&offset);
@@ -715,7 +722,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* compare = compare_dTypes(op1,op2,line);
             if(!compare)
             return NULL;
-            if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+            if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
                 &&strcmp(compare->datatype,"TypeNotMatched")){
                 type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
                 temp->datatype = "boolean";
@@ -747,7 +754,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
         type_exp* compare = compare_dTypes(op1,op2,line);
 
-        if(strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
+        if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
           &&compare){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
