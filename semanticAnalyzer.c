@@ -537,7 +537,8 @@ type_exp* throw_error(semErrors error, int line)
         {printf("Error found at line no %d : Index Out of Order \n", line);break;}
         case RECURSION_NOT_ALLOWED:
         {printf("Error found at line no %d : Recursion not allowed \n", line);break;}
-        
+        case PARAMETER_LIST_MISMATCH:
+        {printf("Error found at line no %d : Parameter list mismatch \n", line);break;}
     }
     return NULL;
 }
@@ -669,7 +670,21 @@ void check_cases(ast_node* node, func_entry* curr,type_exp* switch_dtype){
     }
 }
 
-
+void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
+{
+    while(actual&&formal)
+    {
+       type_exp* act= find_expr(actual, curr, line);
+       type_exp* form=&formal->type;
+       compare_dTypes(act, form, line);
+       actual=actual->next;
+       formal=formal->next;
+    }
+    if(actual||formal)
+    {
+        throw_error(PARAMETER_LIST_MISMATCH,line);
+    }
+}
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
 
@@ -692,7 +707,33 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         }
         else if(temp==curr)
         {
-            throw_error(RECURSION_NOT_ALLOWED);
+            throw_error(RECURSION_NOT_ALLOWED,line);
+        }
+        else
+        {
+            if(node->child_pointers[1])
+            {
+                if(temp->ouput_list)
+                {
+                 perform_type_matching(node->child_pointers[1],temp->ouput_list,curr,line);
+                }
+                else
+                {
+                    throw_error(PARAMETER_LIST_MISMATCH, line);
+                }
+            }
+
+            if(node->child_pointers[2])
+            {
+                if(temp->input_list)
+                {
+                    perform_type_matching(node->child_pointers[2], temp->input_list,curr,line);
+                }
+                else
+                {
+                    throw_error(PARAMETER_LIST_MISMATCH, line);
+                }
+            }
         }
     }
     else if(!strcmp(node->name, "ARRAY")){
@@ -880,7 +921,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=line_number_finder(node);//Might need to check child's line number
         //for PLUS operator need not be always line number tractable
         type_exp* ret=compare_dTypes(left, right,line);
-        return ret;
+        if(strcmp(ret,"boolean"))
+        {
+            throw_error(UNSUPPORTED_DTYPE, line);
+            return NULL;
+        }
+            return ret;
         }
      }
     else if(!strcmp(node->name, "FORINDEX"))
