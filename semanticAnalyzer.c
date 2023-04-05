@@ -534,7 +534,10 @@ type_exp* throw_error(semErrors error, int line)
         case FUNC_NOT_DEFINED:{
         printf("Error found at line no %d : Type Mismatch \n", line);break;}
         case OUT_OF_ORDER_INDEX:
-        printf("Error found at line no %d : Index Out of Order \n", line);break;
+        {printf("Error found at line no %d : Index Out of Order \n", line);break;}
+        case RECURSION_NOT_ALLOWED:
+        {printf("Error found at line no %d : Recursion not allowed \n", line);break;}
+        
     }
     return NULL;
 }
@@ -677,6 +680,20 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=node->token->line_no;
         type_exp* var_exp= find_expr(node, curr,line);
         return var_exp;
+    }
+    else if(!strcmp(node->name,"MODULEREUSE"))
+    {
+        int line=node->child_pointers[0];
+        func_entry* temp=find_module(node->child_pointers[0]->name);
+        if(!temp)
+        {
+            throw_error(FUNC_NOT_DEFINED,line);
+            return NULL;
+        }
+        else if(temp==curr)
+        {
+            throw_error(RECURSION_NOT_ALLOWED);
+        }
     }
     else if(!strcmp(node->name, "ARRAY")){
         type_exp* var_id = type_checking(node->child_pointers[0],curr);
