@@ -450,8 +450,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
 void func_def_(ast_node* ast_root,func_entry* global[]){
      int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
-    if(!strcmp(ast_root->name,"MODULE"))ip_list = getlist(ast_root->child_pointers[1],&offset);
-    if(!strcmp(ast_root->name,"MODULE"))op_list = getlist(ast_root->child_pointers[2],&offset);
+    if(!strcmp(ast_root->name,"MODULE")){ip_list = getlist(ast_root->child_pointers[1],&offset);}
+    if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global,ip_list,op_list,&offset);
@@ -465,8 +465,8 @@ void func_def_(ast_node* ast_root,func_entry* global[]){
 void func_def(ast_node* ast_root){
     int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
-    if(!strcmp(ast_root->name,"MODULE"))ip_list = getlist(ast_root->child_pointers[1],&offset);
-    if(!strcmp(ast_root->name,"MODULE"))op_list = getlist(ast_root->child_pointers[2],&offset);
+    if(!strcmp(ast_root->name,"MODULE")){ip_list = getlist(ast_root->child_pointers[1],&offset);}
+    if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global_func_table,ip_list,op_list,&offset);
