@@ -689,11 +689,28 @@ void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* 
 {
     while(actual&&formal)
     {
+        type_exp* act;
+        type_exp* temp;
+        char* arr_access;
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
-       ast_node* temp= actual->child_pointers[1]->child_pointers[0]?actual->child_pointers[1]->child_pointers[0]:actual->child_pointers[1]->child_pointers[1];
-       type_exp* act= find_expr(temp, curr, line);
+       //ast_node* temp= actual->child_pointers[1]->child_pointers[0]?actual->child_pointers[1]->child_pointers[0]:actual->child_pointers[1]->child_pointers[1];
+       if(actual->child_pointers[1]->isTerminal)
+       {
+            act=type_checking(actual->child_pointers[1], curr);
+       }
+       else
+       {
+            temp= actual->child_pointers[1]->child_pointers[0];
+            act= find_expr(temp, curr, line);
+            if(actual->child_pointers[1]->child_pointers[1])
+            {
+                arr_access=act->datatype;
+                act->datatype=act->arr_data->arr_datatype;
+            }
+       }
        type_exp* form=&formal->type;
        compare_dTypes(act, form, line);
+       act->datatype=arr_access;
        actual=actual->next;
        formal=formal->next;
     }
@@ -702,6 +719,8 @@ void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* 
         throw_error(PARAMETER_LIST_MISMATCH,line);
     }
 }
+
+
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
 
@@ -715,6 +734,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name,"MODULEREUSE"))
     {
+        // what to return
         int line=node->child_pointers[0]->token->line_no;
         func_entry* temp=find_module(node->child_pointers[0]->token->lexeme);
         if(!temp)
@@ -725,10 +745,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         else if(temp==curr)
         {
             throw_error(RECURSION_NOT_ALLOWED,line);
+            return NULL;
         }
         else
         {
             //write abstractions for this
+            //handle the edge 4th case
             if(node->child_pointers[1])
             {
                 if(temp->ouput_list)
