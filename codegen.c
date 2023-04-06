@@ -190,20 +190,23 @@ void main(/*ir_code* IR   symbol table, FILE* f*/)
 
         // Write the external functions and start data section for assembly
         fprintf(assembly, "extern printf, scanf, exit\n");
-        fprintf(assembly, "section      .data\n");
+        fprintf(assembly, "\t\t; Data declaration such as zero and format specifiers for print/scan\n");
+        fprintf(assembly, "\t\tsection      .data\n");
 
         // Write down all the format specifiers reqd
         fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
-        fprintf(assembly, "\t\tzero: dw 0\n");
+        fprintf(assembly, "\t\tzero: equ 0\n");
 
         /* Data declaration of various types to be done by going thro each entry of the symbol table*/
 
-        fprintf(assembly, "section      .text\n");
-        fprintf(assembly, "global main");
+        fprintf(assembly, "\n\n\t\tsection      .text\n");
+        fprintf(assembly, "\t\tglobal main\n");
+        fprintf(assembly, "main:\n");
 
         printf("[+] ASM file updated!\n");
+        fclose(assembly);
     }
 
     // // Write the external functions and start data section for assembly
