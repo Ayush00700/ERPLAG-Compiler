@@ -4,3 +4,4 @@ extern void print_ir_code(FILE* fptr,ir_code* intermediate_code);
 extern ir_code* getIRList(ast_node* root, func_entry** global_ST);
 extern char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
 extern void codegen_wrapper(ir_code* IR  /* symbol table, FILE* f*/);
+extern void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* nodeExp2);

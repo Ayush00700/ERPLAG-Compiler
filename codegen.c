@@ -177,37 +177,37 @@ FILE* assembly;
 // // }
 
 
-void main(/*ir_code* IR   symbol table, FILE* f*/)
-{
-    assembly = fopen("assembly_try.asm", "w");
+// void main(/*ir_code* IR   symbol table, FILE* f*/)
+// {
+//     assembly = fopen("assembly_try.asm", "w");
 
-    if(!assembly)
-        printf("[-] Error opening assembly_try.asm!\n");
+//     if(!assembly)
+//         printf("[-] Error opening assembly_try.asm!\n");
     
-    else
-    {
-        printf("[+] assembly_try.asm opened!\n");
+//     else
+//     {
+//         printf("[+] assembly_try.asm opened!\n");
 
-        // Write the external functions and start data section for assembly
-        fprintf(assembly, "extern printf, scanf, exit\n");
-        fprintf(assembly, "\t\t; Data declaration such as zero and format specifiers for print/scan\n");
-        fprintf(assembly, "\t\tsection      .data\n");
+//         // Write the external functions and start data section for assembly
+//         fprintf(assembly, "extern printf, scanf, exit\n");
+//         fprintf(assembly, "\t\t; Data declaration such as zero and format specifiers for print/scan\n");
+//         fprintf(assembly, "\t\tsection      .data\n");
 
-        // Write down all the format specifiers reqd
-        fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
-        fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
-        fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
-        fprintf(assembly, "\t\tzero: equ 0\n");
+//         // Write down all the format specifiers reqd
+//         fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
+//         fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
+//         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
+//         fprintf(assembly, "\t\tzero: equ 0\n");
 
-        /* Data declaration of various types to be done by going thro each entry of the symbol table*/
+//         /* Data declaration of various types to be done by going thro each entry of the symbol table*/
 
-        fprintf(assembly, "\n\n\t\tsection      .text\n");
-        fprintf(assembly, "\t\tglobal main\n");
-        fprintf(assembly, "main:\n");
+//         fprintf(assembly, "\n\n\t\tsection      .text\n");
+//         fprintf(assembly, "\t\tglobal main\n");
+//         fprintf(assembly, "main:\n");
 
-        printf("[+] ASM file updated!\n");
-        fclose(assembly);
-    }
+//         printf("[+] ASM file updated!\n");
+//         fclose(assembly);
+//     }    
 
     // // Write the external functions and start data section for assembly
     // fprintf(assembly, "extern printf, scanf, exit\n");
@@ -298,4 +298,4 @@ void main(/*ir_code* IR   symbol table, FILE* f*/)
     //     IR_head = IR_head->next;
     // }
 
-}
+// }

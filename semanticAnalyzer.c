@@ -2,10 +2,6 @@
 #include <string.h>
 
 
-#define INT_OFFSET 4 
-#define REAL_OFFSET 8
-#define BOOL_OFFSET 1
-#define POINTER_OFFSET 4
 
 func_entry* global_func_table[TABLE_SIZE];
 func_entry* global_TABLE[TABLE_SIZE];
@@ -46,8 +42,10 @@ int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp)
     new_node -> name = key;
     new_node -> next = local_table->entries[index];
     local_table->entries[index] = new_node;
-    new_node->type = temp;
     new_node->offset = local_table->offset;
+    temp.offset = new_node->offset;
+    new_node->type = temp;
+
     if(!strcmp(temp.datatype,"integer")){
         local_table->offset += INT_OFFSET;
     }

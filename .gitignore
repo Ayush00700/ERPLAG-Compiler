@@ -55,4 +55,6 @@ stage1exe
 ast
 lexer
 semanticAnalyzer
+IR_codegen
+codegen
 *.txt

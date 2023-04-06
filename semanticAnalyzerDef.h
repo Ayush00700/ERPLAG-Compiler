@@ -14,6 +14,7 @@ typedef struct arr_struct{
 typedef struct type_exp{
     char* datatype; //real boolean integer ; array 
     int is_static; //1->static and 0->dynamic
+    int offset;
     arr_struct* arr_data;
 }type_exp;
 

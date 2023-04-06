@@ -216,7 +216,7 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
             type_exp temp;
             temp.is_static = 1;
             temp.datatype = node->type;
-        sym_tab_entry_add(t,local_ST->func_root,temp); //TODO DEBUG
+        sym_tab_entry_add(t,local_ST->func_curr,temp); //TODO DEBUG
     }
     else{
         type_exp temp;
@@ -228,7 +228,7 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
         //     temp.is_static = 1;
         //     temp.datatype = "real";
         // }
-        sym_tab_entry_add(t,local_ST->func_root,temp); //TODO DEBUG
+        sym_tab_entry_add(t,local_ST->func_curr,temp); //TODO DEBUG
     }
     if(!strcmp(node->name,"PLUS")){
         newNode->operator = ADD;
@@ -259,11 +259,12 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
     node->code = add_list_beg(node->child_pointers[0]->code,node->code);
 }
 
-void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* parent){
     
 }
 
-void IR_iterative(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+void IR_iterative(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* parent){
+    
     
     // ir_code_node* ifNode = getNew_ir_code_node();
     // ifNode->operator = IF;
@@ -283,7 +284,7 @@ void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(node->tempName,local_ST->func_root,temp);
+    sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
 
     ir_code_node* newNode = getNew_ir_code_node();
     if(!strcmp(node->name,"AND")){
@@ -307,10 +308,13 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
     if(node->child_pointers[0]->isTerminal)
         newNode->result = node->child_pointers[0]->token->lexeme;
     else{
-        generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);
+        IR_arrayAssign(node->child_pointers[0],local_ST,global_ST,node->child_pointers[1]);
+        // newNode->result = node->child_pointers[0]->tempName;
+        node->code = node->child_pointers[0]->code;
+        return;
         //TODO
-        newNode->result = newTemp();
-        node->child_pointers[0]->tempName = newNode->result; //MODIFY
+        // newNode->result = newTemp();
+        // node->child_pointers[0]->tempName = newNode->result; //MODIFY
         //add add_list_end()
     }
     newNode->left_op = node->child_pointers[1]->tempName;
@@ -323,9 +327,262 @@ void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST)
     
 }
 
-void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* nodeExp2){
+    // generate_IR_for_module(nodeExp2,local_ST,global_ST);
+    generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);
+    char* string = (char*) malloc(sizeof(char)*20);
+    type_exp* tarr = find_expr(node->child_pointers[0],local_ST,node->child_pointers[0]->token->line_no);
+    ir_code_node* relOp1 = getNew_ir_code_node();
+    ir_code_node* relOp2 = getNew_ir_code_node();
+    ir_code_node* orNode = getNew_ir_code_node();
+    ir_code_node* ifNode = getNew_ir_code_node();
+    ir_code_node* offsetNode1 = getNew_ir_code_node();
+    ir_code_node* offsetNode2 = getNew_ir_code_node();
+    ir_code_node* memWriteNode = getNew_ir_code_node();
+
+    char* string1 = (char*) malloc(sizeof(char)*20);
+    sprintf(string1,"%d",tarr->arr_data->lower_bound);
+
+    relOp1->operator = LT;
+    relOp1->left_op = node->child_pointers[1]->tempName;
+    relOp1->right_op = string1;
+    relOp1->result = newTemp();
     
+    type_exp temp;
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(relOp1->result,local_ST->func_curr,temp);
+
+    char* string2 = (char*) malloc(sizeof(char)*20);
+    sprintf(string2,"%d",tarr->arr_data->upper_bound);
+
+    relOp2->operator = GT;
+    relOp2->left_op = node->child_pointers[1]->tempName;
+    relOp2->right_op = string2;
+    relOp2->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(relOp2->result,local_ST->func_curr,temp);
+
+    orNode->operator = OR;
+    orNode->left_op = relOp1->result;
+    orNode->right_op = relOp2->result;
+    orNode->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(orNode->result,local_ST->func_curr,temp);
+
+    ifNode->operator = IF;
+    ifNode->left_op = newLabel();
+    ifNode->result = orNode->result;
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(ifNode->result,local_ST->func_curr,temp);
+    int width;
+    if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
+        width = INT_OFFSET;
+    }
+    else if(!strcmp(tarr->arr_data->arr_datatype,"real")){
+        width = REAL_OFFSET;
+    }
+    else if(!strcmp(tarr->arr_data->arr_datatype,"boolean")){
+        width = BOOL_OFFSET;
+    }
+    int tempOffset = -1; //TODO fix for dynamic arrays
+    if(tarr->is_static==1)
+        tempOffset = tarr->offset - tarr->arr_data->lower_bound*width;
+    else
+        tempOffset = -1* tarr->arr_data->lower_bound*width;
+    char* string3 = (char*) malloc(sizeof(char)*20);
+    sprintf(string3,"%d",width);
+
+    offsetNode1->operator = MUL;
+    offsetNode1->left_op = node->child_pointers[1]->tempName;
+    offsetNode1->right_op = string3;
+    offsetNode1->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "integer";
+    sym_tab_entry_add(offsetNode1->result,local_ST->func_curr,temp);
+
+    char* string4 = (char*) malloc(sizeof(char)*20);
+    sprintf(string4,"%d",tempOffset);
+    offsetNode2->operator = ADD;
+    offsetNode2->left_op = string4;
+    offsetNode2->right_op = offsetNode1->result;
+    offsetNode2->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "integer";
+    sym_tab_entry_add(offsetNode2->result,local_ST->func_curr,temp);
+
+    if(tarr->is_static==1){
+        memWriteNode->operator = MEMWRITE_ST;
+        memWriteNode->result = node->child_pointers[0]->token->lexeme;
+        memWriteNode->left_op = offsetNode2->result;
+        memWriteNode->right_op = nodeExp2->tempName;
+    }
+    else{
+        memWriteNode->operator = MEMWRITE;
+        memWriteNode->result = node->child_pointers[0]->token->lexeme;
+        memWriteNode->left_op = offsetNode2->result;
+        memWriteNode->right_op = nodeExp2->tempName;
+    }
+
+    node->code = add_list_end(nodeExp2->code,node->code);
+    node->code = add_list_end(node->child_pointers[1]->code,node->code);
+    node->code = add_node_end(relOp1,node->code);
+    node->code = add_node_end(relOp2,node->code);
+    node->code = add_node_end(orNode,node->code);
+    node->code = add_node_end(ifNode,node->code);
+    node->code = add_node_end(offsetNode1,node->code);
+    node->code = add_node_end(offsetNode2,node->code);
+    node->code = add_node_end(memWriteNode,node->code);
+
+    // ifNode->operator = IF;
+    // ifNode->
+
+
+    // node->code = add_node_end(memWriteNode,node->code);
+
+
 }
+
+void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+    // generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);
+    generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);
+    type_exp temp;
+    type_exp* tarr = find_expr(node->child_pointers[0],local_ST,node->child_pointers[0]->token->line_no);
+
+    char* string = (char*) malloc(sizeof(char)*20);
+    ir_code_node* relOp1 = getNew_ir_code_node();
+    ir_code_node* relOp2 = getNew_ir_code_node();
+    ir_code_node* orNode = getNew_ir_code_node();
+    ir_code_node* ifNode = getNew_ir_code_node();
+    ir_code_node* offsetNode1 = getNew_ir_code_node();
+    ir_code_node* offsetNode2 = getNew_ir_code_node();
+    ir_code_node* memWriteNode = getNew_ir_code_node();
+
+
+    char* string1 = (char*) malloc(sizeof(char)*20);
+    sprintf(string1,"%d",tarr->arr_data->lower_bound);
+
+    relOp1->operator = LT;
+    relOp1->left_op = node->child_pointers[1]->tempName;
+    relOp1->right_op = string1;
+    relOp1->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(relOp1->result,local_ST->func_curr,temp);
+
+    char* string2 = (char*) malloc(sizeof(char)*20);
+    sprintf(string2,"%d",tarr->arr_data->upper_bound);
+
+    relOp2->operator = GT;
+    relOp2->left_op = node->child_pointers[1]->tempName;
+    relOp2->right_op = string2;
+    relOp2->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(relOp2->result,local_ST->func_curr,temp);
+
+    orNode->operator = OR;
+    orNode->left_op = relOp1->result;
+    orNode->right_op = relOp2->result;
+    orNode->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(orNode->result,local_ST->func_curr,temp);
+
+    ifNode->operator = IF;
+    ifNode->left_op = newLabel();
+    ifNode->result = orNode->result;
+    
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(ifNode->result,local_ST->func_curr,temp);
+    int width;
+    if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
+        width = INT_OFFSET;
+    }
+    else if(!strcmp(tarr->arr_data->arr_datatype,"real")){
+        width = REAL_OFFSET;
+    }
+    else if(!strcmp(tarr->arr_data->arr_datatype,"boolean")){
+        width = BOOL_OFFSET;
+    }
+    int tempOffset = -1; //TODO fix for dynamic arrays
+    if(tarr->is_static==1)
+        tempOffset = tarr->offset - tarr->arr_data->lower_bound*width;
+    else
+        tempOffset = -1* tarr->arr_data->lower_bound*width;
+    char* string3 = (char*) malloc(sizeof(char)*20);
+    sprintf(string3,"%d",width);
+
+    offsetNode1->operator = MUL;
+    offsetNode1->left_op = node->child_pointers[1]->tempName;
+    offsetNode1->right_op = string3;
+    offsetNode1->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "integer";
+    sym_tab_entry_add(offsetNode1->result,local_ST->func_curr,temp);
+
+    char* string4 = (char*) malloc(sizeof(char)*20);
+    sprintf(string4,"%d",tempOffset);
+    offsetNode2->operator = ADD;
+    offsetNode2->left_op = string4;
+    offsetNode2->right_op = offsetNode1->result;
+    offsetNode2->result = newTemp();
+    
+    temp.is_static = 1;
+    temp.datatype = "integer";
+    sym_tab_entry_add(offsetNode2->result,local_ST->func_curr,temp);
+
+    node->tempName = newTemp();
+    temp.is_static = 1;
+    temp.datatype = tarr->arr_data->arr_datatype;
+    sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
+
+    if(tarr->is_static==1){
+        memWriteNode->operator = MEMREAD_ST;
+        memWriteNode->result =node->tempName; 
+        memWriteNode->left_op = node->child_pointers[0]->token->lexeme;
+        memWriteNode->right_op = offsetNode2->result;
+    }
+    else{
+        memWriteNode->operator = MEMREAD;
+        memWriteNode->result =node->tempName; 
+        memWriteNode->left_op = node->child_pointers[0]->token->lexeme;
+        memWriteNode->right_op = offsetNode2->result;
+    }
+    
+
+
+    node->code = add_list_end(node->child_pointers[1]->code,node->code);
+    node->code = add_node_end(relOp1,node->code);
+    node->code = add_node_end(relOp2,node->code);
+    node->code = add_node_end(orNode,node->code);
+    node->code = add_node_end(ifNode,node->code);
+    node->code = add_node_end(offsetNode1,node->code);
+    node->code = add_node_end(offsetNode2,node->code);
+    node->code = add_node_end(memWriteNode,node->code);
+
+    // ifNode->operator = IF;
+    // ifNode->
+
+
+    // node->code = add_node_end(memWriteNode,node->code);
+
+
+}
+
 
 void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFTCHILD
@@ -335,7 +592,7 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(node->tempName,local_ST->func_root,temp); //TODO DEBUG
+    sym_tab_entry_add(node->tempName,local_ST->func_curr,temp); //TODO DEBUG
 
     if(!strcmp(node->name,"LT_result")){
         newNode->operator = LT;
@@ -446,9 +703,18 @@ void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global
 void IR_stmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ast_node* curr = node->next;
     while(curr!=NULL){
-
-        generate_IR_for_module(curr,local_ST,global_ST);//STMTS
-
+        if(!strcmp(curr->name,"FORLOOP")||!strcmp(curr->name,"WHILELOOP")){
+            local_ST->func_curr = local_ST->func_curr->child;  
+            IR_iterative(curr,local_ST,global_ST,node);
+            if(local_ST->func_curr->r_sibiling!=NULL){
+                local_ST->func_curr = local_ST->func_curr->parent;     
+            }
+            else
+                local_ST->func_curr = local_ST->func_curr->parent;  
+        }
+        else{
+            generate_IR_for_module(curr,local_ST,global_ST);
+        }
         node->code = add_list_end(curr->code,node->code);
         curr = curr->next;
     }
@@ -492,9 +758,19 @@ void print_ir_code(FILE* fptr,ir_code* intermediate_code){
         else if(curr->operator==DIV){
             fprintf(fptr,"%s = %s %s %s\n",curr->result,curr->left_op,"/",curr->right_op);   
         }
+        else if(curr->operator==IF){
+            fprintf(fptr,"%s %s GOTO %s\n",OPCODE_str[curr->operator],curr->result,curr->left_op);   
+        }
         else if(curr->operator==ASSIGN){
             fprintf(fptr,"%s = %s\n",curr->result,curr->left_op);   
         }
+        else if(curr->operator==MEMWRITE_ST||curr->operator==MEMWRITE){
+            fprintf(fptr,"%s[%s] = %s\n",curr->result,curr->left_op,curr->right_op);   
+        }
+        else if(curr->operator==MEMREAD_ST||curr->operator==MEMREAD){
+            fprintf(fptr,"%s = %s[%s]\n",curr->result,curr->left_op,curr->right_op);   
+        }
+        
         else if(curr->operator==AND || curr->operator==OR){
             fprintf(fptr,"%s = %s %s %s\n",curr->result,curr->left_op,OPCODE_str[curr->operator],curr->right_op);        }
         else if(curr->operator==LT || curr->operator==LE|| curr->operator==GE|| curr->operator==GT|| curr->operator==NEQ|| curr->operator==EQ){
@@ -517,9 +793,10 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
     else if(!strcmp(root->name,"INPUT_ID")){
         IR_inputStmt(root,local_ST,global_ST);
     }    
-    else if(!strcmp(root->name,"ARRAY_ASSIGN")||!strcmp(root->name,"ARRAY")||!strcmp(root->name,"ARRAY_ACCESS")){
-        // IR_arrayAccess(root,local_ST,global_ST);
+    else if(!strcmp(root->name,"ARRAY_ACCESS")){
+        IR_arrayAccess(root,local_ST,global_ST);
     }    
+
 
     else if(!strcmp(root->name,"OUTPUT")){
         IR_outputStmt(root,local_ST,global_ST);
@@ -529,18 +806,18 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         IR_assignmentStmt(root,local_ST,global_ST);
     }    
 
-    else if(!strcmp(root->name,"SWITCH")){
-        IR_switchStmt(root,local_ST,global_ST);
-    }    
+    // else if(!strcmp(root->name,"SWITCH")){
+    //     IR_switchStmt(root,local_ST,global_ST);
+    // }    
 
-    else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){
-        local_ST->func_curr = local_ST->func_curr->child;  
-        IR_iterative(root,local_ST,global_ST);
-        if(local_ST->func_curr->r_sibiling!=NULL){
-            local_ST->func_curr = local_ST->func_curr->parent;     
-        }else
-        local_ST->func_curr = local_ST->func_curr->parent;  
-    }    
+    // else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){
+    //     local_ST->func_curr = local_ST->func_curr->child;  
+    //     IR_iterative(root,local_ST,global_ST);
+    //     if(local_ST->func_curr->r_sibiling!=NULL){
+    //         local_ST->func_curr = local_ST->func_curr->parent;     
+    //     }else
+    //     local_ST->func_curr = local_ST->func_curr->parent;  
+    // }    
 
     else if(!strcmp(root->name,"AND")||!strcmp(root->name,"OR")){
         IR_booleanExpr(root,local_ST,global_ST);

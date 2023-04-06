@@ -21,8 +21,8 @@ typedef enum Boolean {False,True}Boolean;
 typedef enum OPCODE
 {
     ASSIGN,
-    UNARY_PLUS,
-    UNARY_MINUS,
+    MEMREAD,
+    MEMWRITE,
     GET_VALUE,
     PRINT,
     ADD,
@@ -44,14 +44,16 @@ typedef enum OPCODE
     LABEL,
     RET,
     PARA_IN,
-    PARA_OUT
+    PARA_OUT,
+    MEMREAD_ST,
+    MEMWRITE_ST
 }OPCODE;
 
 
 static const char * const OPCODE_str[] = {
     [ASSIGN] = "ASSIGN",
-    [UNARY_PLUS] = "UNARY_PLUS",
-    [UNARY_MINUS] = "UNARY_MINUS",
+    [MEMREAD] = "MEMREAD",
+    [MEMWRITE] = "MEMWRITE",
     [GET_VALUE] = "GET_VALUE",
     [PRINT] = "PRINT",
     [ADD] = "ADD",
@@ -73,7 +75,9 @@ static const char * const OPCODE_str[] = {
     [LABEL] = "LABEL",
     [RET] = "RET",
     [PARA_IN] = "PARA_IN",
-    [PARA_OUT] = "PARA_OUT"
+    [PARA_OUT] = "PARA_OUT",
+    [MEMREAD_ST] = "MEMREAD_ST",
+    [MEMWRITE_ST] = "MEMWRITE_ST"
 };
 
 
