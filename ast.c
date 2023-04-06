@@ -18,6 +18,8 @@ ast_node* initializeNewNode(){
     new_node->code=NULL;
     new_node->tempName=NULL;
     new_node->token=NULL;
+    new_node->type=NULL;
+    new_node->asm_code=NULL;
     return new_node; 
 }
 

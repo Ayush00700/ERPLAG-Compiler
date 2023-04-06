@@ -1,12 +1,13 @@
 // #include <string.h>
+// #include "IR_codegen.h"
 // #include "codegen.h"
 
 // typedef struct ir_code_node
-// /* The entry will be of the following form
-//     +------------+----------+----------+-----------+
-//     |  operator  |  result  |  left_op |  right_op |
-//     +------------+----------+----------+-----------+
-// */
+/* The entry will be of the following form
+    +------------+----------+----------+-----------+
+    |  operator  |  result  |  left_op |  right_op |
+    +------------+----------+----------+-----------+
+*/
 // {
 //     OPCODE operator;
 //     char* result;
@@ -63,15 +64,7 @@
 
 // FILE* assembly;
 
-// // Required functions
-// void codegen_assgn_stmt(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for assignment
-
-//     /* Handling the symbol table ops*/
-// }
+// Required functions
 
 // void codegen_unary_op(ir_code_node* ir, /* symbol table parameter*/)
 // {
@@ -208,7 +201,7 @@
 //         switch (IR_head.operator)
 //         {
 //         case ASSIGN:
-//             codegen_assgn_stmt(IR_head, /* symbol table param*/);
+//             // codegen_assgn_stmt(IR_head, /* symbol table param*/);
 //             break;
         
 //         case UNARY_PLUS:
@@ -248,7 +241,9 @@
 //             break;
         
 //         case FUNC:
-//         case FN_CALL:
+//         case CALL:
+//         case PARA_IN:
+//         case PARA_OUT:
 //         case RET:
 //             codegen_func(IR_head, /* symbol table param*/);
         
@@ -259,7 +254,9 @@
 //         case IF:
 //             codegen_conditional(IR_head, /* symbol table param*/);
 //             break;
-        
+
+
+
 //         // case LABEL:
 //         //     codegen_label(IR_head, /* symbol table param*/);
 //         //     break;

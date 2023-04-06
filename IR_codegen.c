@@ -3,6 +3,51 @@
 
 static int currentLabel = 1;
 static int currentTempVar = 1;
+char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+    // :=  lhs  rhs  -
+    char* asmCode = (char*) malloc(sizeof(char)*20);
+    char* nameRHS = node->child_pointers[1]->tempName;
+    char* buff = (char*) malloc(sizeof(char)*100);
+    memset(buff,'\0',sizeof(buff));
+    char* nameLHS = node->child_pointers[0]->tempName;
+    int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);
+    sym_tab_entry* temp = NULL;
+    temp = local_ST->func_curr->entries[indexLHS];
+    while(temp!=NULL){
+        if(!strcmp(temp->name,nameLHS)){
+            break;
+        }
+        temp = temp->next;
+    }
+    int offsetLHS = temp->offset;
+
+    int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);
+
+    strcpy(asmCode, "xor    eax , eax           ; flush out the eax register");
+    if(indexRHS==-1){
+        sprintf(buff, "mov [%d] , %s            ; immediate to memory\n",offsetLHS,nameRHS);
+        return buff;
+
+    }
+    temp = local_ST->func_curr->entries[indexRHS];
+    while(temp!=NULL){
+        if(!strcmp(temp->name,nameRHS)){
+            break;
+        }
+        temp = temp->next;
+    }
+
+    int offsetRHS = temp->offset;
+
+
+    // sprintf(lhs_name,"%d",offsetLHS);
+    // stcat();
+    sprintf(asmCode,"mov eax , [%d]\n",offsetRHS);
+    // char buff[100];
+    sprintf(buff, "mov [%d] , eax\n",offsetLHS);
+    strcat(asmCode, buff);
+    return asmCode;
+}
 
 char* concat(char* t1,char*t2){
 }
@@ -20,9 +65,9 @@ ir_code_node* getNew_ir_code_node()
 /* This function initializes the Quadruple to store the intermediate 3 address code*/
 {
     ir_code_node* newNode = (ir_code_node*)malloc(sizeof(ir_code_node));
-    newNode->left_op = (char*)malloc(sizeof(char)*20);
-    newNode->result = (char*)malloc(sizeof(char)*20);
-    newNode->right_op = (char*)malloc(sizeof(char)*20);
+    newNode->left_op = NULL;
+    newNode->result = NULL;
+    newNode->right_op = NULL;
     newNode->next = NULL;
     newNode->operator = -1;
     return newNode;
@@ -143,7 +188,7 @@ void IR_inputStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     // generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//STMTS
     ir_code_node* newNode = getNew_ir_code_node();
     newNode->operator = GET_VALUE;
-    sprintf(newNode->result,"%s",node->token->lexeme);
+    newNode->result = node->token->lexeme;
     node->code = add_node_beg(newNode,NULL);
 }
 
@@ -152,9 +197,10 @@ void IR_outputStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ir_code_node* newNode = getNew_ir_code_node();
     newNode->operator = PRINT;
     if(node->child_pointers[0]->isTerminal){
-        sprintf(newNode->result,"%s",node->child_pointers[0]->token->lexeme);
+        newNode->result = node->child_pointers[0]->token->lexeme;
     }else{
-        sprintf(newNode->result,"%s",node->child_pointers[0]->tempName);
+        newNode->result = node->child_pointers[0]->tempName;
+        // sprintf(newNode->result,"%s",node->child_pointers[0]->tempName);
     }
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
 }
@@ -167,7 +213,10 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
     ir_code_node* newNode = getNew_ir_code_node();
 
     if(!(node->child_pointers[0]->isTerminal)){
-        sym_tab_entry_add(t,local_ST->func_root,local_ST->func_root->entries[hash(node->child_pointers[0]->tempName)]->type); //TODO DEBUG
+            type_exp temp;
+            temp.is_static = 1;
+            temp.datatype = node->type;
+        sym_tab_entry_add(t,local_ST->func_root,temp); //TODO DEBUG
     }
     else{
         type_exp temp;
@@ -237,6 +286,8 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
     }
     newNode->left_op = node->child_pointers[1]->tempName;
     node->code = add_node_end(newNode,node->child_pointers[1]->code);
+    node->asm_code = codegen_assgn_stmt(node,newNode,local_ST,global_ST);
+    printf("\n%s\n",node->asm_code);
 }
 
 void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST){
@@ -251,6 +302,8 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFTCHILD
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//RIGHTCHILD
     ir_code_node* newNode = getNew_ir_code_node();
+    node->tempName = newTemp();
+    
 
     if(!strcmp(node->name,"LT_result")){
         newNode->operator = LT;
@@ -334,7 +387,9 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//STMTS
     ir_code_node* newNode = getNew_ir_code_node();
     newNode->operator = FUNC;
-    sprintf(newNode->result,"main");
+    // sprintf(newNode->result,"main");
+    
+    newNode->result = "main";
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
     ir_code_node* endNode = getNew_ir_code_node();
     endNode->operator = RET;
@@ -364,7 +419,9 @@ void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global
 void IR_stmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ast_node* curr = node->next;
     while(curr!=NULL){
+
         generate_IR_for_module(curr,local_ST,global_ST);//STMTS
+
         node->code = add_list_end(curr->code,node->code);
         curr = curr->next;
     }
@@ -431,7 +488,12 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
     }    
 
     else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){
+        local_ST->func_curr = local_ST->func_curr->child;  
         IR_iterative(root,local_ST,global_ST);
+        if(local_ST->func_curr->r_sibiling!=NULL){
+            local_ST->func_curr = local_ST->func_curr->parent;     
+        }else
+        local_ST->func_curr = local_ST->func_curr->parent;  
     }    
 
     else if(!strcmp(root->name,"AND")||!strcmp(root->name,"OR")){

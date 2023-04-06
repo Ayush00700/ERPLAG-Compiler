@@ -773,6 +773,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if(compare&&op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")        ){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
+            node->type = temp->datatype;
             return temp;
         }else{
             return compare;
@@ -863,6 +864,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line=line_number_finder(node);//Might need to check child's line number
         //for PLUS operator need not be always line number tractable
         type_exp* ret=compare_dTypes(left, right,line);
+        if(ret)node->type = ret->datatype;
         return ret;
         }
      }

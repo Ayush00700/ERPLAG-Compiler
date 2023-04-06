@@ -160,7 +160,7 @@ Iterating over next list element of node 4:
 
 20	ASSIGN
 No of children: 2 
-Childrens:ID ,NUM ,
+Childrens:ID ,ID ,
 Next pointers:ASSIGN ,MODULEREUSE ,
 
 Iterating over next child of Node 20:
@@ -174,11 +174,9 @@ Next pointers:NULL
 
 Iterating over next child of Node 20:
 
-	10
+	var_1_
 
-	10
-
-22	NUM
+22	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL

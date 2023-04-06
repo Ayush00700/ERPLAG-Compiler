@@ -42,7 +42,9 @@ typedef enum OPCODE
     GOTO,
     IF,
     LABEL,
-    RET
+    RET,
+    PARA_IN,
+    PARA_OUT
 }OPCODE;
 
 
@@ -69,7 +71,9 @@ static const char * const OPCODE_str[] = {
     [GOTO] = "GOTO",
     [IF] = "IF",
     [LABEL] = "LABEL",
-    [RET] = "RET"
+    [RET] = "RET",
+    [PARA_IN] = "PARA_IN",
+    [PARA_OUT] = "PARA_OUT"
 };
 
 
@@ -130,6 +134,8 @@ typedef struct ast_node{
     char* true;
     char* false;
     char* nextJump;
+    char* type;
+    char* asm_code;
     Boolean isTerminal;
     token_info* token;
 }ast_node;
