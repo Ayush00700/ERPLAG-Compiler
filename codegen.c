@@ -1,6 +1,8 @@
-// #include <string.h>
+#include <string.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 // #include "IR_codegen.h"
-// #include "codegen.h"
 
 // typedef struct ir_code_node
 /* The entry will be of the following form
@@ -62,7 +64,7 @@
 //     int visited;
 // }func_entry;
 
-// FILE* assembly;
+FILE* assembly;
 
 // Required functions
 
@@ -175,94 +177,122 @@
 // // }
 
 
-// void codegen_wrapper(ir_code* IR,  /* symbol table*/, FILE* f)
-// {
-//     assembly = f;
+void main(/*ir_code* IR   symbol table, FILE* f*/)
+{
+    assembly = fopen("assembly_try.asm", "w");
 
-//     // Write the external functions and start data section for assembly
-//     fprintf(assembly, "extern printf, scanf, exit\n");
-//     fprintf(assembly, "section      .data\n");
+    if(!assembly)
+        printf("[-] Error opening assembly_try.asm!\n");
+    
+    else
+    {
+        printf("[+] assembly_try.asm opened!\n");
 
-//     // Write down all the format specifiers reqd
-//     fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
-//     fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
-//     fprintf(assembly, "\t\tzero: dw 0\n");
+        // Write the external functions and start data section for assembly
+        fprintf(assembly, "extern printf, scanf, exit\n");
+        fprintf(assembly, "section      .data\n");
 
-//     /* Data declaration of various types to be done by going thro each entry of the symbol table*/
+        // Write down all the format specifiers reqd
+        fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
+        fprintf(assembly, "\t\tzero: dw 0\n");
 
-//     fprintf(assembly, "section      .text\n");
-//     fprintf(assembly, "global main");
+        /* Data declaration of various types to be done by going thro each entry of the symbol table*/
 
-//     ir_code_node *IR_head = IR->head;
+        fprintf(assembly, "section      .text\n");
+        fprintf(assembly, "global main");
 
-//     // Go through each entry of the IR quadruple
-//     while(IR_head)
-//     {
-//         switch (IR_head.operator)
-//         {
-//         case ASSIGN:
-//             // codegen_assgn_stmt(IR_head, /* symbol table param*/);
-//             break;
+        printf("[+] ASM file updated!\n");
+    }
+
+    // // Write the external functions and start data section for assembly
+    // fprintf(assembly, "extern printf, scanf, exit\n");
+    // fprintf(assembly, "section      .data\n");
+
+    // // Write down all the format specifiers reqd
+    // fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
+    // fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
+    // fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
+    // fprintf(assembly, "\t\tzero: dw 0\n");
+
+    // /* Data declaration of various types to be done by going thro each entry of the symbol table*/
+
+    // fprintf(assembly, "section      .text\n");
+    // fprintf(assembly, "global main");
+
+    // printf("[+] ASM file updated!\n");
+
+    // ir_code_node *IR_head = IR->head;
+
+    // // Go through each entry of the IR quadruple
+    // while(IR_head)
+    // {
+    //     switch (IR_head.operator)
+    //     {
+    //     case ASSIGN:
+    //         // codegen_assgn_stmt(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case UNARY_PLUS:
-//         case UNARY_MINUS:
-//             codegen_unary_op(IR_head, /* symbol table param*/);
-//             break;
+    //     case UNARY_PLUS:
+    //     case UNARY_MINUS:
+    //         codegen_unary_op(IR_head, /* symbol table param*/);
+    //         break;
 
-//         case GET_VALUE:
-//             codegen_input(IR_head, /* symbol table param*/);
-//             break;
+    //     case GET_VALUE:
+    //         codegen_input(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case PRINT:
-//             codegen_output(IR_head, /* symbol table param*/);
-//             break;
+    //     case PRINT:
+    //         codegen_output(IR_head, /* symbol table param*/);
+    //         break;
 
-//         case ADD:
-//         case SUB:
-//         case MUL:
-//             codegen_arithmetic_nodiv(IR_head, /* symbol table param*/);
-//             break;
-//         case DIV:
-//             codegen_div(IR_head, /* symbol table param*/);
-//             break;
+    //     case ADD:
+    //     case SUB:
+    //     case MUL:
+    //         codegen_arithmetic_nodiv(IR_head, /* symbol table param*/);
+    //         break;
+    //     case DIV:
+    //         codegen_div(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case LT:
-//         case LE:
-//         case GT:
-//         case GE:
-//         case EQ:
-//         case NEQ:
-//             codegen_relational(IR_head, /* symbol table param*/);
-//             break;
+    //     case LT:
+    //     case LE:
+    //     case GT:
+    //     case GE:
+    //     case EQ:
+    //     case NEQ:
+    //         codegen_relational(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case OR:
-//         case AND:
-//             codegen_boolean(IR_head, /* symbol table param*/);
-//             break;
+    //     case OR:
+    //     case AND:
+    //         codegen_boolean(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case FUNC:
-//         case CALL:
-//         case PARA_IN:
-//         case PARA_OUT:
-//         case RET:
-//             codegen_func(IR_head, /* symbol table param*/);
+    //     case FUNC:
+    //     case CALL:
+    //     case PARA_IN:
+    //     case PARA_OUT:
+    //     case RET:
+    //         codegen_func(IR_head, /* symbol table param*/);
         
-//         case GOTO:
-//             codegen_jump(IR_head, /* symbol table param*/);
-//             break;
+    //     case GOTO:
+    //         codegen_jump(IR_head, /* symbol table param*/);
+    //         break;
         
-//         case IF:
-//             codegen_conditional(IR_head, /* symbol table param*/);
-//             break;
+    //     case IF:
+    //         codegen_conditional(IR_head, /* symbol table param*/);
+    //         break;
 
 
 
-//         // case LABEL:
-//         //     codegen_label(IR_head, /* symbol table param*/);
-//         //     break;
-//         }
+    //     // case LABEL:
+    //     //     codegen_label(IR_head, /* symbol table param*/);
+    //     //     break;
+    //     }
 
-//         IR_head = IR_head->next;
-//     }
+    //     IR_head = IR_head->next;
+    // }
 
-// }
+}
