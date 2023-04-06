@@ -220,14 +220,14 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
     }
     else{
         type_exp temp;
-        if(!strcmp(node->child_pointers[0]->token->type,"NUM")){
-            temp.is_static = 1;
-            temp.datatype = "integer";
-        }
-        else if(!strcmp(node->child_pointers[0]->token->type,"RNUM")){
-            temp.is_static = 1;
-            temp.datatype = "real";
-        }
+        // if(!strcmp(node->child_pointers[0]->token->type,"NUM")){
+        temp.is_static = 1;
+        temp.datatype = node->type;
+        // }
+        // else if(!strcmp(node->child_pointers[0]->token->type,"RNUM")){
+        //     temp.is_static = 1;
+        //     temp.datatype = "real";
+        // }
         sym_tab_entry_add(t,local_ST->func_root,temp); //TODO DEBUG
     }
     if(!strcmp(node->name,"PLUS")){
@@ -265,10 +265,39 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
 void IR_iterative(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
+    // ir_code_node* ifNode = getNew_ir_code_node();
+    // ifNode->operator = IF;
+    // ifNode->result = node->tempName;
+    // ifNode->left_op = node->true;
+    // ifNode->right_op = node->false;
+    // ir_code_node* gotoNode = getNew_ir_code_node();
+    // gotoNode->operator = GOTO;
+    // gotoNode->result = node->false;
 }
 
 void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+    generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFT CHILD
+    generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//Right child
+    node->tempName = newTemp();
     
+    type_exp temp;
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(node->tempName,local_ST->func_root,temp);
+
+    ir_code_node* newNode = getNew_ir_code_node();
+    if(!strcmp(node->name,"AND")){
+        newNode->operator = AND;
+
+    }else if(!strcmp(node->name,"OR")){
+        newNode->operator = OR;
+    }
+    newNode->result = node->tempName;
+    newNode->left_op = node->child_pointers[0]->tempName;
+    newNode->right_op = node->child_pointers[1]->tempName;
+    node->code = add_list_end(node->child_pointers[0]->code,node->code);
+    node->code = add_list_end(node->child_pointers[1]->code,node->code);
+    node->code = add_node_end(newNode,node->code);
 }
 
 void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
@@ -286,8 +315,8 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
     }
     newNode->left_op = node->child_pointers[1]->tempName;
     node->code = add_node_end(newNode,node->child_pointers[1]->code);
-    node->asm_code = codegen_assgn_stmt(node,newNode,local_ST,global_ST);
-    printf("\n%s\n",node->asm_code);
+    // node->asm_code = codegen_assgn_stmt(node,newNode,local_ST,global_ST);
+    // printf("\n%s\n",node->asm_code);
 }
 
 void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST){
@@ -303,7 +332,10 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//RIGHTCHILD
     ir_code_node* newNode = getNew_ir_code_node();
     node->tempName = newTemp();
-    
+    type_exp temp;
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    sym_tab_entry_add(node->tempName,local_ST->func_root,temp); //TODO DEBUG
 
     if(!strcmp(node->name,"LT_result")){
         newNode->operator = LT;
@@ -343,15 +375,10 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         newNode->left_op = node->child_pointers[0]->tempName;
         newNode->right_op = node->child_pointers[1]->tempName;
     }
-    node->code = add_node_end(newNode,node->child_pointers[1]->code);
-    node->code = add_node_end(newNode,node->child_pointers[1]->code);
-    ir_code_node* gotoNode = getNew_ir_code_node();
-    newNode->operator = GE;
-    newNode->result = node->tempName;
-    newNode->left_op = node->child_pointers[0]->tempName;
-    newNode->right_op = node->child_pointers[1]->tempName;
 
-    node->code = add_list_beg(node->child_pointers[0]->code,node->code);  
+    node->code = add_list_end(node->child_pointers[0]->code,node->code);
+    node->code = add_list_end(node->child_pointers[1]->code,node->code);
+    node->code = add_node_end(newNode,node->code);
 }
 
 void IR_codeGen(ast_node* root,func_entry** global_ST){
@@ -427,7 +454,21 @@ void IR_stmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     }
 }
 void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
-
+    generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//STMTS
+    ir_code_node* minusNode = getNew_ir_code_node();
+    if(!strcmp(node->child_pointers[0]->name,"PLUS")){
+        node->code = node->child_pointers[1]->code;
+        node->tempName = node->child_pointers[1]->tempName;
+    }else if(!strcmp(node->child_pointers[0]->name,"MINUS")){
+        minusNode->operator = MUL;
+        char* str = (char *) malloc(sizeof(char)*10);
+        sprintf(str,"%d",-1);
+        minusNode->result = newTemp();
+        minusNode->left_op = str;
+        minusNode->right_op = node->child_pointers[1]->tempName;
+        node->code = add_node_end(minusNode,node->child_pointers[1]->code);
+        node->tempName = minusNode->result;
+    }
 }
 
 void print_ir_code(FILE* fptr,ir_code* intermediate_code){
@@ -454,6 +495,11 @@ void print_ir_code(FILE* fptr,ir_code* intermediate_code){
         else if(curr->operator==ASSIGN){
             fprintf(fptr,"%s = %s\n",curr->result,curr->left_op);   
         }
+        else if(curr->operator==AND || curr->operator==OR){
+            fprintf(fptr,"%s = %s %s %s\n",curr->result,curr->left_op,OPCODE_str[curr->operator],curr->right_op);        }
+        else if(curr->operator==LT || curr->operator==LE|| curr->operator==GE|| curr->operator==GT|| curr->operator==NEQ|| curr->operator==EQ){
+            fprintf(fptr,"%s = %s %s %s\n",curr->result,curr->left_op,OPCODE_str[curr->operator],curr->right_op);        }
+
         // fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
         curr = curr->next;      //TODO Debug for null
     }
@@ -468,7 +514,7 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
     if(!strcmp(root->name,"UNARY")){
         IR_unaryStmts(root,local_ST,global_ST);
     }    
-    if(!strcmp(root->name,"INPUT_ID")){
+    else if(!strcmp(root->name,"INPUT_ID")){
         IR_inputStmt(root,local_ST,global_ST);
     }    
     else if(!strcmp(root->name,"ARRAY_ASSIGN")||!strcmp(root->name,"ARRAY")||!strcmp(root->name,"ARRAY_ACCESS")){
@@ -500,7 +546,7 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         IR_booleanExpr(root,local_ST,global_ST);
     }    
 
-    else if(!strcmp(root->name,"LT")||!strcmp(root->name,"LE")||!strcmp(root->name,"GT")||!strcmp(root->name,"GE")||!strcmp(root->name,"NE")||!strcmp(root->name,"EQ")){
+    else if(!strcmp(root->name,"LT_result")||!strcmp(root->name,"LE_result")||!strcmp(root->name,"GT_result")||!strcmp(root->name,"GE_result")||!strcmp(root->name,"NE_result")||!strcmp(root->name,"EQ_result")){
         IR_relational(root,local_ST,global_ST);
     }    
 

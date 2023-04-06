@@ -718,12 +718,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else if(!strcmp(node->name,"LT_result")||!strcmp(node->name,"LE_result")){
         type_exp* op1 = type_checking(node->child_pointers[0],curr);
         type_exp* op2 = type_checking(node->child_pointers[1],curr);
-        int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
+        int line=line_number_finder(node);//Might need to check child's line number
         type_exp* compare = compare_dTypes(op1,op2,line);
             if(!compare)
             return NULL;
             if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
-                &&strcmp(compare->datatype,"TypeNotMatched")){
+                &&compare){
                 type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
                 temp->datatype = "boolean";
                 return temp;
@@ -736,7 +736,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         else if(!strcmp(node->name,"GT_result")||!strcmp(node->name,"GE_result")){
         type_exp* op1 = type_checking(node->child_pointers[0],curr);
         type_exp* op2 = type_checking(node->child_pointers[1],curr);
-        int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
+        int line=line_number_finder(node);//Might need to check child's line number
         type_exp* compare = compare_dTypes(op1,op2,line);
 
         if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
@@ -751,7 +751,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         else if(!strcmp(node->name,"EQ_result")||!strcmp(node->name,"NE_result")){
         type_exp* op1 = type_checking(node->child_pointers[0],curr);
         type_exp* op2 = type_checking(node->child_pointers[1],curr);
-        int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
+        int line=line_number_finder(node);//Might need to check child's line number
         type_exp* compare = compare_dTypes(op1,op2,line);
 
         if(op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")
@@ -856,7 +856,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         return throw_error(UNSUPPORTED_DTYPE,line);
         else return num;
     }
-    else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT")||!strcmp(node->name,"DIV"))
+    else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MUL")||!strcmp(node->name,"DIV"))
     {
         if(node->no_of_children!=0){    //to handle non unary expression 
         type_exp* left =type_checking(node->child_pointers[0],curr);

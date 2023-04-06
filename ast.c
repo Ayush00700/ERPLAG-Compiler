@@ -460,6 +460,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "TRUE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = "true";
             return parent;}
         case 36:
             // Create node for terminal token
@@ -467,6 +468,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "FALSE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = "false";
             return parent;}
         case 37:
         // Create node for terminal token
