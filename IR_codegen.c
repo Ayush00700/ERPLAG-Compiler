@@ -33,9 +33,11 @@ char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
     int offsetLHS = temp->offset;               // Get the memory offset for the lhs variable from the symbol
 
     int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
-    sprintf(buff, "push_regs                    ; save values");
+    sprintf(buff, "; Code for getting assignment statement\n");
     strcpy(asmCode, buff);
-    strcat(asmCode, "xor    eax , eax           ; flush out the eax register");
+    sprintf(buff, "push_regs                    ; save values\n");
+    strcat(asmCode, buff);
+    strcat(asmCode, "xor    rax , rax           ; flush out the rax register");
 
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
@@ -43,9 +45,9 @@ char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
         if(!strcmp(temp->type.datatype, "integer"))
         {    
-            sprintf(buff, "mov      eax , %s                    ; immediate to register\n",nameRHS);
+            sprintf(buff, "mov      rax , %s                    ; immediate to register\n",nameRHS);
             strcat(asmCode, buff);
-            sprintf(buff, "mov      [RBP - %d] , eax            ; register to memory\n",offsetLHS);
+            sprintf(buff, "mov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
             strcat(asmCode, buff);
         }
 
@@ -73,9 +75,9 @@ char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
         if(!strcmp(temp->type.datatype, "integer"))
         {
-            sprintf(buff, "mov      eax , [RBP - %d]                    ; memory to register\n",offsetRHS);
+            sprintf(buff, "mov      rax , [RBP - %d]                    ; memory to register\n",offsetRHS);
             strcat(asmCode, buff);
-            sprintf(buff, "mov      [RBP - %d] , eax            ; register to memory\n",offsetLHS);
+            sprintf(buff, "mov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
             strcat(asmCode, buff);
         }
 
@@ -124,8 +126,10 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
     // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sprintf(buff1, "push_regs                    ; save values");
+    sprintf(buff1, "; Code for arithmetic\n");
     strcpy(asmCode, buff1);
+    sprintf(buff1, "push_regs                    ; save values\n");
+    strcat(asmCode, buff1);
 
     // If left operand is a constant
     if(indexLeft == -1)
@@ -133,7 +137,7 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
         // TODO ----> identifying if immediate value is int or real
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "mov     eax , %s            ; immediate to memory\n", nameLeft);
+            sprintf(buff1, "mov     rax , %s            ; immediate to memory\n", nameLeft);
             strcat(asmCode, buff1);
         }
 
@@ -157,7 +161,7 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "mov     eax , [RBP - %d]\n", offsetLeft);
+            sprintf(buff1, "mov     rax , [RBP - %d]\n", offsetLeft);
             strcat(asmCode, buff1);
         }
         else
@@ -181,9 +185,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
                 // CHECK ----> identifying if immediate value is int or real
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff2, "add     eax , %s\n", nameRight);
+                    sprintf(buff2, "add     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
 
@@ -209,9 +213,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "add     eax , [RBP - %d]\n", offsetRight);
+                    sprintf(buff1, "add     rax , [RBP - %d]\n", offsetRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
                 else
@@ -233,9 +237,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
                 // CHECK ----> identifying if immediate value is int or real
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff2, "sub     eax , %s\n", nameRight);
+                    sprintf(buff2, "sub     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
 
@@ -261,9 +265,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "sub     eax , [RBP - %d]\n", offsetRight);
+                    sprintf(buff1, "sub     rax , [RBP - %d]\n", offsetRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
                 else
@@ -285,9 +289,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
                 // CHECK ----> identifying if immediate value is int or real
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff2, "mul     eax , %s\n", nameRight);
+                    sprintf(buff2, "mul     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
 
@@ -313,9 +317,9 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "mul     eax , [RBP - %d]\n", offsetRight);
+                    sprintf(buff1, "mul     rax , [RBP - %d]\n", offsetRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
                 else
@@ -408,8 +412,10 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
     // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sprintf(buff1, "push_regs                    ; save values");
+    sprintf(buff1, "; Code for logical op\n");
     strcpy(asmCode, buff1);
+    sprintf(buff1, "push_regs                    ; save values\n");
+    strcat(asmCode, buff1);
 
     // If left operand is a constant
     if(indexLeft == -1)
@@ -417,7 +423,7 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
         // TODO ----> identifying if immediate value is int or real
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "mov     eax , %s            ; immediate to memory\n", nameLeft);
+            sprintf(buff1, "mov     rax , %s            ; immediate to memory\n", nameLeft);
             strcat(asmCode, buff1);
         }
 
@@ -441,7 +447,7 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
 
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "mov     eax , [RBP - %d]\n", offsetLeft);
+            sprintf(buff1, "mov     rax , [RBP - %d]\n", offsetLeft);
             strcat(asmCode, buff1);
         }
         else
@@ -465,9 +471,9 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
                 // CHECK ----> identifying if immediate value is int or real
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff2, "and     eax , %s\n", nameRight);
+                    sprintf(buff2, "and     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
 
@@ -493,9 +499,9 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "and     eax , [RBP - %d]\n", offsetRight);
+                    sprintf(buff1, "and     rax , [RBP - %d]\n", offsetRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
                 else
@@ -517,9 +523,9 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
                 // CHECK ----> identifying if immediate value is int or real
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff2, "or     eax , %s\n", nameRight);
+                    sprintf(buff2, "or     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
 
@@ -545,9 +551,9 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "or     eax , [RBP - %d]\n", offsetRight);
+                    sprintf(buff1, "or     rax , [RBP - %d]\n", offsetRight);
                     strcat(asmCode, buff2);
-                    sprintf(buff2, "mov     [RBP - %d] , eax\n", offsetResult);
+                    sprintf(buff2, "mov     [RBP - %d] , rax\n", offsetResult);
                     strcat(asmCode, buff2);
                 }
                 else
@@ -563,6 +569,85 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
 
     sprintf(buff2, "pop_regs        ; restore register values\n");
     strcat(asmCode, buff2);
+    return asmCode;
+}
+
+char* codegen_input(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+    /* The entry will be of the following form
+    +------------+----------+----------+-----------+
+    |  GET_VALUE |    var   |   NULL   |    NULL   |
+    +------------+----------+----------+-----------+
+    */
+
+    // mov  rax, 3 ; sys_read
+    // mov  rbx, 0 ; stdin
+    // mov  rcx, user_input ; user input
+    // mov  rdx, user_input_length ; max length
+    // int  80h
+
+    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
+    char* buff = (char*) malloc(sizeof(char)*100);
+    memset(buff,'\0',sizeof(buff));
+
+    // Get offset of result
+    char* result = ir->result;
+    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    sym_tab_entry* temp = NULL;
+    temp = local_ST->func_curr->entries[indexResult];
+    while(temp!=NULL){
+        if(!strcmp(temp->name,result)){
+            break;
+        }
+        temp = temp->next;
+    }
+    int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    char* resultType = temp->type.datatype;
+
+    sprintf(buff, "; Code for getting user input\n");
+    strcpy(asmCode, buff);
+    sprintf(buff, "push_regs                    ; save values\n");
+    strcat(asmCode, buff);
+
+    if(!strcmp(resultType, "integer"))
+    {
+        sprintf(buff, "mov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
+        strcat(asmCode, buff);
+    }
+    else if(!strcmp(resultType, "real"))
+    {
+        sprintf(buff, "mov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
+        strcat(asmCode, buff);
+    }
+    else if(!strcmp(resultType, "boolean"))
+    {
+        sprintf(buff, "mov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
+        strcat(asmCode, buff);
+    }
+    // TODO ----> for arrays
+
+    sprintf(buff, "mov      rdx , rbp                               ; take base pointer in rdx\n");
+    strcat(asmCode, buff);
+    sprintf(buff, "sub      rdx , %d                                ; move pointer to place where we have to store\n", offsetResult);
+    strcat(asmCode, buff);
+    sprintf(buff, "mov      rax , 0x0000_0000_ffff_ffff             ; set size\n");
+    strcat(asmCode, buff);
+    sprintf(buff, "mov      [rdx] , rax\n");
+    strcat(asmCode, buff);
+    sprintf(buff, "mov      rsi , rdx                               ; move source index\n");
+    strcat(asmCode, buff);
+    sprintf(buff, "mov      rax , zero\n");
+    strcat(asmCode, buff);
+    sprintf(buff, "mov      rsi , rdx\n");
+    strcat(asmCode, buff);
+    // sprintf(buff, "align_16_rsp                                     ; align stack pointer\n");
+    // strcat(asmCode, buff);
+    sprintf(buff, "call     scanf                                   ; system call for input\n");
+    strcat(asmCode, buff);
+    // sprintf(buff, "dealign_16_rsp                                      ; restore previos alignment of stack\n");
+    // strcat(asmCode, buff);
+
+    sprintf(buff, "pop_regs        ; restore register values\n");
+    strcat(asmCode, buff);
     return asmCode;
 }
 /******************************************ASM CODE FNS END******************************************/

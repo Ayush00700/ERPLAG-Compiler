@@ -197,6 +197,7 @@ void main(/*ir_code* IR   symbol table, FILE* f*/)
         fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_bool: db \"%%d\", 10, 0\n");
         fprintf(assembly, "\t\tzero: equ 0\n");
 
         /* Data declaration of various types to be done by going thro each entry of the symbol table*/
