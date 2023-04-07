@@ -316,9 +316,9 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->construct_name = "CASE";
         initialize_entries(local_case);
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
-        else{
-        local_populate(local_case,ast_root->child_pointers[1]);
-        }
+        // else{
+        // local_populate(local_case,ast_root->child_pointers[1]);
+        // }
         local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
     }
@@ -332,9 +332,9 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->construct_name = "CASE";
         initialize_entries(local_case);
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
-        else{
-        local_populate(local_case,ast_root->child_pointers[1]);
-        }
+        // else{
+        // local_populate(local_case,ast_root->child_pointers[1]);
+        // }
         local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
     }
@@ -358,8 +358,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         }
         for_populate(local_for,ast_root->child_pointers[0]);
         local_populate(local_for,ast_root->child_pointers[2]);
-        local_populate(local_table,ast_root->next);
         local_table->offset = local_for->offset;
+        local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"WHILELOOP")){
         var_record* local_while = (var_record*) malloc(sizeof(var_record));
@@ -380,8 +380,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_while;
         }
         local_populate(local_while,ast_root->child_pointers[1]);
-        local_populate(local_table,ast_root->next);
         local_table->offset = local_while->offset; 
+        local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"SWITCH")){
         var_record* local_switch = (var_record*) malloc(sizeof(var_record));
@@ -425,8 +425,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_switch_default;
         }
         local_populate(local_switch_default,ast_root->child_pointers[2]);
-        local_populate(local_table,ast_root->next);
         local_table->offset = local_switch_default->offset; 
+        local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"DECLARE")){
         compute_expression(ast_root,local_table);
@@ -1006,4 +1006,5 @@ void get_global_symbol_table(ast_node* ast_root){
     init_global(global_TABLE);
 
     populate_copy(ast_root,global_TABLE); 
+    printf("hello");
 }
