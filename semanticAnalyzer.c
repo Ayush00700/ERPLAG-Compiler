@@ -690,21 +690,22 @@ void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* 
     while(actual&&formal)
     {
         type_exp* act;
-        type_exp* temp;
+        ast_node* temp;
         char* arr_access;
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
        //ast_node* temp= actual->child_pointers[1]->child_pointers[0]?actual->child_pointers[1]->child_pointers[0]:actual->child_pointers[1]->child_pointers[1];
        if(actual->child_pointers[1]->isTerminal)
        {
             act=type_checking(actual->child_pointers[1], curr);
+            arr_access=act->datatype;
        }
        else
        {
             temp= actual->child_pointers[1]->child_pointers[0];
             act= find_expr(temp, curr, line);
+            arr_access=act->datatype;
             if(actual->child_pointers[1]->child_pointers[1])
             {
-                arr_access=act->datatype;
                 act->datatype=act->arr_data->arr_datatype;
             }
        }
