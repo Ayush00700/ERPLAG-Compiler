@@ -685,11 +685,12 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
         throw_error(PARAMETER_LIST_MISMATCH,line);
     }
 }
-void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
+void perform_type_matching_in(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
 {
     while(actual&&formal)
     {
         type_exp* act;
+        ast_node* temp;
         ast_node* temp;
         char* arr_access;
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
@@ -698,12 +699,15 @@ void perform_type_matching(ast_node* actual, sym_tab_entry* formal, func_entry* 
        {
             act=type_checking(actual->child_pointers[1], curr);
             arr_access=act->datatype;
+            arr_access=act->datatype;
        }
        else
        {
             temp= actual->child_pointers[1]->child_pointers[0];
             act= find_expr(temp, curr, line);
             arr_access=act->datatype;
+            arr_access=act->datatype;
+            
             if(actual->child_pointers[1]->child_pointers[1])
             {
                 act->datatype=act->arr_data->arr_datatype;
@@ -768,7 +772,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             {
                 if(temp->input_list)
                 {
-                    perform_type_matching(node->child_pointers[2], temp->input_list,curr,line);
+                    perform_type_matching_in(node->child_pointers[2], temp->input_list,curr,line);
                 }
                 else
                 {
