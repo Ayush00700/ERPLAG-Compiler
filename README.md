@@ -227,3 +227,5 @@ We have used "3 Address Codes" IR. We have generated IR for the following:
     - AST (Abstract Syntax Tree) creation
     - Semantic Analyzer
     - Code Generation
+
+- Free the pointers

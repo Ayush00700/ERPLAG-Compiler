@@ -269,7 +269,6 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
         newNode->result = node->child_pointers[0]->token->lexeme;
     else{
         IR_arrayAssign(node->child_pointers[0],local_ST,global_ST,node->child_pointers[1]);
-        // node->asm_code = codegen_assgn_stmt(node,node->child_pointers[0]->code->head,local_ST,global_ST);
 
         // newNode->result = node->child_pointers[0]->tempName;
         node->code = node->child_pointers[0]->code;
@@ -281,8 +280,6 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
     }
     newNode->left_op = node->child_pointers[1]->tempName;
     node->code = add_node_end(newNode,node->child_pointers[1]->code);
-    // node->asm_code = codegen_assgn_stmt(node,newNode,local_ST,global_ST);
-    // printf("\n%s\n",node->asm_code);
 }
 
 // void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST){
@@ -650,6 +647,7 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     
     newNode->result = "main";
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
+    //TODO AYUSUDU
     ir_code_node* endNode = getNew_ir_code_node();
     endNode->operator = RET;
     node->code = add_node_end(endNode,node->code);
@@ -773,21 +771,21 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         IR_assignmentStmt(root,local_ST,global_ST);
     }    
 
-    else if(!strcmp(root->name,"SWITCH")){
-        IR_switchStmt(root,local_ST->func_curr,global_ST);
-        if(local_ST->func_curr->r_sibiling!=NULL){
-            local_ST->func_curr = local_ST->func_curr->r_sibiling;     
-        }else
-            local_ST->func_curr = local_ST->func_curr->parent;  
-    }    
+    // else if(!strcmp(root->name,"SWITCH")){
+    //     IR_switchStmt(root,local_ST->func_curr,global_ST);
+    //     if(local_ST->func_curr->r_sibiling!=NULL){
+    //         local_ST->func_curr = local_ST->func_curr->r_sibiling;     
+    //     }else
+    //         local_ST->func_curr = local_ST->func_curr->parent;  
+    // }    
 
-    else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){ 
-        IR_iterative(root,local_ST,global_ST);
-        if(local_ST->func_curr->r_sibiling!=NULL){
-            local_ST->func_curr = local_ST->func_curr->r_sibiling;     
-        }else
-        local_ST->func_curr = local_ST->func_curr->parent;  
-    }    
+    // else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){ 
+    //     IR_iterative(root,local_ST,global_ST);
+    //     if(local_ST->func_curr->r_sibiling!=NULL){
+    //         local_ST->func_curr = local_ST->func_curr->r_sibiling;     
+    //     }else
+    //     local_ST->func_curr = local_ST->func_curr->parent;  
+    // }    
 
     else if(!strcmp(root->name,"AND")||!strcmp(root->name,"OR")){
         IR_booleanExpr(root,local_ST,global_ST);

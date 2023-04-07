@@ -201,10 +201,18 @@ int main(int argc, char* args[]){ //DRIVER
                     ast_node* ast_root = get_ast_root();
                     semantic();
                     get_global_symbol_table(ast_root);
+                    FILE* assembly = fopen("assembly_try.asm", "w");
+                    starter(assembly);
                     FILE* fptr = fopen("intermediate_code.txt","w+");
                     ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
                     print_ir_code(fptr,intermediate_code);
                     fclose(fptr);
+
+                    // fprintf(assembly,"%s", ast_root->asm_code);
+                    fclose(assembly);
+
+
+
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
 

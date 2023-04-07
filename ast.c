@@ -19,7 +19,7 @@ ast_node* initializeNewNode(){
     new_node->tempName=NULL;
     new_node->token=NULL;
     new_node->type=NULL;
-    new_node->asm_code=NULL;
+    // new_node->asm_code=(char*) malloc(sizeof(char)*1000);
     return new_node; 
 }
 

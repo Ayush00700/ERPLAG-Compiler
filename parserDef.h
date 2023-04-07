@@ -139,7 +139,6 @@ typedef struct ast_node{
     char* false;
     char* nextJump;
     char* type;
-    char* asm_code;
     Boolean isTerminal;
     token_info* token;
 }ast_node;

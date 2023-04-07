@@ -946,6 +946,20 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else return NULL;
 }
 
+func_entry* find_module_global(char* key){
+    int index = func_tab_entry_contains(key, global_TABLE);
+    if(index==-1)return NULL;
+    func_entry* function = global_TABLE[index];
+
+    while(function!=NULL){      //HASH COLLISION
+        if(!strcmp(function->name,key)){
+            return function;
+        }
+        function = function->next;
+    }
+    return NULL; 
+}
+
 
 func_entry* find_module(char* key){
     int index = func_tab_entry_contains(key, global_func_table);
@@ -1007,4 +1021,19 @@ void get_global_symbol_table(ast_node* ast_root){
 
     populate_copy(ast_root,global_TABLE); 
     printf("hello");
+}
+
+var_record* find_local_construct(char* func_name, int* arr){
+
+    func_entry* function = find_module_global(func_name);
+
+    var_record* temp = function->func_root;
+
+    int down = arr[0];
+    int right = arr[1];
+
+    for(int i=0;i<down;i++) temp = temp->child;
+    for(int j=0;j<right;j++)temp = temp->r_sibiling;
+
+    return temp;
 }

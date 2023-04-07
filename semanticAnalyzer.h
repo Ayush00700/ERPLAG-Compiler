@@ -33,3 +33,8 @@ extern void semantic();
 extern void get_global_symbol_table(ast_node* ast_root);
 extern int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp);
 extern type_exp* find_expr(ast_node* node, func_entry* curr,int line);
+
+
+// traverse functions
+extern var_record* find_local_construct(char* func_name, int* arr);
+extern func_entry* find_module_global(char* key);
