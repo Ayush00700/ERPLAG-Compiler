@@ -4,6 +4,7 @@
 static int currentLabel = 1;
 static int currentTempVar = 1;
 
+/******************************************ASM CODE FNS END******************************************/
 char* concat(char* t1,char*t2){
 }
 

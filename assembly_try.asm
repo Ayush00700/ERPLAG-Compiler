@@ -4,6 +4,7 @@ extern printf, scanf, exit
 		fmt_spec_int: db "%d", 10, 0
 		fmt_spec_real: db "%4f", 10, 0
 		fmt_spec_string: db "%s", 10, 0
+		fmt_spec_bool: db "%d", 10, 0
 		zero: equ 0
 
 
