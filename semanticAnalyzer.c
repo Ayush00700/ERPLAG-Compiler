@@ -315,11 +315,13 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->offset = local_table->offset;
         local_case->construct_name = "CASE";
         initialize_entries(local_case);
-        if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
-        // else{
-        // local_populate(local_case,ast_root->child_pointers[1]);
-        // }
         local_table->offset = local_case->offset;
+        if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
+        else{
+        // local_populate(local_case,ast_root->child_pointers[1]);
+        local_table->offset = local_case->offset;
+        }
+        // local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
     }
     else if(!strcmp(ast_root->name,"CASE")){
@@ -331,11 +333,13 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->offset = local_table->offset;
         local_case->construct_name = "CASE";
         initialize_entries(local_case);
-        if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
-        // else{
-        // local_populate(local_case,ast_root->child_pointers[1]);
-        // }
         local_table->offset = local_case->offset;
+        if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
+        else{
+        // local_populate(local_case,ast_root->child_pointers[1]);
+        local_table->offset = local_case->offset;
+        }
+        // local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
     }
     else if(!strcmp(ast_root->name,"FORLOOP")){

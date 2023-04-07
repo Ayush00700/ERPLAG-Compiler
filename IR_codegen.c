@@ -4,6 +4,10 @@
 static int currentLabel = 1;
 static int currentTempVar = 1;
 
+
+static int currentChildLabel = 0;
+static int currentSibilingLevel = 0;
+
 char* concat(char* t1,char*t2){
 }
 
@@ -25,6 +29,8 @@ ir_code_node* getNew_ir_code_node()
     newNode->right_op = NULL;
     newNode->next = NULL;
     newNode->operator = -1;
+    newNode->nestingLevel[0] = currentSibilingLevel;
+    newNode->nestingLevel[1] = currentChildLabel;
     return newNode;
 }   
 
@@ -555,7 +561,6 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
 }
 
-
 void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFTCHILD
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//RIGHTCHILD
@@ -641,6 +646,9 @@ ir_code* IR_prog(ast_node* root,func_entry** global_ST){
 }
 void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//STMTS
+
+    currentSibilingLevel = 0;
+    currentChildLabel = 0;
     ir_code_node* newNode = getNew_ir_code_node();
     newNode->operator = FUNC;
     // sprintf(newNode->result,"main");
@@ -648,6 +656,9 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     newNode->result = "main";
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
     //TODO AYUSUDU
+    currentSibilingLevel = 0;
+    currentChildLabel = 0;
+
     ir_code_node* endNode = getNew_ir_code_node();
     endNode->operator = RET;
     node->code = add_node_end(endNode,node->code);
@@ -656,6 +667,10 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
 void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global_ST,Boolean listStop){
     ast_node* curr = node;
     generate_IR_for_module(node->child_pointers[3],local_ST,global_ST);//STMTS
+    
+    currentSibilingLevel = 0;
+    currentChildLabel = 0;
+    
     ir_code_node* newNode = getNew_ir_code_node();
     ir_code_node* endNode = getNew_ir_code_node();
     newNode->operator = FUNC;
@@ -675,14 +690,21 @@ void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global
 }
 void IR_stmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ast_node* curr = node->next;
+    flag = 0;
     if(!strcmp(curr->name,"FORLOOP")||!strcmp(curr->name,"WHILELOOP")||!strcmp(curr->name,"SWITCH")){
-            local_ST->func_curr = local_ST->func_curr->child;  
+        currentChildLevel++;
+        flag=1;
+        local_ST->func_curr = local_ST->func_curr->child;  
     }
     while(curr!=NULL){
         generate_IR_for_module(curr,local_ST,global_ST);
         node->code = add_list_end(curr->code,node->code);
         curr = curr->next;
+        currentSibilingLevel++;
     }
+    currentSibilingLevel =0;
+    if(flag)
+        currentChildLevel--;
 }
 void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//STMTS

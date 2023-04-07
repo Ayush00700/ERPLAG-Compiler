@@ -88,6 +88,7 @@ typedef struct ir_code_node
     +------------+----------+----------+-----------+
 */
 {
+    int nestingLevel[2];
     OPCODE operator;
     char* result;
     char* left_op;
