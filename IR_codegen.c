@@ -3,51 +3,6 @@
 
 static int currentLabel = 1;
 static int currentTempVar = 1;
-char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
-    // :=  lhs  rhs  -
-    char* asmCode = (char*) malloc(sizeof(char)*20);
-    char* nameRHS = node->child_pointers[1]->tempName;
-    char* buff = (char*) malloc(sizeof(char)*100);
-    memset(buff,'\0',sizeof(buff));
-    char* nameLHS = node->child_pointers[0]->tempName;
-    int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexLHS];
-    while(temp!=NULL){
-        if(!strcmp(temp->name,nameLHS)){
-            break;
-        }
-        temp = temp->next;
-    }
-    int offsetLHS = temp->offset;
-
-    int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);
-
-    strcpy(asmCode, "xor    eax , eax           ; flush out the eax register");
-    if(indexRHS==-1){
-        sprintf(buff, "mov [%d] , %s            ; immediate to memory\n",offsetLHS,nameRHS);
-        return buff;
-
-    }
-    temp = local_ST->func_curr->entries[indexRHS];
-    while(temp!=NULL){
-        if(!strcmp(temp->name,nameRHS)){
-            break;
-        }
-        temp = temp->next;
-    }
-
-    int offsetRHS = temp->offset;
-
-
-    // sprintf(lhs_name,"%d",offsetLHS);
-    // stcat();
-    sprintf(asmCode,"mov eax , [%d]\n",offsetRHS);
-    // char buff[100];
-    sprintf(buff, "mov [%d] , eax\n",offsetLHS);
-    strcat(asmCode, buff);
-    return asmCode;
-}
 
 char* concat(char* t1,char*t2){
 }
@@ -265,6 +220,11 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST,as
 
 void IR_iterative(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* parent){
     
+    // char* begin = newLabel();
+    // node->child_pointers[0]->true = newLabel();
+    // node->child_pointers[0]->false = node->next;
+    // node->child_pointers[1]-> = be
+
     
     // ir_code_node* ifNode = getNew_ir_code_node();
     // ifNode->operator = IF;
@@ -309,6 +269,8 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
         newNode->result = node->child_pointers[0]->token->lexeme;
     else{
         IR_arrayAssign(node->child_pointers[0],local_ST,global_ST,node->child_pointers[1]);
+        // node->asm_code = codegen_assgn_stmt(node,node->child_pointers[0]->code->head,local_ST,global_ST);
+
         // newNode->result = node->child_pointers[0]->tempName;
         node->code = node->child_pointers[0]->code;
         return;
