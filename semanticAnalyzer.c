@@ -748,6 +748,10 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
     if(!node)
     return NULL;
+    else if(!strcmp(node->name,"INPUT_ID"))
+    {
+        find_expr(node,curr, node->token->line_no);
+    }
     else if(!strcmp(node->name,"ID"))
     {
         int line=node->token->line_no;
@@ -833,6 +837,9 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if( arr_data!=NULL && arr_index !=NULL
             && !strcmp(arr_data->datatype,"array")
             && !strcmp(arr_index->datatype,"integer")){
+               //I think error here, because we should return the inside element type rather than array
+                type_exp* temp=(type_exp*)malloc(sizeof(type_exp));
+                temp->datatype=arr_data->arr_data->arr_datatype;
                 return arr_data;
         }
     }
@@ -978,6 +985,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT")||!strcmp(node->name,"DIV"))
     {
+        
         if(node->no_of_children!=0){    //to handle non unary expression 
         type_exp* left =type_checking(node->child_pointers[0],curr);
         type_exp* right=type_checking(node->child_pointers[1],curr);
@@ -1151,3 +1159,6 @@ void get_global_symbol_table(ast_node* ast_root){
 
     populate_copy(ast_root,global_TABLE); 
 }
+
+// function call (after defiinition or declaration only) check ??
+// offset computation needs to be corrected (KIYA KYA PEHLE SE) ??

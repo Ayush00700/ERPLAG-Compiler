@@ -2,7 +2,7 @@
 ** Multiple level nesting using static array data type**
 **Variant of test case 2**
 
-<<module var_demo_array>>/
+<<module var_demo_array>>
 takes input [x:integer, m:array [2..20] of integer, p:real];
 returns [ n:integer, k: boolean];
 start

@@ -2,7 +2,7 @@
 ** Multiple level nesting using primitive data types**
 **Variant of test case 1**
 
-
+**Error recovery issue**
 <<module var_demo>>
 takes input [x:integer, w: boolean, p:real];
 returns [m:integer, n:integer, u: boolean];

@@ -1,7 +1,7 @@
 ** Test case 2: Testing symbol table creation for variable declaration and redeclaration checks**
 ** Single level nesting using static array data type**
 
-
+**seg fault at line 37**
 <<module var_demo_array>>
 takes input [x:integer, m:array [2..20] of integer, p:real];
 returns [ n:integer, k: boolean];
