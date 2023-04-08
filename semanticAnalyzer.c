@@ -985,19 +985,25 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     }
     else if(!strcmp(node->name, "PLUS")||!strcmp(node->name, "MINUS")||!strcmp(node->name, "MULT")||!strcmp(node->name,"DIV"))
     {
-        
-        if(node->no_of_children!=0){    //to handle non unary expression 
-        type_exp* left =type_checking(node->child_pointers[0],curr);
-        type_exp* right=type_checking(node->child_pointers[1],curr);
-        int line=line_number_finder(node);//Might need to check child's line number
-        //for PLUS operator need not be always line number tractable
-        type_exp* ret=compare_dTypes(left, right,line);
-        if(ret&&!strcmp(ret->datatype,"boolean"))
-        {
-            throw_error(UNSUPPORTED_DTYPE, line);
-            return NULL;
-        }
-            return ret;
+        if(node->no_of_children!=0){  
+            //to handle non unary expression 
+            type_exp* left =type_checking(node->child_pointers[0],curr);
+            type_exp* right=type_checking(node->child_pointers[1],curr);
+            int line=line_number_finder(node);//Might need to check child's line number
+            //for PLUS operator need not be always line number tractable
+            type_exp* ret=compare_dTypes(left, right,line);
+            if(ret&&(!strcmp(ret->datatype,"boolean")||!strcmp(ret->datatype,"array")))
+            {
+                throw_error(UNSUPPORTED_DTYPE, line);
+                return NULL;
+            }
+            if(!strcmp(node->name, "DIV"))//Check this case. Added later
+            {
+                type_exp* real=(type_exp*)malloc(sizeof(type_exp));
+                strcpy(real->datatype,"real");
+                return real;
+            }
+        return ret;
         }
      }
     else if(!strcmp(node->name, "FORINDEX"))

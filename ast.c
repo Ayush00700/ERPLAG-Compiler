@@ -874,7 +874,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->token = root->child_pointers[0]->token;
             return parent;}
         case 78:
-       {     ast_node* parent = initializeNewNode();
+       {    ast_node* parent = initializeNewNode();
             parent->name = "UNARY";
             parent->isTerminal = False;
             parent->no_of_children = 2;
