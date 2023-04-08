@@ -1,12 +1,40 @@
-#include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "IR_codegen.h"
+#include "codegen.h"
 
 FILE* assembly;
 
-char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void macros_starter(){
+    /* This function defines the required macros in the assembly file
+    */
+
+   fprintf(assembly, "\t\t; macro to store all registers\n");
+   fprintf(assembly, "\t\t%% macro  push_regs    0\n");
+   fprintf(assembly, "\t\tpush      rax\n");
+   fprintf(assembly, "\t\tpush      rbx\n");
+   fprintf(assembly, "\t\tpush      rcx\n");
+   fprintf(assembly, "\t\tpush      rdx\n");
+   fprintf(assembly, "\t\tpush      rsp\n");
+   fprintf(assembly, "\t\tpush      rbp\n");
+   fprintf(assembly, "\t\tpush      rsi\n");
+   fprintf(assembly, "\t\tpush      rdi\n");
+   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+
+   fprintf(assembly, "\t\t; macro to restore all registers\n");
+   fprintf(assembly, "\t\t%% macro  pop_regs    0\n");
+   fprintf(assembly, "\t\tpush      rdi\n");
+   fprintf(assembly, "\t\tpush      rsi\n");
+   fprintf(assembly, "\t\tpush      rbp\n");
+   fprintf(assembly, "\t\tpush      rsp\n");
+   fprintf(assembly, "\t\tpush      rdx\n");
+   fprintf(assembly, "\t\tpush      rcx\n");
+   fprintf(assembly, "\t\tpush      rbx\n");
+   fprintf(assembly, "\t\tpush      rax\n");
+   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+}
+
+void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |   ASSIGN   |    lhs   |    rhs   |    NULL   |
@@ -14,18 +42,18 @@ char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
     */
 
     char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
-    char* nameRHS = node->child_pointers[1]->tempName;      // temporary variable name for rhs
+    char* nameRHS = ir->left_op;      // temporary variable name for rhs
 
     char* buff = (char*) malloc(sizeof(char)*100);
     memset(buff,'\0',sizeof(buff));
 
-    char* nameLHS = node->child_pointers[0]->tempName;      // temporary variable name for rhs
+    char* nameLHS = ir->left_op;      // temporary variable name for rhs
 
     // Finding the symbol table entry for lhs variable
     int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexLHS];
-    while(temp!=NULL){
+    while(temp!=NULL){  //Hashing collision
         if(!strcmp(temp->name,nameLHS)){
             break;
         }
@@ -96,7 +124,7 @@ char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
     fprintf(assembly, "%s", asmCode);
 }
 
-char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_logical(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -289,7 +317,7 @@ char* codegen_logical(ast_node* node,ir_code_node* ir, func_entry* local_ST,func
     fprintf(assembly, "%s", asmCode);
 }
 
-char* codegen_input(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_input(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |  GET_VALUE |    var   |   NULL   |    NULL   |
@@ -360,7 +388,7 @@ char* codegen_input(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_e
     fprintf(assembly, "%s", asmCode);
 }
 
-char* codegen_output(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_output(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    PRINT   |    var   |   NULL   |    NULL   |
@@ -524,7 +552,7 @@ char* codegen_output(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_
     fprintf(assembly, "%s", asmCode);
 }
 
-char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -799,7 +827,7 @@ char* codegen_arithmetic(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
     fprintf(assembly, "%s", asmCode);
 }
 
-char* codegen_relational(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -1442,78 +1470,6 @@ char* codegen_relational(ast_node* node,ir_code_node* ir, func_entry* local_ST,f
 //     /* Handling the symbol table ops*/
 // }
 
-// void codegen_input(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for input
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_output(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for output
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_arithmetic_nodiv(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for each arith op
-//     switch(ir.operator)
-//     {
-//         case ADD:
-//             break;
-//         case SUB:
-//             break;
-//         case MUL:
-//             break;
-//     }
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_div(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for division
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_relational(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for each rel op
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_boolean(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for each bool op
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_func(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for function related ops
-
-//     /* Handling the symbol table ops*/
-// }
-
 // void codegen_jump(ir_code_node* ir, /* symbol table parameter*/)
 // {
 //     /* Handling the symbol table ops*/
@@ -1546,6 +1502,7 @@ void starter(FILE* assembly_file)
 {
 
     assembly = assembly_file;
+    // assembly = fopen("assembly_try.asm","w");
 
     if(!assembly)
         printf("[-] Error opening assembly_try.asm!\n");
@@ -1555,21 +1512,14 @@ void starter(FILE* assembly_file)
         printf("[+] assembly_try.asm opened!\n");
 
         // Write the external functions and start data section for assembly
-        /*Group-20
---------------------
-1. Rajan Sahu       2019B4A70572P
-2. Yash Goyal       2019B4A70638P
-3. Ayush Agarwal    2019B4A70652P
-4. Vasu Swaroop     2019B4A70656P
-5. A Sudarshan      2019B4A70744P
-        */
         fprintf(assembly, "; Group-20\n");
-        fprintf(assembly, "; --------------------\n");
+        fprintf(assembly, "; ---------------------------------\n");
         fprintf(assembly, "; 1. Rajan Sahu       2019B4A70572P\n");
         fprintf(assembly, "; 2. Yash Goyal       2019B4A70638P\n");
         fprintf(assembly, "; 3. Ayush Agarwal    2019B4A70652P\n");
         fprintf(assembly, "; 4. Vasu Swaroop     2019B4A70656P\n");
         fprintf(assembly, "; 5. A Sudarshan      2019B4A70744P\n");
+        fprintf(assembly, "; ---------------------------------\n");
         fprintf(assembly, "extern printf, scanf, exit\n");
         fprintf(assembly, "\t\t; Data declaration such as zero and format specifiers for print/scan\n");
         fprintf(assembly, "\t\tsection      .data\n");
@@ -1588,29 +1538,16 @@ void starter(FILE* assembly_file)
         /* Data declaration of various types to be done by going thro each entry of the symbol table*/
 
         fprintf(assembly, "\n\n\t\tsection      .text\n");
+        macros_starter();               // Define the macros
         fprintf(assembly, "\t\tglobal main\n");
         fprintf(assembly, "main:\n");
 
         printf("[+] ASM file updated!\n");
+
+
+        // fclose(assembly);
     }    
 }
-
-    // // Write the external functions and start data section for assembly
-    // fprintf(assembly, "extern printf, scanf, exit\n");
-    // fprintf(assembly, "section      .data\n");
-
-    // // Write down all the format specifiers reqd
-    // fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
-    // fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
-    // fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
-    // fprintf(assembly, "\t\tzero: dw 0\n");
-
-    // /* Data declaration of various types to be done by going thro each entry of the symbol table*/
-
-    // fprintf(assembly, "section      .text\n");
-    // fprintf(assembly, "global main");
-
-    // printf("[+] ASM file updated!\n");
 
     // ir_code_node *IR_head = IR->head;
 

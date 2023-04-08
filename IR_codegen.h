@@ -6,4 +6,3 @@ extern ir_code* getIRList(ast_node* root, func_entry** global_ST);
 extern void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,ast_node* nodeExp2);
 extern char* newTemp();
 extern char* newLabel();
-extern char* codegen_assgn_stmt(ast_node* node,ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
