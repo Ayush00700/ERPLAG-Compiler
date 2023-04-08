@@ -539,6 +539,11 @@ type_exp* throw_error(semErrors error, int line)
         {printf("Error found at line no %d : Recursion not allowed \n", line);break;}
         case PARAMETER_LIST_MISMATCH:
         {printf("Error found at line no %d : Parameter list mismatch \n", line);break;}
+        case DEFAULT_NOT_FOUND:
+        {printf("Error found at line no %d : Default not found \n", line);break;}
+        case DEFAULT_FOUND:
+        {printf("Error found at line no %d : Unexpected default found \n", line);break;}
+
     }
     return NULL;
 }
@@ -647,28 +652,41 @@ int line_number_finder(ast_node* ast_root){
     }else return line_number_finder(ast_root->child_pointers[0]);
 }
 
-void check_cases(ast_node* node, func_entry* curr,type_exp* switch_dtype){
+void check_cases_boolean(ast_node* node, func_entry* curr, type_exp* switch_dtype)
+{
+    
+}
+
+void check_cases(ast_node* node, func_entry* curr, type_exp* switch_dtype){
 
     if(!node){
         return;
     }
+
     type_exp* case_id = type_checking(node->child_pointers[0],curr);
     int line = node->child_pointers[0]->token->line_no;
-    if(!compare_dTypes(case_id,switch_dtype,line))printf("--Case type mismatch with Switch type\n");
+
+    compare_dTypes(case_id,switch_dtype,line);
+    // printf("--Case type mismatch with Switch type\n");
     
     perform_type_checking(node->child_pointers[1],curr);
-    if(curr->func_curr->r_sibiling&&
-    (!strcmp(curr->func_curr->r_sibiling->construct_name,"CASE"))){
+
+    if(curr->func_curr->r_sibiling&&(!strcmp(curr->func_curr->r_sibiling->construct_name,"CASE")))
+    {
     curr->func_curr = curr->func_curr->r_sibiling;
     check_cases(node->next,curr,switch_dtype);
     }
-    else if(curr->func_curr->r_sibiling){
+    else if(curr->func_curr->r_sibiling)
+    {
     curr->func_curr->parent->child = curr->func_curr->r_sibiling;
     curr->func_curr = curr->func_curr->r_sibiling;
-    }else{
+    }
+    else
+    {
         curr->func_curr = curr->func_curr->parent;
     }
 }
+
 void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
 {
     while(actual&&formal)
@@ -1034,12 +1052,31 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         var_record* temp= curr->func_curr;
         int line = node->child_pointers[0]->token->line_no;
         type_exp* switch_id = type_checking(node->child_pointers[0],curr);
-        //context change
+
         curr->func_curr=curr->func_curr->child;
-        //switch case needs to be handled apart only 
         if(switch_id)check_cases(node->child_pointers[1],curr,switch_id);
-        // type_exp* case_ids = type_checking(node->child_pointers[1],curr);
-        type_exp* default_ids = type_checking(node->child_pointers[2],curr);
+        
+        if(switch_id&&!strcmp(switch_id->datatype,"integer"))
+        {
+            if(!node->child_pointers[2])
+            {
+                throw_error(DEFAULT_NOT_FOUND,line);
+            }
+            //if default doesnt exist then error
+        }
+        else if(switch_id&&!strcmp(switch_id->datatype,"boolean"))
+        {
+            if(node->child_pointers[2])
+            {
+                throw_error(DEFAULT_FOUND,line);
+            }
+        }
+        else if(switch_id&&!strcmp(switch_id->datatype,"real"))
+        {
+            throw_error(UNSUPPORTED_DTYPE, line);
+        }
+        type_checking(node->child_pointers[2],curr);
+
         if(curr->func_curr->r_sibiling){
         curr->func_curr->parent->child = curr->func_curr->r_sibiling;
         curr->func_curr = temp;
