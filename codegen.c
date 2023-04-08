@@ -1459,25 +1459,31 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry** glob
     fprintf(assembly, "%s", asmCode);
 }
 
+void codegen_switch(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+{
+    char* asmCode = (char*)malloc(sizeof(char)*20);
+    char* buff = (char*)malloc(sizeof(char)*100);
+
+    fprintf(assembly ,"%s", asmCode);
+}
+
+void codegen_iterative(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+{
+    char* asmCode = (char*)malloc(sizeof(char)*20);
+    char* buff = (char*)malloc(sizeof(char)*100);
+
+    fprintf(assembly ,"%s", asmCode);
+}
+
+void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+{
+    char* asmCode = (char*)malloc(sizeof(char)*20);
+    char* buff = (char*)malloc(sizeof(char)*100);
+
+    fprintf(assembly ,"%s", asmCode);
+}
+
 // Required functions
-
-// void codegen_unary_op(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for both unary ops
-
-//     /* Handling the symbol table ops*/
-// }
-
-// void codegen_jump(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
-
-//     // Writing the assembly for jump
-
-//     /* Handling the symbol table ops*/
-// }
 
 // void codegen_conditional(ir_code_node* ir, /* symbol table parameter*/)
 // {
@@ -1544,10 +1550,7 @@ void starter(FILE* assembly_file)
 
         printf("[+] ASM file updated!\n");
 
-
-        // fclose(assembly);
-    }    
-}
+    }
 
     // ir_code_node *IR_head = IR->head;
 
@@ -1621,4 +1624,6 @@ void starter(FILE* assembly_file)
     //     IR_head = IR_head->next;
     // }
 
-// }
+    fclose(assembly);
+    
+}
