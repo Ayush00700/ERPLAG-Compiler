@@ -88,11 +88,12 @@ typedef struct ir_code_node
     +------------+----------+----------+-----------+
 */
 {
-    int nestingLevel[2];
+    // int nestingLevel[2];
     OPCODE operator;
     char* result;
     char* left_op;
     char* right_op;
+    char* reach;
     struct ir_code_node* next;
 }ir_code_node;
 
@@ -136,9 +137,6 @@ typedef struct ast_node{
     struct ast_node* next;
     ir_code* code; //FOR INTERMEDIATE CODE GEN
     char* tempName; //FOR INTERMEDIATE CODE GEN
-    char* true;
-    char* false;
-    char* nextJump;
     char* type;
     Boolean isTerminal;
     token_info* token;

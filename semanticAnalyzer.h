@@ -36,5 +36,5 @@ extern type_exp* find_expr(ast_node* node, func_entry* curr,int line);
 
 
 // traverse functions
-extern var_record* find_local_construct(char* func_name, int* arr);
+extern var_record* find_local_construct(char* func_name, char* arr);
 extern func_entry* find_module_global(char* key);

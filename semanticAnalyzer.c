@@ -1022,25 +1022,57 @@ void semantic(){
     //perform bound checking
 
 }
+
+
+void number(var_record* node, char* reach){
+
+if(node&&node->parent==NULL){
+    number( node->child,strcat(reach,"d")); //direction : 0 go down
+}else if(node){
+    char* temp = (char*) malloc(sizeof(char)*100);
+    memset(temp,'\0',sizeof(temp));
+    strcpy(temp,reach);
+    node->reach = temp;
+    number(node->child,strcat(reach,"d"));
+    int n = strlen(reach);
+    reach[n-1] = '\0';
+    number(node->r_sibiling,strcat(reach,"r"));
+    n = strlen(reach);
+    reach[n-1] = '\0';
+}else return;
+}
+
 void get_global_symbol_table(ast_node* ast_root){
 
     init_global(global_TABLE);
 
     populate_copy(ast_root,global_TABLE); 
-    printf("hello");
+
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_TABLE[i]){
+            char* reach = (char*)malloc(sizeof(char)*100);
+            memset(reach,'\0',sizeof(reach));
+            number(global_TABLE[i]->func_root,reach);
+        }
+    }
+
 }
 
-var_record* find_local_construct(char* func_name, int* arr){
+var_record* find_local_construct(char* func_name, char* arr){
 
     func_entry* function = find_module_global(func_name);
 
     var_record* temp = function->func_root;
 
-    int down = arr[0];
-    int right = arr[1];
+    int n = strlen(arr);
 
-    for(int i=0;i<down;i++) temp = temp->child;
-    for(int j=0;j<right;j++)temp = temp->r_sibiling;
-
+    for(int i=0;i<n;i++){
+        if(arr[i]=='d'){
+            temp = temp->child;
+        }else if(arr[i]=='r'){
+            temp = temp->r_sibiling;
+        }
+    }
+    
     return temp;
 }

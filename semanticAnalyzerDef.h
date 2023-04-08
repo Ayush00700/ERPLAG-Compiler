@@ -32,6 +32,9 @@ typedef struct var_record{
     struct var_record* r_sibiling;
     int offset;
     char* construct_name;
+    // int nesting;
+    // int sibiling;
+    char* reach;
 }var_record;
 
 typedef struct func_entry{

@@ -10,10 +10,7 @@ ast_node* initializeNewNode(){
     new_node->child_pointers = NULL;
     new_node->isTerminal = False;
     new_node->name = NULL;
-    new_node->false= NULL;
-    new_node->true= NULL;
     new_node->next = NULL;
-    new_node->nextJump=NULL;
     new_node->no_of_children=0;
     new_node->code=NULL;
     new_node->tempName=NULL;
@@ -1404,6 +1401,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "TRUE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = "true";
             return parent;}
         case 133:
             // Create node for terminal token
@@ -1411,6 +1409,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->name = "FALSE";
             parent->isTerminal = True;
             parent->token = root->child_pointers[0]->token;
+            parent->tempName = "false";
             return parent;}
         case 134:
 {            ast_node* child1 = create_ast(root->child_pointers[2]);
