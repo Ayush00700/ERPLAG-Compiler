@@ -5,3 +5,6 @@ extern void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry
 extern void codegen_logical(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
 extern void codegen_input(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
 extern void codegen_output(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
+extern void codegen_switch(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
+extern void codegen_iterative(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
+extern void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST);
