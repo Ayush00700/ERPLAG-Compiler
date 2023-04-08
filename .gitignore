@@ -55,3 +55,4 @@ stage1exe
 ast
 lexer
 semanticAnalyzer
+*.txt

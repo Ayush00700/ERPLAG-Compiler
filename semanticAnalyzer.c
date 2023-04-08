@@ -709,7 +709,6 @@ void perform_type_matching_in(ast_node* actual, sym_tab_entry* formal, func_entr
     {
         type_exp* act;
         ast_node* temp;
-        ast_node* temp;
         char* arr_access;
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
        //ast_node* temp= actual->child_pointers[1]->child_pointers[0]?actual->child_pointers[1]->child_pointers[0]:actual->child_pointers[1]->child_pointers[1];
