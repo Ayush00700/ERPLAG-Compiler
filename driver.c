@@ -207,8 +207,7 @@ int main(int argc, char* args[]){ //DRIVER
                     fclose(fptr);
 
                     FILE* assembly = fopen("assembly_try.asm", "w");
-                    starter(assembly);
-                    fclose(assembly);
+                    starter(assembly,intermediate_code);
 
                     // fprintf(assembly,"%s", ast_root->asm_code);
 

@@ -1504,7 +1504,7 @@ void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** globa
 // // }
 
 
-void starter(FILE* assembly_file)
+void starter(FILE* assembly_file,ir_code* IR)
 {
 
     assembly = assembly_file;
@@ -1552,77 +1552,94 @@ void starter(FILE* assembly_file)
 
     }
 
-    // ir_code_node *IR_head = IR->head;
+    ir_code_node *IR_head = IR->head;
+    var_record* func_curr;
+    func_entry* function;
 
-    // // Go through each entry of the IR quadruple
-    // while(IR_head)
-    // {
-    //     switch (IR_head.operator)
-    //     {
-    //     case ASSIGN:
-    //         // codegen_assgn_stmt(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case UNARY_PLUS:
-    //     case UNARY_MINUS:
-    //         codegen_unary_op(IR_head, /* symbol table param*/);
-    //         break;
-
-    //     case GET_VALUE:
-    //         codegen_input(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case PRINT:
-    //         codegen_output(IR_head, /* symbol table param*/);
-    //         break;
-
-    //     case ADD:
-    //     case SUB:
-    //     case MUL:
-    //         codegen_arithmetic_nodiv(IR_head, /* symbol table param*/);
-    //         break;
-    //     case DIV:
-    //         codegen_div(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case LT:
-    //     case LE:
-    //     case GT:
-    //     case GE:
-    //     case EQ:
-    //     case NEQ:
-    //         codegen_relational(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case OR:
-    //     case AND:
-    //         codegen_boolean(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case FUNC:
-    //     case CALL:
-    //     case PARA_IN:
-    //     case PARA_OUT:
-    //     case RET:
-    //         codegen_func(IR_head, /* symbol table param*/);
-        
-    //     case GOTO:
-    //         codegen_jump(IR_head, /* symbol table param*/);
-    //         break;
-        
-    //     case IF:
-    //         codegen_conditional(IR_head, /* symbol table param*/);
-    //         break;
+    // Go through each entry of the IR quadruple
+    while(IR_head)
+    {
+        if(IR_head->operator==FUNC){ //if you reach FUNC --> then change the context
+            
+            //in case it is main --we have to search for DRIVER
+            if (!strcmp(IR_head->result,"main")) function = find_module_global("DRIVER");
+            else function = find_module_global(IR_head->result);
+            func_curr = function->func_root; //once we get the function then just locate the root
+        }
 
 
+        char* reach = IR_head->reach; 
 
-    //     // case LABEL:
-    //     //     codegen_label(IR_head, /* symbol table param*/);
-    //     //     break;
-    //     }
+        if(strcmp(reach,"")){ //if reach is not "" then find the local construct
+                              //in the current function
+            func_curr = find_local_construct(function->name,reach);
+        }else {
+            func_curr = function->func_root;
+        }
 
-    //     IR_head = IR_head->next;
-    // }
+        function->func_curr = func_curr;
+        
+        // switch (IR_head->operator)
+        // {
+        // case ASSIGN:
+        //     codegen_assgn_stmt(IR_head, /* symbol table param*/);
+        //     break;
+
+        // case GET_VALUE:
+        //     codegen_input(IR_head,);
+        //     break;
+        
+        // case PRINT:
+        //     codegen_output(IR_head, /* symbol table param*/);
+        //     break;
+
+        // case ADD:
+        // case SUB:
+        // case MUL:
+        //     codegen_arithmetic_nodiv(IR_head, /* symbol table param*/);
+        //     break;
+        // case DIV:
+        //     codegen_div(IR_head, /* symbol table param*/);
+        //     break;
+        
+        // case LT:
+        // case LE:
+        // case GT:
+        // case GE:
+        // case EQ:
+        // case NEQ:
+        //     codegen_relational(IR_head, /* symbol table param*/);
+        //     break;
+        
+        // case OR:
+        // case AND:
+        //     codegen_boolean(IR_head, /* symbol table param*/);
+        //     break;
+        
+        // case FUNC:
+        // case CALL:
+        // case PARA_IN:
+        // case PARA_OUT:
+        // case RET:
+        //     codegen_func(IR_head, /* symbol table param*/);
+        
+        // case GOTO:
+        //     codegen_jump(IR_head, /* symbol table param*/);
+        //     break;
+        
+        // case IF:
+        //     codegen_conditional(IR_head, /* symbol table param*/);
+        //     break;
+
+
+
+        // // case LABEL:
+        // //     codegen_label(IR_head, /* symbol table param*/);
+        // //     break;
+        // }
+
+        IR_head = IR_head->next;
+    }
 
     fclose(assembly);
     

@@ -1027,6 +1027,10 @@ void semantic(){
 void number(var_record* node, char* reach){
 
 if(node&&node->parent==NULL){
+    char* temp = (char*) malloc(sizeof(char)*3);
+    memset(temp,'\0',sizeof(temp));
+    strcpy(temp,reach);
+    node->reach = temp;
     number( node->child,strcat(reach,"d")); //direction : 0 go down
 }else if(node){
     char* temp = (char*) malloc(sizeof(char)*100);
