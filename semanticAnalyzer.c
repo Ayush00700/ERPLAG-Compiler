@@ -409,6 +409,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_table->offset = local_switch->offset;
         //naya for default
         if(ast_root->child_pointers[2] == NULL){
+            local_populate(local_table,ast_root->next);
             return;
         }
         var_record* local_switch_default = (var_record*) malloc(sizeof(var_record));
@@ -935,8 +936,10 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if(switch_id)check_cases(node->child_pointers[1],curr,switch_id);
         // type_exp* case_ids = type_checking(node->child_pointers[1],curr);
         type_exp* default_ids = type_checking(node->child_pointers[2],curr);
-        if(curr->func_curr->r_sibiling){
+        if(node->child_pointers[2]&&curr->func_curr->r_sibiling){
         curr->func_curr->parent->child = curr->func_curr->r_sibiling;
+        curr->func_curr = temp;
+        }else if(curr->func_curr->r_sibiling){
         curr->func_curr = temp;
         }
         else {curr->func_curr = temp;}

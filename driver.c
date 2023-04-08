@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "IR_codegen.h"
+#include "codegen.h"
 #include <string.h>
 
 extern func_entry* global_TABLE[TABLE_SIZE];

@@ -1518,6 +1518,12 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = child2;
+            char* temp = (char*) malloc(sizeof(char)*5);
+            sprintf(temp,"%s",child2->tempName);
+            if(parent->child_pointers[0]&&!strcmp(parent->child_pointers[0]->name,"MINUS")){
+                sprintf(temp,"%s%s","-",child2->tempName);
+            }
+            parent->tempName = temp;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             return parent;}

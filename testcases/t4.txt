@@ -7,8 +7,42 @@ start
 	declare R1_abc: boolean;
 	declare r2_ABC: integer;
 	declare R3_abc: real;
+	declare sum: integer;
 	get_value(var_1_);
 	var_1_ := 2;
+
+	switch(R1_abc)
+	start
+	case true: declare index:integer;
+			print(index);
+			sum:=1;
+			break;
+	case false: print(sum);
+			declare A:array[1..15] of real;
+			declare index:integer;
+			print(index);
+			**prints the values of sum and index  15-n times**
+			break;
+
+	end
+
+	while(var_1_ < 3)
+	start
+	get_value(tempvar);
+	**arr1[i]:=tempvar;** 		
+	declare B:array[-1..+10] of boolean;
+	**tempvar:=-(tempvar+ arr1[k]+arr1[+5]-arr1[-10]);**
+	**B[k]:=-10;**
+	var_1_:=var_1_+1;
+	print(var_1_);
+	** the semantics of while needs an increment and will be taken care of at the second phase**
+	end
+
+	for(index in -1..15)
+	start	
+		var_1_ := var_1_ + 1;
+		print(var_1_);
+	end
 	print(20);
 	**get_value(var_1_);
 
