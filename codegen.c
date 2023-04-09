@@ -64,13 +64,13 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     +------------+----------+----------+-----------+
     */
 
-    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
+    
     char* nameRHS = ir->left_op;      // temporary variable name for rhs
 
-    char* buff = (char*) malloc(sizeof(char)*100);
-    memset(buff,'\0',sizeof(buff));
+    
+    
 
-    char* nameLHS = ir->left_op;      // temporary variable name for rhs
+    char* nameLHS = ir->result;      // temporary variable name for rhs
 
     // Finding the symbol table entry for lhs variable
     int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
@@ -87,11 +87,11 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     if(indexLHS!=-1)offsetLHS = temp->offset;               // Get the memory offset for the lhs variable from the symbol
 
     int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
-    sprintf(buff, "\t\t; Code for getting assignment statement\n");
-    strcpy(asmCode, buff);
-    sprintf(buff, "\t\tpush_regs                    ; save values\n");
-    strcat(asmCode, buff);
-    strcat(asmCode, "\t\txor    rax , rax           ; flush out the rax register");
+    fprintf(assembly, "\t\t; Code for getting assignment statement\n");
+    
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    
+    fprintf(assembly, "\t\txor    rax , rax           ; flush out the rax register");
 
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
@@ -99,18 +99,18 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
         int type_right_int = (strchr(nameLHS, '.'))? 1 : 0;
         if(type_right_int)
         {    
-            sprintf(buff, "\t\tmov      rax , %s                    ; immediate to register\n",nameRHS);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rax , %s                    ; immediate to register\n",nameRHS);
+            
+            fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
+            
         }
 
         else
         {
-            sprintf(buff, "\t\tmovsd      xmm0 , %s                    ; immediate to register\n",nameRHS);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmovsd      [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmovsd      xmm0 , %s                    ; immediate to register\n",nameRHS);
+            
+            fprintf(assembly, "\t\tmovsd      [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
+            
         }
     }
 
@@ -129,24 +129,24 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(temp->type.datatype, "integer"))
         {
-            sprintf(buff, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetRHS);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetRHS);
+            
+            fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
+            
         }
 
         else
         {
-            sprintf(buff, "\t\tmovsd      xmm0 , [RBP - %d]                    ; memory to register\n",offsetRHS);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmovsd     [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmovsd      xmm0 , [RBP - %d]                    ; memory to register\n",offsetRHS);
+            
+            fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
+            
         }
     }
     
-    sprintf(buff, "\t\tpop_regs                    ; restore values");
-    strcat(asmCode, buff);                                       
-    fprintf(assembly, "%s", asmCode);
+    fprintf(assembly, "\t\tpop_regs                    ; restore values");
+                                           
+    
 }
 
 void codegen_logical(ir_code_node* ir, func_entry* local_ST){
@@ -157,11 +157,11 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     label can be one of AND, OR
     */
 
-    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
-    char* buff1 = (char*) malloc(sizeof(char)*100);
-    memset(buff1,'\0',sizeof(buff1));
-    char* buff2 = (char*) malloc(sizeof(char)*100);
-    memset(buff2,'\0',sizeof(buff2));
+    
+    
+    
+    
+    
 
     // Get offset of result
     char* result = ir->result;
@@ -180,10 +180,10 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sprintf(buff1, "\t\t; Code for logical op\n");
-    strcpy(asmCode, buff1);
-    sprintf(buff1, "\t\tpush_regs                    ; save values\n");
-    strcat(asmCode, buff1);
+    fprintf(assembly, "\t\t; Code for logical op\n");
+    
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    
 
     // If left operand is a constant
     if(indexLeft == -1)
@@ -192,14 +192,14 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
         // TODO ----> identifying if immediate value is int or real
         if( type_left_int)
         {
-            sprintf(buff1, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
+            
         }
 
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
+            
         }
     }
 
@@ -216,13 +216,13 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
+            
         }
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
+            
         }
         
     }
@@ -244,18 +244,18 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tand     rax , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tand     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tandpd     xmm0 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tandpd     xmm0 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
 
@@ -272,17 +272,17 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "\t\tand     rax , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tand     rax , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
                 else
                 {
-                    sprintf(buff1, "\t\tandpd     xmm0 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tandpd     xmm0 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
             break;
@@ -297,18 +297,18 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tor     rax , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tor     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\torpd     xmm0 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\torpd     xmm0 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
 
@@ -325,25 +325,24 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "\t\tor     rax , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tor     rax , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
                 else
                 {
-                    sprintf(buff1, "\t\torpd     xmm0 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\torpd     xmm0 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
             break;
     }
 
-    sprintf(buff2, "\t\tpop_regs        ; restore register values\n");
-    strcat(asmCode, buff2);
-    fprintf(assembly, "%s", asmCode);
+    fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+    
 }
 
 void codegen_input(ir_code_node* ir, func_entry* local_ST){
@@ -352,9 +351,9 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
     |  GET_VALUE |    var   |   NULL   |    NULL   |
     +------------+----------+----------+-----------+
     */
-    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
-    char* buff = (char*) malloc(sizeof(char)*100);
-    memset(buff,'\0',sizeof(buff));
+    
+    
+    
 
     // Get offset of result
     char* result = ir->result;
@@ -370,51 +369,51 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
     int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
 
-    sprintf(buff, "\t\t; Code for getting user input\n");
-    strcpy(asmCode, buff);
-    sprintf(buff, "\t\tpush_regs                    ; save values\n");
-    strcat(asmCode, buff);
+    fprintf(assembly, "\t\t; Code for getting user input\n");
+    
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    
 
     if(!strcmp(resultType, "integer"))
     {
-        sprintf(buff, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
+        
     }
     else if(!strcmp(resultType, "real"))
     {
-        sprintf(buff, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
+        
     }
     else if(!strcmp(resultType, "boolean"))
     {
-        sprintf(buff, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
+        
     }
 
-    sprintf(buff, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tsub      rdx , %d                                ; move pointer to place where we have to store\n", offsetResult);
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tmov      rax , 0x0000_0000_ffff_ffff             ; set size\n");
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tmov      [rdx] , rax\n");
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tmov      rsi , rdx                               ; move source index\n");
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tmov      rax , zero\n");
-    strcat(asmCode, buff);
-    sprintf(buff, "\t\tmov      rsi , rdx\n");
-    strcat(asmCode, buff);
-    // sprintf(buff, "\t\talign_16_rsp                                     ; align stack pointer\n");
-    // strcat(asmCode, buff);
-    sprintf(buff, "\t\tcall     scanf                                   ; system call for input\n");
-    strcat(asmCode, buff);
-    // sprintf(buff, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-    // strcat(asmCode, buff);
+    fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+    
+    fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place where we have to store\n", offsetResult);
+    
+    fprintf(assembly, "\t\tmov      rax , 0x0000_0000_ffff_ffff             ; set size\n");
+    
+    fprintf(assembly, "\t\tmov      [rdx] , rax\n");
+    
+    fprintf(assembly, "\t\tmov      rsi , rdx                               ; move source index\n");
+    
+    fprintf(assembly, "\t\tmov      rax , zero\n");
+    
+    fprintf(assembly, "\t\tmov      rsi , rdx\n");
+    
+    // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+    // 
+    fprintf(assembly, "\t\tcall     scanf                                   ; system call for input\n");
+    
+    // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+    // 
 
-    sprintf(buff, "\t\tpop_regs        ; restore register values\n");
-    strcat(asmCode, buff);
-    fprintf(assembly, "%s", asmCode);
+    fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+    
+    
 }
 
 void codegen_output(ir_code_node* ir, func_entry* local_ST){
@@ -423,33 +422,31 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
     |    PRINT   |    var   |   NULL   |    NULL   |
     +------------+----------+----------+-----------+
     */
-    char* asmCode = (char*) malloc(sizeof(char)*2000);        // asm code attribute
-    char* buff = (char*) malloc(sizeof(char)*1000);
-    memset(buff,'\0',sizeof(buff));
+    
 
     // Get offset of result
     char* result = ir->result;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);   // Checks if the symbol table contains - if yes we get the index
     if(indexResult==-1)
     {
-        sprintf(buff, "\t\t; Code for printing output\n");
-        strcpy(asmCode, buff);
-        sprintf(buff, "\t\tpush_regs                    ; save values\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\t; Code for printing output\n");
+        
+        fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+        
 
-        sprintf(buff, "\t\tlea      rdi , [rel fmt_spec_int]                ; get corresponding format specifier\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_int]                ; get corresponding format specifier\n");
+        
 
-        sprintf(buff, "\t\tmov      rsi , %s                               ; move source index\n", result);
-        strcat(asmCode, buff);
-        sprintf(buff, "\t\txor      rax , rax\n");
-        strcat(asmCode, buff);
-        // sprintf(buff, "\t\talign_16_rsp                                     ; align stack pointer\n");
-        // strcat(asmCode, buff);
-        sprintf(buff, "\t\tcall     printf                                   ; system call for output\n");
-        strcat(asmCode, buff);
-        // sprintf(buff, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-        // strcat(asmCode, buff);
+        fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+        
+        fprintf(assembly, "\t\txor      rax , rax\n");
+        
+        // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+        // 
+        fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+        
+        // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+        // 
     }
 
     else
@@ -465,120 +462,120 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
         int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
         char* resultType = temp->type.datatype;
 
-        sprintf(buff, "\t\t; Code for printing output\n");
-        strcpy(asmCode, buff);
-        sprintf(buff, "\t\tpush_regs                    ; save values\n");
-        strcat(asmCode, buff);
+        fprintf(assembly, "\t\t; Code for printing output\n");
+        
+        fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+        
 
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
+            
 
-            sprintf(buff, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rsi , [rdx]                               ; move source index\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\txor      rax , rax\n");
-            strcat(asmCode, buff);
-            // sprintf(buff, "\t\talign_16_rsp                                     ; align stack pointer\n");
-            // strcat(asmCode, buff);
-            sprintf(buff, "\t\tcall     printf                                   ; system call for output\n");
-            strcat(asmCode, buff);
-            // sprintf(buff, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-            // strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            
+            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            
+            fprintf(assembly, "\t\tmov      rsi , [rdx]                               ; move source index\n");
+            
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            
+            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            // 
+            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            
+            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            // 
         }
         else if(!strcmp(resultType, "real"))
         {
-            sprintf(buff, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
+            
 
-            sprintf(buff, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmovq      xmm0 , [rdx]                               ; move source index\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rax , 1\n");
-            strcat(asmCode, buff);
-            // sprintf(buff, "\t\talign_16_rsp                                     ; align stack pointer\n");
-            // strcat(asmCode, buff);
-            sprintf(buff, "\t\tcall     printf                                   ; system call for output\n");
-            strcat(asmCode, buff);
-            // sprintf(buff, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-            // strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            
+            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            
+            fprintf(assembly, "\t\tmovq      xmm0 , [rdx]                               ; move source index\n");
+            
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            
+            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            // 
+            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            
+            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            // 
         }
         else if(!strcmp(resultType, "boolean"))
         {
 
-            sprintf(buff, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
+            
 
             char* true_label = newLabel();
             char* next_label = newLabel();
 
-            sprintf(buff, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rax , [rdx]                               ; move source index\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tcmp      rax , 0\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tjnz      %s\n", true_label);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tcmp      rax , 0\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tpush_regs                    ; save values\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\t; to print false\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rax , 1\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rdi , 1\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rsi , false\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rdx , false_len\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tsyscall\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tpop_regs        ; restore register values\n");
-            strcat(asmCode, buff);
+            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            
+            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            
+            fprintf(assembly, "\t\tmov      rax , [rdx]                               ; move source index\n");
+            
+            fprintf(assembly, "\t\tcmp      rax , 0\n");
+            
+            fprintf(assembly, "\t\tjnz      %s\n", true_label);
+            
+            fprintf(assembly, "\t\tcmp      rax , 0\n");
+            
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            
+            fprintf(assembly, "\t\t; to print false\n");
+            
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            
+            fprintf(assembly, "\t\tmov      rsi , false\n");
+            
+            fprintf(assembly, "\t\tmov      rdx , false_len\n");
+            
+            fprintf(assembly, "\t\tsyscall\n");
+            
+            fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+            
 
-            sprintf(buff, "\t\tpush_regs                    ; save values\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "%s:\n", true_label);
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\t; to print true\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rax , 1\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rdi , 1\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rsi , true\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tmov      rdx , true_len\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tsyscall\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "\t\tpop_regs        ; restore register values\n");
-            strcat(asmCode, buff);
-            sprintf(buff, "%s:\n", next_label);
-            strcat(asmCode, buff);
-            // sprintf(buff, "\t\talign_16_rsp                                     ; align stack pointer\n");
-            // strcat(asmCode, buff);
-            // sprintf(buff, "\t\tcall     printf                                   ; system call for output\n");
-            // strcat(asmCode, buff);
-            // sprintf(buff, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-            // strcat(asmCode, buff);
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            
+            fprintf(assembly, "%s:\n", true_label);
+            
+            fprintf(assembly, "\t\t; to print true\n");
+            
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            
+            fprintf(assembly, "\t\tmov      rsi , true\n");
+            
+            fprintf(assembly, "\t\tmov      rdx , true_len\n");
+            
+            fprintf(assembly, "\t\tsyscall\n");
+            
+            fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+            
+            fprintf(assembly, "%s:\n", next_label);
+            
+            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            // 
+            // fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            // 
+            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            // 
         }
     }
-    sprintf(buff, "\t\tpop_regs        ; restore register values\n");
-    strcat(asmCode, buff);
-    fprintf(assembly, "%s", asmCode);
+    fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+    
+    
 }
 
 void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
@@ -589,11 +586,11 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     label can be one of ADD, SUB, MUL, DIv
     */
 
-    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
-    char* buff1 = (char*) malloc(sizeof(char)*100);
-    memset(buff1,'\0',sizeof(buff1));
-    char* buff2 = (char*) malloc(sizeof(char)*100);
-    memset(buff2,'\0',sizeof(buff2));
+    
+    
+    
+    
+    
 
     // Get offset of result
     char* result = ir->result;
@@ -612,10 +609,10 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sprintf(buff1, "\t\t; Code for arithmetic\n");
-    strcpy(asmCode, buff1);
-    sprintf(buff1, "\t\tpush_regs                    ; save values\n");
-    strcat(asmCode, buff1);
+    fprintf(assembly, "\t\t; Code for arithmetic\n");
+    
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    
 
     // If left operand is a constant
     if(indexLeft == -1)
@@ -624,14 +621,14 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
         // TODO ----> identifying if immediate value is int or real
         if(type_left_int)
         {
-            sprintf(buff1, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
+            
         }
 
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
+            
         }
     }
 
@@ -648,13 +645,13 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(resultType, "integer"))
         {
-            sprintf(buff1, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
+            
         }
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
+            
         }
         
     }
@@ -675,18 +672,18 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tadd     rax , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tadd     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\taddsd     xmm0 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\taddsd     xmm0 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
 
@@ -703,17 +700,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "\t\tadd     rax , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tadd     rax , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
                 else
                 {
-                    sprintf(buff1, "\t\taddsd     xmm0 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\taddsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
             break;
@@ -728,18 +725,18 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tsub     rax , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tsub     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tsubsd     xmm0 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tsubsd     xmm0 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
 
@@ -756,17 +753,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "\t\tsub     rax , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tsub     rax , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
                 else
                 {
-                    sprintf(buff1, "\t\tsubsd     xmm0 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tsubsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
             break;
@@ -782,18 +779,18 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmul     rax , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmul     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmulsd     xmm0 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmulsd     xmm0 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
 
@@ -810,17 +807,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    sprintf(buff1, "\t\tmul     rax , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmul     rax , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    
                 }
                 else
                 {
-                    sprintf(buff1, "\t\tmulsd     xmm0 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmulsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    
                 }
             }
             break;
@@ -831,10 +828,10 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                sprintf(buff2, "\t\tdivsd     xmm0 , %s\n", nameRight);
-                strcat(asmCode, buff2);
-                sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                strcat(asmCode, buff2);
+                fprintf(assembly, "\t\tdivsd     xmm0 , %s\n", nameRight);
+                
+                fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                
             }
 
             else
@@ -848,17 +845,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 }
                 int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
 
-                sprintf(buff1, "\t\tdivsd     xmm0 , [RBP - %d]\n", offsetRight);
-                strcat(asmCode, buff2);
-                sprintf(buff2, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
-                strcat(asmCode, buff2);
+                fprintf(assembly, "\t\tdivsd     xmm0 , [RBP - %d]\n", offsetRight);
+                
+                fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                
             }
             break;
     }
 
-    sprintf(buff2, "\t\tpop_regs        ; restore register values\n");
-    strcat(asmCode, buff2);
-    fprintf(assembly, "%s", asmCode);
+    fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+    
+    
 }
 
 void codegen_relational(ir_code_node* ir, func_entry* local_ST){
@@ -869,11 +866,11 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     label can be one of LT, LTE, GT, GTE, EQ, NEQ
     */
 
-    char* asmCode = (char*) malloc(sizeof(char)*20);        // asm code attribute
-    char* buff1 = (char*) malloc(sizeof(char)*100);
-    memset(buff1,'\0',sizeof(buff1));
-    char* buff2 = (char*) malloc(sizeof(char)*100);
-    memset(buff2,'\0',sizeof(buff2));
+    
+    
+    
+    
+    
 
     // Get offset of result
     char* result = ir->result;
@@ -892,10 +889,10 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sprintf(buff1, "\t\t; Code for relational\n");
-    strcpy(asmCode, buff1);
-    sprintf(buff1, "\t\tpush_regs                    ; save values\n");
-    strcat(asmCode, buff1);
+    fprintf(assembly, "\t\t; Code for relational\n");
+    
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    
 
     // If left operand is a constant
     if(indexLeft == -1)
@@ -905,14 +902,14 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
         int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
         if(type_left_int)
         {
-            sprintf(buff1, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
+            
         }
 
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
+            
         }
     }
 
@@ -930,13 +927,13 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(leftType, "integer"))
         {
-            sprintf(buff1, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
+            
         }
         else
         {
-            sprintf(buff1, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
-            strcat(asmCode, buff1);
+            fprintf(assembly, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
+            
         }
         
     }
@@ -960,34 +957,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjlt     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjlt     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjb     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjb     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1005,34 +1002,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjlt     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjlt     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjb     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjb     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
@@ -1048,34 +1045,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjgt     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjgt     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tja     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tja     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1093,34 +1090,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjgt     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjgt     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
                 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjg     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjg     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
@@ -1136,36 +1133,36 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjle     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjle     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjb     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjb     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1183,36 +1180,36 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjle     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjle     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
                 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjb     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjb     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
@@ -1228,36 +1225,36 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjge     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjge     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tja     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tja     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1275,36 +1272,36 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjge     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjge     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
                 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tja     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tja     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
@@ -1320,34 +1317,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1365,34 +1362,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
                 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
@@ -1408,34 +1405,34 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 if(type_right_int)
                 {
-                    sprintf(buff2, "\t\tmov     rbx , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjnz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjnz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , %s\n", nameRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjnz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjnz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
 
@@ -1453,60 +1450,58 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(rightType, "integer"))
                 {
-                    sprintf(buff2, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcmp     rax , rbx\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjnz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcmp     rax , rbx\n");
+                    
+                    fprintf(assembly, "\t\tjnz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
 
                 else
                 {
-                    sprintf(buff2, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tcomiss     xmm0 , xmm1\n");
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tjnz     %s\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "%s:\n", true_label);
-                    strcat(asmCode, buff2);
-                    sprintf(buff2, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
-                    strcat(asmCode, buff2);
+                    fprintf(assembly, "\t\tmov     xmm1 , [RBP - %d]\n", offsetRight);
+                    
+                    fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
+                    
+                    fprintf(assembly, "\t\tjnz     %s\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 0);
+                    
+                    fprintf(assembly, "%s:\n", true_label);
+                    
+                    fprintf(assembly, "\t\tmov     [RBP - %d], %d\n", offsetResult, 1);
+                    
                 }
             }
             break;
         }
 
-    sprintf(buff2, "\t\tpop_regs        ; restore register values\n");
-    strcat(asmCode, buff2);
+    fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+    
 
                                           
-    fprintf(assembly, "%s", asmCode);
+    
 }
 
 void codegen_switch(ir_code_node* ir, func_entry* local_ST)
 {
-    char* asmCode = (char*)malloc(sizeof(char)*20);
-    char* buff = (char*)malloc(sizeof(char)*100);
-
-    fprintf(assembly ,"%s", asmCode);
+    
+    
 }
 
 void codegen_jump(ir_code_node* ir, func_entry* local_ST)
 {
-    char* asmCode = (char*)malloc(sizeof(char)*20);
-    char* buff = (char*)malloc(sizeof(char)*100);
+    
+    
 
-    fprintf(assembly ,"%s", asmCode);
+    
 }
 
 void codegen_func(ir_code_node* ir, func_entry* local_ST)
@@ -1516,16 +1511,16 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     |    label   |  fn_name |    NULL  |    NULL   |
     +------------+----------+----------+-----------+
     */
-    char* asmCode = (char*)malloc(sizeof(char)*20);
-    char* buff = (char*)malloc(sizeof(char)*100);
+    
+    
 
     char* funcName = ir->result;
 
-    sprintf(buff, "%s:\n",funcName);
-    strcpy(asmCode, buff);
+    fprintf(assembly, "%s:\n",funcName);
+    
     
 
-    fprintf(assembly ,"%s", asmCode);
+    
 }
 
 // Required functions

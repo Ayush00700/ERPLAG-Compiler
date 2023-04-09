@@ -2,8 +2,6 @@
 FUNC	main		
 a = 5		
 b = 9		
-GET_VALUE	x		
-GET_VALUE	y		
 t1 = y * b		
 t2 = x + t1		
 t3 = a - b		
