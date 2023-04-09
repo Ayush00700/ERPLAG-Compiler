@@ -57,7 +57,7 @@ void macros_starter(){
 
 }
 
-void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |   ASSIGN   |    lhs   |    rhs   |    NULL   |
@@ -147,7 +147,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,func_entry** glob
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_logical(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -340,7 +340,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST,func_entry** global_
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_input(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_input(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |  GET_VALUE |    var   |   NULL   |    NULL   |
@@ -411,7 +411,7 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_output(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_output(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    PRINT   |    var   |   NULL   |    NULL   |
@@ -575,7 +575,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST,func_entry** global_S
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -850,7 +850,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST,func_entry** glob
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
+void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -1482,7 +1482,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry** glob
     fprintf(assembly, "%s", asmCode);
 }
 
-void codegen_switch(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+void codegen_switch(ir_code_node* ir, func_entry* local_ST)
 {
     char* asmCode = (char*)malloc(sizeof(char)*20);
     char* buff = (char*)malloc(sizeof(char)*100);
@@ -1490,7 +1490,7 @@ void codegen_switch(ir_code_node* ir, func_entry* local_ST,func_entry** global_S
     fprintf(assembly ,"%s", asmCode);
 }
 
-void codegen_iterative(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+void codegen_jump(ir_code_node* ir, func_entry* local_ST)
 {
     char* asmCode = (char*)malloc(sizeof(char)*20);
     char* buff = (char*)malloc(sizeof(char)*100);
@@ -1498,7 +1498,7 @@ void codegen_iterative(ir_code_node* ir, func_entry* local_ST,func_entry** globa
     fprintf(assembly ,"%s", asmCode);
 }
 
-void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
+void codegen_func(ir_code_node* ir, func_entry* local_ST)
 {
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
@@ -1510,7 +1510,7 @@ void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** globa
 
     char* funcName = ir->result;
 
-    sprintf(buff, "_%s:\n",funcName);
+    sprintf(buff, "%s:\n",funcName);
     strcpy(asmCode, buff);
     
 
@@ -1519,23 +1519,58 @@ void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** globa
 
 // Required functions
 
-// void codegen_conditional(ir_code_node* ir, /* symbol table parameter*/)
-// {
-//     /* Handling the symbol table ops*/
+void codegen_conditional(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
 
-//     // Writing the assembly for conditional
+    // Writing the assembly for conditional
 
-//     /* Handling the symbol table ops*/
-// }
+    /* Handling the symbol table ops*/
+}
 
-// // void codegen_label(ir_code_node* ir, /* symbol table parameter*/)
-// // {
-// //     /* Handling the symbol table ops*/
+void codegen_label(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
 
-// //     // Writing the assembly for label
+    // Writing the assembly for label
 
-// //     /* Handling the symbol table ops*/
-// // }
+    /* Handling the symbol table ops*/
+}
+
+
+void codegen_mem_read_ST(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
+
+    // Writing the assembly for label
+
+    /* Handling the symbol table ops*/
+}
+
+void codegen_mem_write_ST(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
+
+    // Writing the assembly for label
+
+    /* Handling the symbol table ops*/
+}
+void codegen_mem_read(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
+
+    // Writing the assembly for label
+
+    /* Handling the symbol table ops*/
+}
+void codegen_mem_write(ir_code_node* ir, func_entry* local_ST)
+{
+    /* Handling the symbol table ops*/
+
+    // Writing the assembly for label
+
+    /* Handling the symbol table ops*/
+}
 
 
 void starter(FILE* assembly_file,ir_code* IR)
@@ -1585,10 +1620,9 @@ void starter(FILE* assembly_file,ir_code* IR)
         printf("[+] ASM file updated!\n");
 
     }
-
     ir_code_node *IR_head = IR->head;
     var_record* func_curr;
-    func_entry* function;
+    func_entry* local_ST;
 
     // Go through each entry of the IR quadruple
     while(IR_head)
@@ -1596,85 +1630,94 @@ void starter(FILE* assembly_file,ir_code* IR)
         if(IR_head->operator==FUNC){ //if you reach FUNC --> then change the context
             
             //in case it is main --we have to search for DRIVER
-            if (!strcmp(IR_head->result,"main")) function = find_module_global("DRIVER");
-            else function = find_module_global(IR_head->result);
-            func_curr = function->func_root; //once we get the function then just locate the root
+            if (!strcmp(IR_head->result,"main")) local_ST = find_module_global("DRIVER");
+            else local_ST = find_module_global(IR_head->result);
+            func_curr = local_ST->func_root; //once we get the local_ST then just locate the root
         }
 
 
         char* reach = IR_head->reach; 
 
         if(strcmp(reach,"")){ //if reach is not "" then find the local construct
-                              //in the current function
-            func_curr = find_local_construct(function->name,reach);
+                              //in the current local_ST
+            func_curr = find_local_construct(local_ST->name,reach);
         }else {
-            func_curr = function->func_root;
+            func_curr = local_ST->func_root;
         }
 
-        function->func_curr = func_curr;
-        
-        // switch (IR_head->operator)
-        // {
-        // case ASSIGN:
-        //     codegen_assgn_stmt(IR_head, /* symbol table param*/);
-        //     break;
+        local_ST->func_curr = func_curr;
 
-        // case GET_VALUE:
-        //     codegen_input(IR_head,);
-        //     break;
-        
-        // case PRINT:
-        //     codegen_output(IR_head, /* symbol table param*/);
-        //     break;
+        switch (IR_head->operator)
+        {
+        case ASSIGN:
+            codegen_assgn_stmt(IR_head, local_ST);
+            break;
 
-        // case ADD:
-        // case SUB:
-        // case MUL:
-        //     codegen_arithmetic_nodiv(IR_head, /* symbol table param*/);
-        //     break;
-        // case DIV:
-        //     codegen_div(IR_head, /* symbol table param*/);
-        //     break;
+        case GET_VALUE:
+            codegen_input(IR_head, local_ST);
+            break;
         
-        // case LT:
-        // case LE:
-        // case GT:
-        // case GE:
-        // case EQ:
-        // case NEQ:
-        //     codegen_relational(IR_head, /* symbol table param*/);
-        //     break;
-        
-        // case OR:
-        // case AND:
-        //     codegen_boolean(IR_head, /* symbol table param*/);
-        //     break;
-        
-        // case FUNC:
-        // case CALL:
-        // case PARA_IN:
-        // case PARA_OUT:
-        // case RET:
-        //     codegen_func(IR_head, /* symbol table param*/);
-        
-        // case GOTO:
-        //     codegen_jump(IR_head, /* symbol table param*/);
-        //     break;
-        
-        // case IF:
-        //     codegen_conditional(IR_head, /* symbol table param*/);
-        //     break;
+        case PRINT:
+            codegen_output(IR_head, local_ST);
+            break;
 
+        case ADD:
+        case SUB:
+        case MUL:
+        case DIV:
+            codegen_arithmetic(IR_head, local_ST);
+            break;
+        
+        case LT:
+        case LE:
+        case GT:
+        case GE:
+        case EQ:
+        case NEQ:
+            codegen_relational(IR_head, local_ST);
+            break;
+        
+        case OR:
+        case AND:
+            codegen_logical(IR_head, local_ST);
+            break;
+        
+        case FUNC:
+        case CALL:
+        case PARA_IN:
+        case PARA_OUT:
+        case RET:
+            codegen_func(IR_head, local_ST);
+        
+        case GOTO:
+            codegen_jump(IR_head, local_ST);
+            break;
+        
+        case IF:
+            codegen_conditional(IR_head, local_ST);
+            break;
+        
+        case LABEL:
+            codegen_label(IR_head, local_ST);
+            break;
+        
+        case MEMREAD_ST:
+            codegen_mem_read_ST(IR_head, local_ST);
+            break;
 
+        case MEMWRITE_ST:
+            codegen_mem_write_ST(IR_head, local_ST);
+            break;
 
-        // // case LABEL:
-        // //     codegen_label(IR_head, /* symbol table param*/);
-        // //     break;
-        // }
+        case MEMREAD:
+            codegen_mem_read(IR_head, local_ST);
+            break;
 
+        case MEMWRITE:
+            codegen_mem_write(IR_head, local_ST);
+            break;
+        }
         IR_head = IR_head->next;
     }
-
     fclose(assembly);
-    
 }

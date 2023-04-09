@@ -1,2 +1,0 @@
-FUNC	var_demo
-FUNC	main
