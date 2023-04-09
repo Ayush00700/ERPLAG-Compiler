@@ -32,6 +32,29 @@ void macros_starter(){
    fprintf(assembly, "\t\tpush      rbx\n");
    fprintf(assembly, "\t\tpush      rax\n");
    fprintf(assembly, "\t\t%% endmacro\n\n\n");
+
+   fprintf(assembly, "\t\t; macro to align RSP\n");
+   fprintf(assembly, "\t\t%% macro  rsp_align    0\n");
+   fprintf(assembly, "\t\tpush      rbx\n");
+   fprintf(assembly, "\t\tpush      rdx\n");
+   fprintf(assembly, "\t\tpush      rax\n");
+   fprintf(assembly, "\t\txor       rdx , rdx\n");
+   fprintf(assembly, "\t\tmov       rax , rsp\n");
+   fprintf(assembly, "\t\tmov       rbx , 16\n");
+   fprintf(assembly, "\t\tidiv      rbx\n");
+   fprintf(assembly, "\t\tmov       rbx , rdx\n");
+   fprintf(assembly, "\t\tpop       rax\n");
+   fprintf(assembly, "\t\tpop       rdx\n");
+   fprintf(assembly, "\t\tsub       rsp , rbx\n");
+   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+
+   fprintf(assembly, "\t\t; macro to re-align RSP\n");
+   fprintf(assembly, "\t\t%% macro  rsp_realign    0\n");
+   fprintf(assembly, "\t\tadd      rsp , rbx\n");
+   fprintf(assembly, "\t\tpush      rdx\n");
+   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+
+
 }
 
 void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST){
@@ -1477,8 +1500,19 @@ void codegen_iterative(ir_code_node* ir, func_entry* local_ST,func_entry** globa
 
 void codegen_procedure(ir_code_node* ir, func_entry* local_ST,func_entry** global_ST)
 {
+    /* The entry will be of the following form
+    +------------+----------+----------+-----------+
+    |    label   |  fn_name |    NULL  |    NULL   |
+    +------------+----------+----------+-----------+
+    */
     char* asmCode = (char*)malloc(sizeof(char)*20);
     char* buff = (char*)malloc(sizeof(char)*100);
+
+    char* funcName = ir->result;
+
+    sprintf(buff, "_%s:\n",funcName);
+    strcpy(asmCode, buff);
+    
 
     fprintf(assembly ,"%s", asmCode);
 }
