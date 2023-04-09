@@ -20,14 +20,14 @@ Iterating over next child of Node 2:
 3	STATEMENTS
 No of children: 0 
 Childrens:
-Next pointers:DECLARE ,DECLARE ,ASSIGN ,ASSIGN ,INPUT_ID ,INPUT_ID ,ASSIGN ,OUTPUT ,
+Next pointers:DECLARE ,DECLARE ,ASSIGN ,INPUT_ID ,OUTPUT ,
 
 Iterating over next list element of node 3:
 
 4	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,ASSIGN ,ASSIGN ,INPUT_ID ,INPUT_ID ,ASSIGN ,OUTPUT ,
+Next pointers:DECLARE ,ASSIGN ,INPUT_ID ,OUTPUT ,
 
 Iterating over next child of Node 4:
 
@@ -70,7 +70,7 @@ Iterating over next list element of node 3:
 9	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:ASSIGN ,ASSIGN ,INPUT_ID ,INPUT_ID ,ASSIGN ,OUTPUT ,
+Next pointers:ASSIGN ,INPUT_ID ,OUTPUT ,
 
 Iterating over next child of Node 9:
 
@@ -113,11 +113,11 @@ Iterating over next list element of node 3:
 14	ASSIGN
 No of children: 2 
 Childrens:ID ,NUM ,
-Next pointers:ASSIGN ,INPUT_ID ,INPUT_ID ,ASSIGN ,OUTPUT ,
+Next pointers:INPUT_ID ,OUTPUT ,
 
 Iterating over next child of Node 14:
 
-	a
+	x
 
 15	ID
 No of children: 0 
@@ -137,232 +137,25 @@ Next pointers:NULL
 
 Iterating over next list element of node 3:
 
-17	ASSIGN
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:INPUT_ID ,INPUT_ID ,ASSIGN ,OUTPUT ,
-
-Iterating over next child of Node 17:
-
-	b
-
-18	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 17:
-
-	9
-
-	9
-
-19	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 3:
-
 	x
 
-20	INPUT_ID
+17	INPUT_ID
 No of children: 0 
 Childrens:
-Next pointers:INPUT_ID ,ASSIGN ,OUTPUT ,
-
-Iterating over next list element of node 3:
-
-	y
-
-21	INPUT_ID
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,OUTPUT ,
-
-Iterating over next list element of node 3:
-
-22	ASSIGN
-No of children: 2 
-Childrens:ID ,MINUS ,
 Next pointers:OUTPUT ,
 
-Iterating over next child of Node 22:
-
-	z
-
-23	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 22:
-
-24	MINUS
-No of children: 2 
-Childrens:PLUS ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 24:
-
-25	PLUS
-No of children: 2 
-Childrens:PLUS ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 25:
-
-26	PLUS
-No of children: 2 
-Childrens:PLUS ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 26:
-
-27	PLUS
-No of children: 2 
-Childrens:ID ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 27:
-
-	x
-
-28	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 27:
-
-29	MUL
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 29:
-
-	y
-
-30	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 29:
-
-	b
-
-31	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 26:
-
-32	MUL
-No of children: 2 
-Childrens:MINUS ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 32:
-
-33	MINUS
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 33:
-
-	a
-
-34	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 33:
-
-	b
-
-35	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 32:
-
-	y
-
-36	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 25:
-
-37	MUL
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 37:
-
-	a
-
-38	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 37:
-
-	2
-
-	2
-
-39	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 24:
-
-40	MUL
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 40:
-
-	b
-
-41	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 40:
-
-	x
-
-42	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
 Iterating over next list element of node 3:
 
-43	OUTPUT
+18	OUTPUT
 No of children: 1 
 Childrens:ID ,
 Next pointers:NULL
 
-Iterating over next child of Node 43:
+Iterating over next child of Node 18:
 
-	z
+	x
 
-44	ID
+19	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL

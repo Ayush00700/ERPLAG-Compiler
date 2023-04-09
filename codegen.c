@@ -15,22 +15,18 @@ void macros_starter(){
    fprintf(assembly, "\t\tpush      rbx\n");
    fprintf(assembly, "\t\tpush      rcx\n");
    fprintf(assembly, "\t\tpush      rdx\n");
-   fprintf(assembly, "\t\tpush      rsp\n");
-   fprintf(assembly, "\t\tpush      rbp\n");
    fprintf(assembly, "\t\tpush      rsi\n");
    fprintf(assembly, "\t\tpush      rdi\n");
    fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
    fprintf(assembly, "\t\t;macro to restore all registers\n");
    fprintf(assembly, "\t\t%%macro  pop_regs    0\n");
-   fprintf(assembly, "\t\tpush      rdi\n");
-   fprintf(assembly, "\t\tpush      rsi\n");
-   fprintf(assembly, "\t\tpush      rbp\n");
-   fprintf(assembly, "\t\tpush      rsp\n");
-   fprintf(assembly, "\t\tpush      rdx\n");
-   fprintf(assembly, "\t\tpush      rcx\n");
-   fprintf(assembly, "\t\tpush      rbx\n");
-   fprintf(assembly, "\t\tpush      rax\n");
+   fprintf(assembly, "\t\tpop      rdi\n");
+   fprintf(assembly, "\t\tpop      rsi\n");
+   fprintf(assembly, "\t\tpop      rdx\n");
+   fprintf(assembly, "\t\tpop      rcx\n");
+   fprintf(assembly, "\t\tpop      rbx\n");
+   fprintf(assembly, "\t\tpop      rax\n");
    fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
    fprintf(assembly, "\t\t;macro to align RSP\n");
@@ -51,7 +47,7 @@ void macros_starter(){
    fprintf(assembly, "\t\t;macro to re-align RSP\n");
    fprintf(assembly, "\t\t%%macro  rsp_realign    0\n");
    fprintf(assembly, "\t\tadd      rsp , rbx\n");
-   fprintf(assembly, "\t\tpush      rdx\n");
+   fprintf(assembly, "\t\tpop      rbx\n");
    fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
 
@@ -91,7 +87,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     
-    fprintf(assembly, "\t\txor    rax , rax           ; flush out the rax register");
+    fprintf(assembly, "\t\txor    rax , rax           ; flush out the rax register\n");
 
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
@@ -376,17 +372,17 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
 
     if(!strcmp(resultType, "integer"))
     {
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_in          ; get corresponding format specifier\n");
         
     }
     else if(!strcmp(resultType, "real"))
     {
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_in          ; get corresponding format specifier\n");
         
     }
     else if(!strcmp(resultType, "boolean"))
     {
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
+        fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_in          ; get corresponding format specifier\n");
         
     }
 
@@ -396,7 +392,7 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
     
     fprintf(assembly, "\t\tmov      rax , 0x0000_0000_ffff_ffff             ; set size\n");
     
-    fprintf(assembly, "\t\tmov      [rdx] , rax\n");
+    fprintf(assembly, "\t\tmov     [rdx] , rax\n");
     
     fprintf(assembly, "\t\tmov      rsi , rdx                               ; move source index\n");
     
@@ -404,11 +400,11 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
     
     fprintf(assembly, "\t\tmov      rsi , rdx\n");
     
-    // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+    fprintf(assembly, "\t\trsp_align                                        ; align stack pointer\n");
     // 
     fprintf(assembly, "\t\tcall     scanf                                   ; system call for input\n");
     
-    // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+    fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
     // 
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
@@ -425,30 +421,75 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
     
 
     // Get offset of result
+
+
+
     char* result = ir->result;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);   // Checks if the symbol table contains - if yes we get the index
     if(indexResult==-1)
-    {
-        fprintf(assembly, "\t\t; Code for printing output\n");
-        
-        fprintf(assembly, "\t\tpush_regs                    ; save values\n");
-        
+    {   
+        int type_left_int = 0; 
+        type_left_int = (strchr(result, '.'))? -1 : 1;
+        if(type_left_int==1){
+            fprintf(assembly, "\t\t; Code for printing output\n");
+            
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            
 
-        fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_int]                ; get corresponding format specifier\n");
-        
+            fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_int_out]                ; get corresponding format specifier\n");
+            
 
-        fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
-        
-        fprintf(assembly, "\t\txor      rax , rax\n");
-        
-        // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
-        // 
-        fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
-        
-        // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
-        // 
+            fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+            
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            // 
+            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            
+            fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
+            // 
+        }
+        else if(type_left_int==-1){
+            fprintf(assembly, "\t\t; Code for printing output\n");
+            
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            
+
+            fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_real_out]                ; get corresponding format specifier\n");
+            
+
+            fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+            
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            // 
+            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            
+            fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
+        }
+        else{
+            fprintf(assembly, "\t\t; Code for printing output\n");
+            
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            
+
+            fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_bool_out]                ; get corresponding format specifier\n");
+            
+
+            fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+            
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            // 
+            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+            
+            fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
+   
+        }
     }
-
     else
     {
         sym_tab_entry* temp = NULL;
@@ -469,7 +510,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(resultType, "integer"))
         {
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_int          ; get corresponding format specifier\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                  ; get corresponding format specifier\n");
             
 
             fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
@@ -480,37 +521,37 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             
             fprintf(assembly, "\t\txor      rax , rax\n");
             
-            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
             // 
             fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
             
-            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
             // 
         }
         else if(!strcmp(resultType, "real"))
         {
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_real          ; get corresponding format specifier\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out          ; get corresponding format specifier\n");
             
 
             fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
             fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
             
-            fprintf(assembly, "\t\tmovq      xmm0 , [rdx]                               ; move source index\n");
+            fprintf(assembly, "\t\tmovq      xmm0 ,[rdx]                               ; move source index\n");
             
             fprintf(assembly, "\t\tmov      rax , 1\n");
             
-            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            // fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
             // 
             fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
             
-            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            // fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
             // 
         }
         else if(!strcmp(resultType, "boolean"))
         {
 
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool          ; get corresponding format specifier\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_out          ; get corresponding format specifier\n");
             
 
             char* true_label = newLabel();
@@ -565,11 +606,11 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             
             fprintf(assembly, "%s:\n", next_label);
             
-            // fprintf(assembly, "\t\talign_16_rsp                                     ; align stack pointer\n");
+            // fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
             // 
             // fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
             // 
-            // fprintf(assembly, "\t\tdealign_16_rsp                                      ; restore previos alignment of stack\n");
+            // fprintf(assembly, "\t\trsp_realign                                      ; restore previos alignment of stack\n");
             // 
         }
     }
@@ -784,7 +825,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     
                     fprintf(assembly, "\t\tmul     rbx\n");
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov    [RBP - %d] , rax\n", offsetResult);
                     
                 }
 
@@ -946,13 +987,13 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
         }
         
     }
+    char* nameRight;
+    int indexRight;
+    char* true_label = newLabel();
 
     // For right operand
     switch(ir->operator)
     {
-        char* nameRight;
-        int indexRight;
-        char* true_label = newLabel();
 
         case LT:
             // Get offset of right operand temp
@@ -1526,6 +1567,7 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     char* funcName = ir->result;
 
     fprintf(assembly, "%s:\n",funcName);
+    fprintf(assembly, "\t\tmov      rbp , rsp               ; set base to current stack top\n");
     
     
 
@@ -1615,10 +1657,13 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tsection      .data\n");
 
         // Write down all the format specifiers reqd
-        fprintf(assembly, "\t\tfmt_spec_int: db \"%%d\", 10, 0\n");
-        fprintf(assembly, "\t\tfmt_spec_real: db \"%%4f\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_int_in: db \"%%d\", 0\n");
+        fprintf(assembly, "\t\tfmt_spec_int_out: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_real_in: db \"%%4f\", 0\n");
+        fprintf(assembly, "\t\tfmt_spec_real_out: db \"%%4f\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
-        fprintf(assembly, "\t\tfmt_spec_bool: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_bool_in: db \"%%d\", 0\n");
+        fprintf(assembly, "\t\tfmt_spec_bool_out: db \"%%d\", 10, 0\n");
         fprintf(assembly, "\t\ttrue: db \"true\", 10, 0\n");
         fprintf(assembly, "\t\ttrue_len: equ $ - true\n");
         fprintf(assembly, "\t\tfalse: db \"false\", 10, 0\n");
