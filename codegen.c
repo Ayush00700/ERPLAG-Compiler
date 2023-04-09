@@ -9,8 +9,8 @@ void macros_starter(){
     /* This function defines the required macros in the assembly file
     */
 
-   fprintf(assembly, "\t\t; macro to store all registers\n");
-   fprintf(assembly, "\t\t%% macro  push_regs    0\n");
+   fprintf(assembly, "\t\t;macro to store all registers\n");
+   fprintf(assembly, "\t\t%%macro  push_regs    0\n");
    fprintf(assembly, "\t\tpush      rax\n");
    fprintf(assembly, "\t\tpush      rbx\n");
    fprintf(assembly, "\t\tpush      rcx\n");
@@ -19,10 +19,10 @@ void macros_starter(){
    fprintf(assembly, "\t\tpush      rbp\n");
    fprintf(assembly, "\t\tpush      rsi\n");
    fprintf(assembly, "\t\tpush      rdi\n");
-   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+   fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
-   fprintf(assembly, "\t\t; macro to restore all registers\n");
-   fprintf(assembly, "\t\t%% macro  pop_regs    0\n");
+   fprintf(assembly, "\t\t;macro to restore all registers\n");
+   fprintf(assembly, "\t\t%%macro  pop_regs    0\n");
    fprintf(assembly, "\t\tpush      rdi\n");
    fprintf(assembly, "\t\tpush      rsi\n");
    fprintf(assembly, "\t\tpush      rbp\n");
@@ -31,10 +31,10 @@ void macros_starter(){
    fprintf(assembly, "\t\tpush      rcx\n");
    fprintf(assembly, "\t\tpush      rbx\n");
    fprintf(assembly, "\t\tpush      rax\n");
-   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+   fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
-   fprintf(assembly, "\t\t; macro to align RSP\n");
-   fprintf(assembly, "\t\t%% macro  rsp_align    0\n");
+   fprintf(assembly, "\t\t;macro to align RSP\n");
+   fprintf(assembly, "\t\t%%macro  rsp_align    0\n");
    fprintf(assembly, "\t\tpush      rbx\n");
    fprintf(assembly, "\t\tpush      rdx\n");
    fprintf(assembly, "\t\tpush      rax\n");
@@ -46,13 +46,13 @@ void macros_starter(){
    fprintf(assembly, "\t\tpop       rax\n");
    fprintf(assembly, "\t\tpop       rdx\n");
    fprintf(assembly, "\t\tsub       rsp , rbx\n");
-   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+   fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
-   fprintf(assembly, "\t\t; macro to re-align RSP\n");
-   fprintf(assembly, "\t\t%% macro  rsp_realign    0\n");
+   fprintf(assembly, "\t\t;macro to re-align RSP\n");
+   fprintf(assembly, "\t\t%%macro  rsp_realign    0\n");
    fprintf(assembly, "\t\tadd      rsp , rbx\n");
    fprintf(assembly, "\t\tpush      rdx\n");
-   fprintf(assembly, "\t\t%% endmacro\n\n\n");
+   fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
 
 }
@@ -96,7 +96,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
         // CHECK ------> detect if immediate value is int or real
-        int type_right_int = (strchr(nameLHS, '.'))? 1 : 0;
+        int type_right_int = (strchr(nameLHS, '.'))? 0 : 1;
         if(type_right_int)
         {    
             fprintf(assembly, "\t\tmov      rax , %s                    ; immediate to register\n",nameRHS);
@@ -188,7 +188,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     // If left operand is a constant
     if(indexLeft == -1)
     {
-        int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
+        int type_left_int = (strchr(nameLeft, '.'))? 0 : 1;
         // TODO ----> identifying if immediate value is int or real
         if( type_left_int)
         {
@@ -239,7 +239,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
 
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
@@ -293,7 +293,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
@@ -617,7 +617,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     // If left operand is a constant
     if(indexLeft == -1)
     {
-        int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
+        int type_left_int = (strchr(nameLeft, '.'))? 0 : 1;
         // TODO ----> identifying if immediate value is int or real
         if(type_left_int)
         {
@@ -668,7 +668,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
@@ -721,7 +721,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
@@ -774,12 +774,15 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.') != NULL)? 0 : 1;
 
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    fprintf(assembly, "\t\tmul     rax , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
+                    
+                    fprintf(assembly, "\t\tmul     rbx\n");
                     
                     fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
                     
@@ -787,7 +790,9 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 else
                 {
-                    fprintf(assembly, "\t\tmulsd     xmm0 , %s\n", nameRight);
+                    fprintf(assembly, "\t\tmovsd      xmm1 , %s\n", nameRight);
+
+                    fprintf(assembly, "\t\tmulsd     xmm1\n");
                     
                     fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
                     
@@ -807,14 +812,18 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    fprintf(assembly, "\t\tmul     rax , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+
+                    fprintf(assembly, "\t\tmul     rbx\n");
                     
                     fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
                     
                 }
                 else
                 {
-                    fprintf(assembly, "\t\tmulsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tmovsd     xmm1 , [RBP - %d]\n", offsetRight);
+                  
+                    fprintf(assembly, "\t\tmulsd     xmm1\n");
                     
                     fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
                     
@@ -899,7 +908,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     {
         // If strchr(nameLeft, '.') returns null then it means left operand has no '.'
         // and hence it is an integer constant (immediate value)
-        int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
+        int type_left_int = (strchr(nameLeft, '.'))? 0 : 1;
         if(type_left_int)
         {
             fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
@@ -954,7 +963,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1042,7 +1051,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1130,7 +1139,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1222,7 +1231,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1314,7 +1323,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1402,7 +1411,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
-                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+                int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
@@ -1513,7 +1522,7 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     */
     
     
-
+   
     char* funcName = ir->result;
 
     fprintf(assembly, "%s:\n",funcName);
@@ -1621,7 +1630,7 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\n\n\t\tsection      .text\n");
         macros_starter();               // Define the macros
         fprintf(assembly, "\t\tglobal main\n");
-        fprintf(assembly, "main:\n");
+        // fprintf(assembly, "main:\n");
 
         printf("[+] ASM file updated!\n");
 
@@ -1689,11 +1698,12 @@ void starter(FILE* assembly_file,ir_code* IR)
             break;
         
         case FUNC:
+            codegen_func(IR_head, local_ST);
         case CALL:
         case PARA_IN:
         case PARA_OUT:
         case RET:
-            codegen_func(IR_head, local_ST);
+            break;
         
         case GOTO:
             codegen_jump(IR_head, local_ST);

@@ -21,8 +21,8 @@ extern printf, scanf, exit
 
 
 		section      .text
-		; macro to store all registers
-		% macro  push_regs    0
+		;macro to store all registers
+		%macro  push_regs    0
 		push      rax
 		push      rbx
 		push      rcx
@@ -31,11 +31,11 @@ extern printf, scanf, exit
 		push      rbp
 		push      rsi
 		push      rdi
-		% endmacro
+		%endmacro
 
 
-		; macro to restore all registers
-		% macro  pop_regs    0
+		;macro to restore all registers
+		%macro  pop_regs    0
 		push      rdi
 		push      rsi
 		push      rbp
@@ -44,11 +44,11 @@ extern printf, scanf, exit
 		push      rcx
 		push      rbx
 		push      rax
-		% endmacro
+		%endmacro
 
 
-		; macro to align RSP
-		% macro  rsp_align    0
+		;macro to align RSP
+		%macro  rsp_align    0
 		push      rbx
 		push      rdx
 		push      rax
@@ -60,18 +60,17 @@ extern printf, scanf, exit
 		pop       rax
 		pop       rdx
 		sub       rsp , rbx
-		% endmacro
+		%endmacro
 
 
-		; macro to re-align RSP
-		% macro  rsp_realign    0
+		;macro to re-align RSP
+		%macro  rsp_realign    0
 		add      rsp , rbx
 		push      rdx
-		% endmacro
+		%endmacro
 
 
 		global main
-main:
 main:
 		; Code for getting assignment statement
 		push_regs                    ; save values
@@ -81,10 +80,35 @@ main:
 		push_regs                    ; save values
 		xor    rax , rax           ; flush out the rax register		mov      rax , 9                    ; immediate to register
 		mov      [RBP - 16] , rax            ; register to memory
-		pop_regs                    ; restore values		; Code for arithmetic
+		pop_regs                    ; restore values		; Code for getting user input
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int          ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 0                                ; move pointer to place where we have to store
+		mov      rax , 0x0000_0000_ffff_ffff             ; set size
+		mov      [rdx] , rax
+		mov      rsi , rdx                               ; move source index
+		mov      rax , zero
+		mov      rsi , rdx
+		call     scanf                                   ; system call for input
+		pop_regs        ; restore register values
+		; Code for getting user input
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int          ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 4                                ; move pointer to place where we have to store
+		mov      rax , 0x0000_0000_ffff_ffff             ; set size
+		mov      [rdx] , rax
+		mov      rsi , rdx                               ; move source index
+		mov      rax , zero
+		mov      rsi , rdx
+		call     scanf                                   ; system call for input
+		pop_regs        ; restore register values
+		; Code for arithmetic
 		push_regs                    ; save values
 		mov     rax , [RBP - 4]
-		mul     rax , [RBP - 16]
+		mov     rbx , [RBP - 16]
+		mul     rbx
 		mov     [RBP - 24] , rax
 		pop_regs        ; restore register values
 		; Code for arithmetic
@@ -102,7 +126,8 @@ main:
 		; Code for arithmetic
 		push_regs                    ; save values
 		mov     rax , [RBP - 32]
-		mul     rax , [RBP - 4]
+		mov     rbx , [RBP - 4]
+		mul     rbx
 		mov     [RBP - 36] , rax
 		pop_regs        ; restore register values
 		; Code for arithmetic
@@ -114,7 +139,8 @@ main:
 		; Code for arithmetic
 		push_regs                    ; save values
 		mov     rax , [RBP - 12]
-		mul     rax , 2
+		mov     rbx , 2
+		mul     rbx
 		mov     [RBP - 44] , rax
 		pop_regs        ; restore register values
 		; Code for arithmetic
@@ -126,7 +152,8 @@ main:
 		; Code for arithmetic
 		push_regs                    ; save values
 		mov     rax , [RBP - 16]
-		mul     rax , [RBP - 0]
+		mov     rbx , [RBP - 0]
+		mul     rbx
 		mov     [RBP - 52] , rax
 		pop_regs        ; restore register values
 		; Code for arithmetic
@@ -148,4 +175,3 @@ main:
 		xor      rax , rax
 		call     printf                                   ; system call for output
 		pop_regs        ; restore register values
-(null):

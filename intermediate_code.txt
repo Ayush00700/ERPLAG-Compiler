@@ -1,7 +1,8 @@
-<<<<<<< HEAD
 FUNC	main		
 a = 5		
 b = 9		
+GET_VALUE	x		
+GET_VALUE	y		
 t1 = y * b		
 t2 = x + t1		
 t3 = a - b		
@@ -14,5 +15,3 @@ t9 = t7 - t8
 z = t9		
 PRINT	z		
 RET		
-=======
->>>>>>> c9773ff7c583588fb4335424b67b553a1e696796
