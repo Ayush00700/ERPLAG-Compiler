@@ -2,6 +2,8 @@
 ** Multiple level nesting using integer, real, boolean data types including static array data type**
 **Variant of test case 4**
 
+**Need to handle the case of conditional variables changing values**
+**Line 60 error not caught**
 <<module var_demo_array>>
 takes input [x:integer, m:array [-12..20] of integer, p:real];
 returns [ n:integer, k: boolean];

@@ -15,7 +15,7 @@ Next pointers:MODULE ,
 
 Iterating over next child of Node 2:
 
-	switch_var_demo1
+	var_demo
 
 3	FUNC_ID
 No of children: 0 
@@ -51,12 +51,12 @@ Iterating over next list element of node 4:
 
 7	IPLIST
 No of children: 2 
-Childrens:ID ,REAL ,
+Childrens:ID ,BOOLEAN ,
 Next pointers:IPLIST ,
 
 Iterating over next child of Node 7:
 
-	y
+	w
 
 8	ID
 No of children: 0 
@@ -65,9 +65,9 @@ Next pointers:NULL
 
 Iterating over next child of Node 7:
 
-	real
+	boolean
 
-9	REAL
+9	BOOLEAN
 No of children: 0 
 Childrens:
 Next pointers:NULL
@@ -76,12 +76,12 @@ Iterating over next list element of node 4:
 
 10	IPLIST
 No of children: 2 
-Childrens:ID ,BOOLEAN ,
+Childrens:ID ,REAL ,
 Next pointers:NULL
 
 Iterating over next child of Node 10:
 
-	z
+	p
 
 11	ID
 No of children: 0 
@@ -90,9 +90,9 @@ Next pointers:NULL
 
 Iterating over next child of Node 10:
 
-	boolean
+	real
 
-12	BOOLEAN
+12	REAL
 No of children: 0 
 Childrens:
 Next pointers:NULL
@@ -102,11 +102,11 @@ Iterating over next child of Node 2:
 13	OPLIST_HEAD
 No of children: 2 
 Childrens:ID ,INTEGER ,
-Next pointers:NULL
+Next pointers:OPLIST ,OPLIST ,
 
 Iterating over next child of Node 13:
 
-	u
+	m
 
 14	ID
 No of children: 0 
@@ -122,644 +122,638 @@ No of children: 0
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 2:
+Iterating over next list element of node 13:
 
-16	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:DECLARE ,DECLARE ,DECLARE ,INPUT_ID ,SWITCH ,ASSIGN ,SWITCH ,SWITCH ,
-
-Iterating over next list element of node 16:
-
-17	DECLARE
+16	OPLIST
 No of children: 2 
-Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,DECLARE ,INPUT_ID ,SWITCH ,ASSIGN ,SWITCH ,SWITCH ,
+Childrens:ID ,INTEGER ,
+Next pointers:OPLIST ,
 
-Iterating over next child of Node 17:
-
-	m
-
-18	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:ID ,ID ,
-
-Iterating over next list element of node 18:
+Iterating over next child of Node 16:
 
 	n
 
-19	ID
+17	ID
 No of children: 0 
 Childrens:
-Next pointers:ID ,
+Next pointers:NULL
 
-Iterating over next list element of node 18:
+Iterating over next child of Node 16:
 
-	k
+	integer
+
+18	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 13:
+
+19	OPLIST
+No of children: 2 
+Childrens:ID ,BOOLEAN ,
+Next pointers:NULL
+
+Iterating over next child of Node 19:
+
+	u
 
 20	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 17:
-
-	integer
-
-21	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 16:
-
-22	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,BOOLEAN ,
-Next pointers:DECLARE ,INPUT_ID ,SWITCH ,ASSIGN ,SWITCH ,SWITCH ,
-
-Iterating over next child of Node 22:
-
-	h
-
-23	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 22:
+Iterating over next child of Node 19:
 
 	boolean
 
-24	BOOLEAN
+21	BOOLEAN
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 16:
+Iterating over next child of Node 2:
 
-25	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,REAL ,
-Next pointers:INPUT_ID ,SWITCH ,ASSIGN ,SWITCH ,SWITCH ,
-
-Iterating over next child of Node 25:
-
-	p
-
-26	ID_LIST_HEAD
+22	STATEMENTS
 No of children: 0 
 Childrens:
-Next pointers:NULL
+Next pointers:DECLARE ,ASSIGN ,INPUT_ID ,DECLARE ,INPUT_ID ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
 
-Iterating over next child of Node 25:
+Iterating over next list element of node 22:
 
-	real
-
-27	REAL
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 16:
-
-	n
-
-28	INPUT_ID
-No of children: 0 
-Childrens:
-Next pointers:SWITCH ,ASSIGN ,SWITCH ,SWITCH ,
-
-Iterating over next list element of node 16:
-
-29	SWITCH
-No of children: 3 
-Childrens:ID ,CASE_HEAD ,DEFAULTCASE ,
-Next pointers:ASSIGN ,SWITCH ,SWITCH ,
-
-Iterating over next child of Node 29:
-
-	k
-
-30	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 29:
-
-31	CASE_HEAD
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:CASE ,
-
-Iterating over next child of Node 31:
-
-	10
-
-	10
-
-32	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 31:
-
-33	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:DECLARE ,DECLARE ,DECLARE ,DECLARE ,ASSIGN ,
-
-Iterating over next list element of node 33:
-
-34	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,REAL ,
-Next pointers:DECLARE ,DECLARE ,DECLARE ,ASSIGN ,
-
-Iterating over next child of Node 34:
-
-	A
-
-35	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 34:
-
-	real
-
-36	REAL
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 33:
-
-37	DECLARE
+23	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,DECLARE ,ASSIGN ,
+Next pointers:ASSIGN ,INPUT_ID ,DECLARE ,INPUT_ID ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
 
-Iterating over next child of Node 37:
+Iterating over next child of Node 23:
 
-	Q
+	a
 
-38	ID_LIST_HEAD
+24	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 24:
+
+	b
+
+25	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 37:
+Iterating over next child of Node 23:
 
 	integer
 
-39	INTEGER
+26	INTEGER
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 33:
+Iterating over next list element of node 22:
 
-40	DECLARE
+27	ASSIGN
 No of children: 2 
-Childrens:ID_LIST_HEAD ,ARRAY_DATATYPE ,
-Next pointers:DECLARE ,ASSIGN ,
+Childrens:ID ,NUM ,
+Next pointers:INPUT_ID ,DECLARE ,INPUT_ID ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 27:
+
+	a
+
+28	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 27:
+
+	5
+
+	5
+
+29	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+	b
+
+30	INPUT_ID
+No of children: 0 
+Childrens:
+Next pointers:DECLARE ,INPUT_ID ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next list element of node 22:
+
+31	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,REAL ,
+Next pointers:INPUT_ID ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 31:
+
+	value
+
+32	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,ID ,
+
+Iterating over next list element of node 32:
+
+	q
+
+33	ID
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 32:
+
+	r
+
+34	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 31:
+
+	real
+
+35	REAL
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+	q
+
+36	INPUT_ID
+No of children: 0 
+Childrens:
+Next pointers:ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next list element of node 22:
+
+37	ASSIGN
+No of children: 2 
+Childrens:ID ,RNUM ,
+Next pointers:ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 37:
+
+	r
+
+38	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 37:
+
+	23.67e+2
+
+	2367.000000
+
+39	RNUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+40	ASSIGN
+No of children: 2 
+Childrens:ID ,PLUS ,
+Next pointers:ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
 
 Iterating over next child of Node 40:
 
-	B
+	value
 
-41	ID_LIST_HEAD
+41	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 40:
 
-42	ARRAY_DATATYPE
+42	PLUS
 No of children: 2 
-Childrens:ARRAY_RANGE ,INTEGER ,
+Childrens:ID ,MUL ,
 Next pointers:NULL
 
 Iterating over next child of Node 42:
 
-43	ARRAY_RANGE
-No of children: 2 
-Childrens:SIGNED_NUMBER ,SIGNED_NUMBER ,
-Next pointers:NULL
+	p
 
-Iterating over next child of Node 43:
-
-44	SIGNED_NUMBER
-No of children: 2 
-Childrens:MINUS ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 44:
-
-	-
-
-45	MINUS
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 44:
-
-	10
-
-	10
-
-46	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 43:
-
-47	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 47:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 47:
-
-	30
-
-	30
-
-48	NUM
+43	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 42:
 
-	integer
-
-49	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 33:
-
-50	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,ARRAY_DATATYPE ,
-Next pointers:ASSIGN ,
-
-Iterating over next child of Node 50:
-
-	E
-
-51	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 50:
-
-52	ARRAY_DATATYPE
-No of children: 2 
-Childrens:ARRAY_RANGE ,INTEGER ,
-Next pointers:NULL
-
-Iterating over next child of Node 52:
-
-53	ARRAY_RANGE
-No of children: 2 
-Childrens:SIGNED_NUMBER ,SIGNED_NUMBER ,
-Next pointers:NULL
-
-Iterating over next child of Node 53:
-
-54	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 54:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 54:
-
-	4
-
-	4
-
-55	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 53:
-
-56	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 56:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 56:
-
-	10
-
-	10
-
-57	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 52:
-
-	integer
-
-58	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 33:
-
-59	ASSIGN
-No of children: 2 
-Childrens:ARRAY_ASSIGN ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 59:
-
-60	ARRAY_ASSIGN
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 60:
-
-	B
-
-61	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 60:
-
-	12
-
-	12
-
-62	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 59:
-
-63	MUL
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 63:
-
-	k
-
-64	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 63:
-
-	20
-
-	20
-
-65	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 31:
-
-66	CASE
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 66:
-
-	20
-
-	20
-
-67	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 66:
-
-68	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,INPUT_ID ,FORLOOP ,
-
-Iterating over next list element of node 68:
-
-69	ASSIGN
-No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:INPUT_ID ,FORLOOP ,
-
-Iterating over next child of Node 69:
-
-	p
-
-70	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 69:
-
-71	PLUS
-No of children: 2 
-Childrens:RNUM ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 71:
-
-	12.90
-
-	12.900000
-
-72	RNUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 71:
-
-	p
-
-73	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 68:
-
-	n
-
-74	INPUT_ID
-No of children: 0 
-Childrens:
-Next pointers:FORLOOP ,
-
-Iterating over next list element of node 68:
-
-75	FORLOOP
-No of children: 3 
-Childrens:ID ,FORRANGE ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 75:
-
-	m
-
-76	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 75:
-
-77	FORRANGE
-No of children: 2 
-Childrens:FORINDEX ,FORINDEX ,
-Next pointers:NULL
-
-Iterating over next child of Node 77:
-
-78	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 78:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 78:
-
-	10
-
-	10
-
-79	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 77:
-
-80	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 80:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 80:
-
-	15
-
-	15
-
-81	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 75:
-
-82	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 82:
-
-83	ASSIGN
-No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:NULL
-
-Iterating over next child of Node 83:
-
-	m
-
-84	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 83:
-
-85	PLUS
+44	MUL
 No of children: 2 
 Childrens:ID ,ID ,
 Next pointers:NULL
 
-Iterating over next child of Node 85:
+Iterating over next child of Node 44:
+
+	q
+
+45	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 44:
+
+	r
+
+46	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+47	ASSIGN
+No of children: 2 
+Childrens:ID ,PLUS ,
+Next pointers:ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 47:
+
+	m
+
+48	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 47:
+
+49	PLUS
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 49:
+
+	a
+
+50	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 49:
+
+	x
+
+51	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+52	ASSIGN
+No of children: 2 
+Childrens:ID ,OR ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 52:
+
+	u
+
+53	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 52:
+
+54	OR
+No of children: 2 
+Childrens:AND ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 54:
+
+55	AND
+No of children: 2 
+Childrens:TRUE ,FALSE ,
+Next pointers:NULL
+
+Iterating over next child of Node 55:
+
+	true
+
+56	TRUE
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 55:
+
+	false
+
+57	FALSE
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 54:
+
+	v
+
+58	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+59	ASSIGN
+No of children: 2 
+Childrens:ID ,LE_result ,
+Next pointers:DECLARE ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 59:
+
+	u
+
+60	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 59:
+
+61	LE_result
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 61:
+
+	a
+
+62	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 61:
+
+	b
+
+63	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+64	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,INTEGER ,
+Next pointers:ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 64:
+
+	w
+
+65	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 64:
+
+	integer
+
+66	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+67	ASSIGN
+No of children: 2 
+Childrens:ID ,NUM ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 67:
+
+	w
+
+68	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 67:
+
+	23
+
+	23
+
+69	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+70	ASSIGN
+No of children: 2 
+Childrens:ID ,PLUS ,
+Next pointers:DECLARE ,ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 70:
 
 	n
+
+71	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 70:
+
+72	PLUS
+No of children: 2 
+Childrens:MUL ,NUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 72:
+
+73	MUL
+No of children: 2 
+Childrens:ID ,NUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 73:
+
+	a
+
+74	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 73:
+
+	25
+
+	25
+
+75	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 72:
+
+	100
+
+	100
+
+76	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+77	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,REAL ,
+Next pointers:ASSIGN ,ASSIGN ,
+
+Iterating over next child of Node 77:
+
+	b
+
+78	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 78:
+
+	c
+
+79	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 77:
+
+	real
+
+80	REAL
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 22:
+
+81	ASSIGN
+No of children: 2 
+Childrens:ID ,PLUS ,
+Next pointers:ASSIGN ,
+
+Iterating over next child of Node 81:
+
+	c
+
+82	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 81:
+
+83	PLUS
+No of children: 2 
+Childrens:MINUS ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 83:
+
+84	MINUS
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 84:
+
+	value
+
+85	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 84:
+
+	q
 
 86	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 85:
+Iterating over next child of Node 83:
 
-	m
+	r
 
 87	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 29:
+Iterating over next list element of node 22:
 
-88	DEFAULTCASE
-No of children: 1 
-Childrens:STATEMENTS ,
+88	ASSIGN
+No of children: 2 
+Childrens:ID ,PLUS ,
 Next pointers:NULL
 
 Iterating over next child of Node 88:
 
-89	STATEMENTS
+	w
+
+89	ID
 No of children: 0 
 Childrens:
-Next pointers:ASSIGN ,
+Next pointers:NULL
 
-Iterating over next list element of node 89:
+Iterating over next child of Node 88:
 
-90	ASSIGN
+90	PLUS
 No of children: 2 
-Childrens:ID ,MUL ,
+Childrens:ID ,NUM ,
 Next pointers:NULL
 
 Iterating over next child of Node 90:
 
-	m
+	w
 
 91	ID
 No of children: 0 
@@ -768,41 +762,41 @@ Next pointers:NULL
 
 Iterating over next child of Node 90:
 
-92	MUL
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
+	5
 
-Iterating over next child of Node 92:
+	5
 
-	m
-
-93	ID
+92	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 92:
+Iterating over next list element of node 2:
 
-	2
+93	MODULE
+No of children: 4 
+Childrens:FUNC_ID ,IPLIST_HEAD ,OPLIST_HEAD ,STATEMENTS ,
+Next pointers:NULL
 
-	2
+Iterating over next child of Node 93:
 
-94	NUM
+	compute
+
+94	FUNC_ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 16:
+Iterating over next child of Node 93:
 
-95	ASSIGN
+95	IPLIST_HEAD
 No of children: 2 
-Childrens:ID ,MINUS ,
-Next pointers:SWITCH ,SWITCH ,
+Childrens:ID ,INTEGER ,
+Next pointers:IPLIST ,IPLIST ,IPLIST ,
 
 Iterating over next child of Node 95:
 
-	u
+	a
 
 96	ID
 No of children: 0 
@@ -811,21 +805,23 @@ Next pointers:NULL
 
 Iterating over next child of Node 95:
 
-97	MINUS
-No of children: 2 
-Childrens:PLUS ,ID ,
+	integer
+
+97	INTEGER
+No of children: 0 
+Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 97:
+Iterating over next list element of node 95:
 
-98	PLUS
+98	IPLIST
 No of children: 2 
-Childrens:ID ,MUL ,
-Next pointers:NULL
+Childrens:ID ,INTEGER ,
+Next pointers:IPLIST ,IPLIST ,
 
 Iterating over next child of Node 98:
 
-	u
+	b
 
 99	ID
 No of children: 0 
@@ -834,48 +830,48 @@ Next pointers:NULL
 
 Iterating over next child of Node 98:
 
-100	MUL
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
+	integer
 
-Iterating over next child of Node 100:
-
-	x
-
-101	ID
+100	INTEGER
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 100:
+Iterating over next list element of node 95:
 
-	m
+101	IPLIST
+No of children: 2 
+Childrens:ID ,REAL ,
+Next pointers:IPLIST ,
+
+Iterating over next child of Node 101:
+
+	s
 
 102	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 97:
+Iterating over next child of Node 101:
 
-	n
+	real
 
-103	ID
+103	REAL
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 16:
+Iterating over next list element of node 95:
 
-104	SWITCH
-No of children: 3 
-Childrens:ID ,CASE_HEAD ,DEFAULTCASE ,
-Next pointers:SWITCH ,
+104	IPLIST
+No of children: 2 
+Childrens:ID ,INTEGER ,
+Next pointers:NULL
 
 Iterating over next child of Node 104:
 
-	p
+	c
 
 105	ID
 No of children: 0 
@@ -884,375 +880,369 @@ Next pointers:NULL
 
 Iterating over next child of Node 104:
 
-106	CASE_HEAD
+	integer
+
+106	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 93:
+
+107	OPLIST_HEAD
 No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:NULL
+Childrens:ID ,BOOLEAN ,
+Next pointers:OPLIST ,OPLIST ,
 
-Iterating over next child of Node 106:
+Iterating over next child of Node 107:
 
-	1
+	res_1
 
-	1
-
-107	NUM
+108	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 106:
+Iterating over next child of Node 107:
 
-108	STATEMENTS
+	boolean
+
+109	BOOLEAN
 No of children: 0 
 Childrens:
-Next pointers:ASSIGN ,
+Next pointers:NULL
 
-Iterating over next list element of node 108:
+Iterating over next list element of node 107:
 
-109	ASSIGN
+110	OPLIST
+No of children: 2 
+Childrens:ID ,INTEGER ,
+Next pointers:OPLIST ,
+
+Iterating over next child of Node 110:
+
+	res_2_a
+
+111	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 110:
+
+	integer
+
+112	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 107:
+
+113	OPLIST
+No of children: 2 
+Childrens:ID ,REAL ,
+Next pointers:NULL
+
+Iterating over next child of Node 113:
+
+	res_2__b
+
+114	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 113:
+
+	real
+
+115	REAL
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 93:
+
+116	STATEMENTS
+No of children: 0 
+Childrens:
+Next pointers:DECLARE ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next list element of node 116:
+
+117	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,BOOLEAN ,
+Next pointers:DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next child of Node 117:
+
+	new
+
+118	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 117:
+
+	boolean
+
+119	BOOLEAN
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+120	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,INTEGER ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next child of Node 120:
+
+	abc_1
+
+121	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 121:
+
+	pqr_2
+
+122	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 120:
+
+	integer
+
+123	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+124	ASSIGN
 No of children: 2 
 Childrens:ID ,PLUS ,
-Next pointers:NULL
+Next pointers:DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
-Iterating over next child of Node 109:
+Iterating over next child of Node 124:
 
-	p
+	pqr_2
 
-110	ID
+125	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 109:
+Iterating over next child of Node 124:
 
-111	PLUS
+126	PLUS
 No of children: 2 
 Childrens:ID ,NUM ,
 Next pointers:NULL
 
-Iterating over next child of Node 111:
+Iterating over next child of Node 126:
 
-	p
+	abc_1
 
-112	ID
+127	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 111:
+Iterating over next child of Node 126:
 
-	1
+	6
 
-	1
+	6
 
-113	NUM
+128	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 104:
+Iterating over next list element of node 116:
 
-114	DEFAULTCASE
-No of children: 1 
-Childrens:STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 114:
-
-115	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 115:
-
-116	ASSIGN
-No of children: 2 
-Childrens:ID ,FALSE ,
-Next pointers:NULL
-
-Iterating over next child of Node 116:
-
-	h
-
-117	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 116:
-
-	false
-
-118	FALSE
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 16:
-
-119	SWITCH
-No of children: 3 
-Childrens:ID ,CASE_HEAD ,DEFAULTCASE ,
-Next pointers:NULL
-
-Iterating over next child of Node 119:
-
-	h
-
-120	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 119:
-
-121	CASE_HEAD
-No of children: 2 
-Childrens:FALSE ,STATEMENTS ,
-Next pointers:CASE ,CASE ,
-
-Iterating over next child of Node 121:
-
-	false
-
-122	FALSE
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 121:
-
-123	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:DECLARE ,DECLARE ,DECLARE ,DECLARE ,ASSIGN ,
-
-Iterating over next list element of node 123:
-
-124	DECLARE
+129	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,REAL ,
-Next pointers:DECLARE ,DECLARE ,DECLARE ,ASSIGN ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
-Iterating over next child of Node 124:
+Iterating over next child of Node 129:
 
-	A
+	abc_1
 
-125	ID_LIST_HEAD
+130	ID_LIST_HEAD
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 124:
+Iterating over next child of Node 129:
 
 	real
 
-126	REAL
+131	REAL
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 123:
+Iterating over next list element of node 116:
 
-127	DECLARE
+132	ASSIGN
+No of children: 2 
+Childrens:ID ,UNARY ,
+Next pointers:DECLARE ,ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next child of Node 132:
+
+	res_2_a
+
+133	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 132:
+
+134	UNARY
+No of children: 2 
+Childrens:MINUS ,MINUS ,
+Next pointers:NULL
+
+Iterating over next child of Node 134:
+
+	-
+
+135	MINUS
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 134:
+
+136	MINUS
+No of children: 2 
+Childrens:MUL ,DIV ,
+Next pointers:NULL
+
+Iterating over next child of Node 136:
+
+137	MUL
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 137:
+
+	a
+
+138	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 137:
+
+	b
+
+139	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 136:
+
+140	DIV
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 140:
+
+	c
+
+141	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 140:
+
+	pqr_2
+
+142	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+143	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,DECLARE ,ASSIGN ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
-Iterating over next child of Node 127:
+Iterating over next child of Node 143:
 
-	Q
+	s
 
-128	ID_LIST_HEAD
+144	ID_LIST_HEAD
 No of children: 0 
 Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 127:
-
-	integer
-
-129	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 123:
-
-130	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,ARRAY_DATATYPE ,
-Next pointers:DECLARE ,ASSIGN ,
-
-Iterating over next child of Node 130:
-
-	B
-
-131	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 130:
-
-132	ARRAY_DATATYPE
-No of children: 2 
-Childrens:ARRAY_RANGE ,INTEGER ,
-Next pointers:NULL
-
-Iterating over next child of Node 132:
-
-133	ARRAY_RANGE
-No of children: 2 
-Childrens:SIGNED_NUMBER ,SIGNED_NUMBER ,
-Next pointers:NULL
-
-Iterating over next child of Node 133:
-
-134	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 134:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 134:
-
-	10
-
-	10
-
-135	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 133:
-
-136	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 136:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 136:
-
-	30
-
-	30
-
-137	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 132:
-
-	integer
-
-138	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 123:
-
-139	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,ARRAY_DATATYPE ,
-Next pointers:ASSIGN ,
-
-Iterating over next child of Node 139:
-
-	E
-
-140	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 139:
-
-141	ARRAY_DATATYPE
-No of children: 2 
-Childrens:ARRAY_RANGE ,INTEGER ,
-Next pointers:NULL
-
-Iterating over next child of Node 141:
-
-142	ARRAY_RANGE
-No of children: 2 
-Childrens:SIGNED_NUMBER ,SIGNED_NUMBER ,
-Next pointers:NULL
-
-Iterating over next child of Node 142:
-
-143	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
 Next pointers:NULL
 
 Iterating over next child of Node 143:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 143:
-
-	4
-
-	4
-
-144	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 142:
-
-145	SIGNED_NUMBER
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 145:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 145:
-
-	10
-
-	10
-
-146	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 141:
 
 	integer
 
-147	INTEGER
+145	INTEGER
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 123:
+Iterating over next list element of node 116:
 
-148	ASSIGN
+146	ASSIGN
 No of children: 2 
-Childrens:ARRAY_ASSIGN ,MUL ,
+Childrens:ID ,PLUS ,
+Next pointers:DECLARE ,ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next child of Node 146:
+
+	res_2__b
+
+147	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 146:
+
+148	PLUS
+No of children: 2 
+Childrens:PLUS ,RNUM ,
 Next pointers:NULL
 
 Iterating over next child of Node 148:
 
-149	ARRAY_ASSIGN
+149	PLUS
 No of children: 2 
-Childrens:ID ,NUM ,
+Childrens:ID ,MUL ,
 Next pointers:NULL
 
 Iterating over next child of Node 149:
 
-	B
+	res_2__b
 
 150	ID
 No of children: 0 
@@ -1261,129 +1251,123 @@ Next pointers:NULL
 
 Iterating over next child of Node 149:
 
-	12
+151	MUL
+No of children: 2 
+Childrens:ID ,NUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 151:
+
+	p
+
+152	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 151:
 
 	12
 
-151	NUM
+	12
+
+153	NUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 148:
 
-152	MUL
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
+	22.34E-2
 
-Iterating over next child of Node 152:
+	0.223400
 
-	k
-
-153	ID
+154	RNUM
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 152:
+Iterating over next list element of node 116:
 
-	20
-
-	20
-
-154	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 121:
-
-155	CASE
+155	DECLARE
 No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:CASE ,
+Childrens:ID_LIST_HEAD ,BOOLEAN ,
+Next pointers:ASSIGN ,ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
 Iterating over next child of Node 155:
 
-	20
+	m
 
-	20
+156	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,
 
-156	NUM
+Iterating over next list element of node 156:
+
+	n
+
+157	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 155:
 
-157	STATEMENTS
+	boolean
+
+158	BOOLEAN
 No of children: 0 
 Childrens:
-Next pointers:ASSIGN ,INPUT_ID ,FORLOOP ,ASSIGN ,
+Next pointers:NULL
 
-Iterating over next list element of node 157:
+Iterating over next list element of node 116:
 
-158	ASSIGN
+159	ASSIGN
 No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:INPUT_ID ,FORLOOP ,ASSIGN ,
+Childrens:ID ,AND ,
+Next pointers:ASSIGN ,ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
-Iterating over next child of Node 158:
+Iterating over next child of Node 159:
 
-	A
+	res_1
 
-159	ID
+160	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 158:
+Iterating over next child of Node 159:
 
-160	PLUS
+161	AND
 No of children: 2 
-Childrens:RNUM ,ID ,
+Childrens:OR ,FALSE ,
 Next pointers:NULL
 
-Iterating over next child of Node 160:
+Iterating over next child of Node 161:
 
-	12.90
-
-	12.900000
-
-161	RNUM
-No of children: 0 
-Childrens:
+162	OR
+No of children: 2 
+Childrens:AND ,LE_result ,
 Next pointers:NULL
 
-Iterating over next child of Node 160:
+Iterating over next child of Node 162:
 
-	p
-
-162	ID
-No of children: 0 
-Childrens:
+163	AND
+No of children: 2 
+Childrens:LE_result ,GE_result ,
 Next pointers:NULL
 
-Iterating over next list element of node 157:
+Iterating over next child of Node 163:
 
-	Q
-
-163	INPUT_ID
-No of children: 0 
-Childrens:
-Next pointers:FORLOOP ,ASSIGN ,
-
-Iterating over next list element of node 157:
-
-164	FORLOOP
-No of children: 3 
-Childrens:ID ,FORRANGE ,STATEMENTS ,
-Next pointers:ASSIGN ,
+164	LE_result
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
 
 Iterating over next child of Node 164:
 
-	m
+	a
 
 165	ID
 No of children: 0 
@@ -1392,84 +1376,84 @@ Next pointers:NULL
 
 Iterating over next child of Node 164:
 
-166	FORRANGE
-No of children: 2 
-Childrens:FORINDEX ,FORINDEX ,
-Next pointers:NULL
+	b
 
-Iterating over next child of Node 166:
-
-167	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 167:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 167:
-
-	10
-
-	10
-
-168	NUM
+166	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 166:
+Iterating over next child of Node 163:
 
-169	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 169:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 169:
-
-	15
-
-	15
-
-170	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 164:
-
-171	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 171:
-
-172	ASSIGN
-No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:NULL
-
-Iterating over next child of Node 172:
-
-	n
-
-173	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 172:
-
-174	PLUS
+167	GE_result
 No of children: 2 
 Childrens:ID ,ID ,
 Next pointers:NULL
 
+Iterating over next child of Node 167:
+
+	c
+
+168	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 167:
+
+	a
+
+169	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 162:
+
+170	LE_result
+No of children: 2 
+Childrens:ID ,NUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 170:
+
+	s
+
+171	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 170:
+
+	23
+
+	23
+
+172	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 161:
+
+	false
+
+173	FALSE
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+174	ASSIGN
+No of children: 2 
+Childrens:ID ,AND ,
+Next pointers:ASSIGN ,ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
+
 Iterating over next child of Node 174:
 
-	n
+	m
 
 175	ID
 No of children: 0 
@@ -1478,30 +1462,30 @@ Next pointers:NULL
 
 Iterating over next child of Node 174:
 
-	m
+176	AND
+No of children: 2 
+Childrens:ID ,LE_result ,
+Next pointers:NULL
 
-176	ID
+Iterating over next child of Node 176:
+
+	n
+
+177	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 157:
+Iterating over next child of Node 176:
 
-177	ASSIGN
+178	LE_result
 No of children: 2 
-Childrens:ARRAY_ASSIGN ,MINUS ,
-Next pointers:NULL
-
-Iterating over next child of Node 177:
-
-178	ARRAY_ASSIGN
-No of children: 2 
-Childrens:ID ,NUM ,
+Childrens:ID ,ID ,
 Next pointers:NULL
 
 Iterating over next child of Node 178:
 
-	E
+	abc_1
 
 179	ID
 No of children: 0 
@@ -1510,187 +1494,185 @@ Next pointers:NULL
 
 Iterating over next child of Node 178:
 
-	7
+	pqr_2
 
-	7
-
-180	NUM
+180	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 177:
+Iterating over next list element of node 116:
 
-181	MINUS
+181	ASSIGN
 No of children: 2 
-Childrens:PLUS ,MUL ,
-Next pointers:NULL
+Childrens:ID ,AND ,
+Next pointers:ASSIGN ,DECLARE ,ASSIGN ,OUTPUT ,
 
 Iterating over next child of Node 181:
-
-182	PLUS
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 182:
-
-	k
-
-183	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 182:
-
-	12
-
-	12
-
-184	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 181:
-
-185	MUL
-No of children: 2 
-Childrens:ID ,NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 185:
-
-	Q
-
-186	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 185:
-
-	10
-
-	10
-
-187	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 121:
-
-188	CASE
-No of children: 2 
-Childrens:TRUE ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 188:
-
-	true
-
-189	TRUE
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 188:
-
-190	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,OUTPUT ,
-
-Iterating over next list element of node 190:
-
-191	ASSIGN
-No of children: 2 
-Childrens:ID ,MINUS ,
-Next pointers:OUTPUT ,
-
-Iterating over next child of Node 191:
 
 	m
 
-192	ID
+182	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 191:
+Iterating over next child of Node 181:
 
-193	MINUS
+183	AND
+No of children: 2 
+Childrens:OR ,GE_result ,
+Next pointers:NULL
+
+Iterating over next child of Node 183:
+
+184	OR
+No of children: 2 
+Childrens:ID ,LE_result ,
+Next pointers:NULL
+
+Iterating over next child of Node 184:
+
+	m
+
+185	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 184:
+
+186	LE_result
 No of children: 2 
 Childrens:ID ,ID ,
 Next pointers:NULL
 
-Iterating over next child of Node 193:
+Iterating over next child of Node 186:
 
-	m
+	a
 
-194	ID
+187	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 193:
+Iterating over next child of Node 186:
 
-	n
+	b
 
-195	ID
+188	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 190:
+Iterating over next child of Node 183:
 
-196	OUTPUT
-No of children: 1 
-Childrens:ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 196:
-
-	m
-
-197	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 119:
-
-198	DEFAULTCASE
-No of children: 1 
-Childrens:STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 198:
-
-199	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 199:
-
-200	ASSIGN
+189	GE_result
 No of children: 2 
-Childrens:ARRAY_ASSIGN ,PLUS ,
+Childrens:ID ,RNUM ,
+Next pointers:NULL
+
+Iterating over next child of Node 189:
+
+	res_2__b
+
+190	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 189:
+
+	30.65
+
+	30.650000
+
+191	RNUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+192	ASSIGN
+No of children: 2 
+Childrens:ID ,OR ,
+Next pointers:DECLARE ,ASSIGN ,OUTPUT ,
+
+Iterating over next child of Node 192:
+
+	res_1
+
+193	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 192:
+
+194	OR
+No of children: 2 
+Childrens:AND ,AND ,
+Next pointers:NULL
+
+Iterating over next child of Node 194:
+
+195	AND
+No of children: 2 
+Childrens:TRUE ,EQ_result ,
+Next pointers:NULL
+
+Iterating over next child of Node 195:
+
+	true
+
+196	TRUE
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 195:
+
+197	EQ_result
+No of children: 2 
+Childrens:ID ,ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 197:
+
+	c
+
+198	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 197:
+
+	b
+
+199	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 194:
+
+200	AND
+No of children: 2 
+Childrens:GT_result ,LE_result ,
 Next pointers:NULL
 
 Iterating over next child of Node 200:
 
-201	ARRAY_ASSIGN
+201	GT_result
 No of children: 2 
-Childrens:ID ,NUM ,
+Childrens:ID ,ID ,
 Next pointers:NULL
 
 Iterating over next child of Node 201:
 
-	E
+	b
 
 202	ID
 No of children: 0 
@@ -1699,302 +1681,298 @@ Next pointers:NULL
 
 Iterating over next child of Node 201:
 
-	9
+	s
 
-	9
-
-203	NUM
+203	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 200:
 
-204	PLUS
+204	LE_result
 No of children: 2 
-Childrens:ARRAY_ACCESS ,ID ,
+Childrens:ID ,ID ,
 Next pointers:NULL
 
 Iterating over next child of Node 204:
 
-205	ARRAY_ACCESS
-No of children: 2 
-Childrens:ID ,NUM ,
+	a
+
+205	ID
+No of children: 0 
+Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 205:
+Iterating over next child of Node 204:
 
-	B
+	d
 
 206	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 205:
+Iterating over next list element of node 116:
 
-	15
-
-	15
-
-207	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 204:
-
-	Q
-
-208	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 2:
-
-209	MODULE
-No of children: 4 
-Childrens:FUNC_ID ,IPLIST_HEAD ,OPLIST_HEAD ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 209:
-
-	for_loop_demo
-
-210	FUNC_ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 209:
-
-211	IPLIST_HEAD
-No of children: 2 
-Childrens:ID ,INTEGER ,
-Next pointers:IPLIST ,IPLIST ,
-
-Iterating over next child of Node 211:
-
-	x
-
-212	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 211:
-
-	integer
-
-213	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 211:
-
-214	IPLIST
-No of children: 2 
-Childrens:ID ,REAL ,
-Next pointers:IPLIST ,
-
-Iterating over next child of Node 214:
-
-	y
-
-215	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 214:
-
-	real
-
-216	REAL
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 211:
-
-217	IPLIST
-No of children: 2 
-Childrens:ID ,BOOLEAN ,
-Next pointers:NULL
-
-Iterating over next child of Node 217:
-
-	z
-
-218	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 217:
-
-	boolean
-
-219	BOOLEAN
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 209:
-
-220	OPLIST_HEAD
-No of children: 2 
-Childrens:ID ,INTEGER ,
-Next pointers:NULL
-
-Iterating over next child of Node 220:
-
-	u
-
-221	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 220:
-
-	integer
-
-222	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 209:
-
-223	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:DECLARE ,FORLOOP ,
-
-Iterating over next list element of node 223:
-
-224	DECLARE
+207	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:FORLOOP ,
+Next pointers:ASSIGN ,OUTPUT ,
 
-Iterating over next child of Node 224:
+Iterating over next child of Node 207:
 
-	k
+	new
 
-225	ID_LIST_HEAD
+208	ID_LIST_HEAD
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 224:
+Iterating over next child of Node 207:
 
 	integer
 
-226	INTEGER
+209	INTEGER
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 223:
+Iterating over next list element of node 116:
 
-227	FORLOOP
-No of children: 3 
-Childrens:ID ,FORRANGE ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 227:
-
-	k
-
-228	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 227:
-
-229	FORRANGE
+210	ASSIGN
 No of children: 2 
-Childrens:FORINDEX ,FORINDEX ,
-Next pointers:NULL
+Childrens:ID ,LT_result ,
+Next pointers:OUTPUT ,
 
-Iterating over next child of Node 229:
+Iterating over next child of Node 210:
 
-230	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
+	new
 
-Iterating over next child of Node 230:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 230:
-
-	12
-
-	12
-
-231	NUM
+211	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 229:
+Iterating over next child of Node 210:
 
-232	FORINDEX
-No of children: 2 
-Childrens:NUM ,
-Next pointers:NULL
-
-Iterating over next child of Node 232:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 232:
-
-	70
-
-	70
-
-233	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 227:
-
-234	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,ASSIGN ,
-
-Iterating over next list element of node 234:
-
-235	ASSIGN
-No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:ASSIGN ,
-
-Iterating over next child of Node 235:
-
-	u
-
-236	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 235:
-
-237	PLUS
+212	LT_result
 No of children: 2 
 Childrens:ID ,ID ,
 Next pointers:NULL
 
+Iterating over next child of Node 212:
+
+	a
+
+213	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 212:
+
+	b
+
+214	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 116:
+
+215	OUTPUT
+No of children: 1 
+Childrens:ID ,
+Next pointers:NULL
+
+Iterating over next child of Node 215:
+
+	res_1
+
+216	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 1:
+
+217	DRIVER
+No of children: 1 
+Childrens:STATEMENTS ,
+Next pointers:NULL
+
+Iterating over next child of Node 217:
+
+218	STATEMENTS
+No of children: 0 
+Childrens:
+Next pointers:DECLARE ,INPUT_ID ,DECLARE ,DECLARE ,MODULEREUSE ,OUTPUT ,DECLARE ,
+
+Iterating over next list element of node 218:
+
+219	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,INTEGER ,
+Next pointers:INPUT_ID ,DECLARE ,DECLARE ,MODULEREUSE ,OUTPUT ,DECLARE ,
+
+Iterating over next child of Node 219:
+
+	v_1_2_3
+
+220	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 219:
+
+	integer
+
+221	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 218:
+
+	v_1_2_43
+
+222	INPUT_ID
+No of children: 0 
+Childrens:
+Next pointers:DECLARE ,DECLARE ,MODULEREUSE ,OUTPUT ,DECLARE ,
+
+Iterating over next list element of node 218:
+
+223	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,INTEGER ,
+Next pointers:DECLARE ,MODULEREUSE ,OUTPUT ,DECLARE ,
+
+Iterating over next child of Node 223:
+
+	result_
+
+224	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,ID ,
+
+Iterating over next list element of node 224:
+
+	v7
+
+225	ID
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 224:
+
+	v9
+
+226	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 223:
+
+	integer
+
+227	INTEGER
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 218:
+
+228	DECLARE
+No of children: 2 
+Childrens:ID_LIST_HEAD ,BOOLEAN ,
+Next pointers:MODULEREUSE ,OUTPUT ,DECLARE ,
+
+Iterating over next child of Node 228:
+
+	u1
+
+229	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 228:
+
+	boolean
+
+230	BOOLEAN
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next list element of node 218:
+
+231	MODULEREUSE
+No of children: 3 
+Childrens:ID ,ID_LIST_HEAD ,PARALIST_HEAD ,
+Next pointers:OUTPUT ,DECLARE ,
+
+Iterating over next child of Node 231:
+
+	compute
+
+232	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 231:
+
+	u1
+
+233	ID_LIST_HEAD
+No of children: 0 
+Childrens:
+Next pointers:ID ,ID ,
+
+Iterating over next list element of node 233:
+
+	result_
+
+234	ID
+No of children: 0 
+Childrens:
+Next pointers:ID ,
+
+Iterating over next list element of node 233:
+
+	k
+
+235	ID
+No of children: 0 
+Childrens:
+Next pointers:NULL
+
+Iterating over next child of Node 231:
+
+236	PARALIST_HEAD
+No of children: 2 
+Childrens:NON_CONST_PARAMETER ,
+Next pointers:PARALIST ,PARALIST ,
+
+Iterating over next child of Node 236:
+//This node was made NULL and thereby does not exist!:
+Iterating over next child of Node 236:
+
+237	NON_CONST_PARAMETER
+No of children: 2 
+Childrens:ID ,
+Next pointers:NULL
+
 Iterating over next child of Node 237:
 
-	x
+	v_1_2_3
 
 238	ID
 No of children: 0 
@@ -2002,24 +1980,26 @@ Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 237:
+//This node was made NULL and thereby does not exist!:
+Iterating over next list element of node 236:
 
-	k
-
-239	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 234:
-
-240	ASSIGN
+239	PARALIST
 No of children: 2 
-Childrens:ID ,PLUS ,
+Childrens:NON_CONST_PARAMETER ,
+Next pointers:PARALIST ,
+
+Iterating over next child of Node 239:
+//This node was made NULL and thereby does not exist!:
+Iterating over next child of Node 239:
+
+240	NON_CONST_PARAMETER
+No of children: 2 
+Childrens:ID ,
 Next pointers:NULL
 
 Iterating over next child of Node 240:
 
-	k
+	v7
 
 241	ID
 No of children: 0 
@@ -2027,517 +2007,74 @@ Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 240:
+//This node was made NULL and thereby does not exist!:
+Iterating over next list element of node 236:
 
-242	PLUS
+242	PARALIST
 No of children: 2 
-Childrens:ID ,NUM ,
+Childrens:NON_CONST_PARAMETER ,
 Next pointers:NULL
 
 Iterating over next child of Node 242:
+//This node was made NULL and thereby does not exist!:
+Iterating over next child of Node 242:
 
-	k
+243	NON_CONST_PARAMETER
+No of children: 2 
+Childrens:ID ,
+Next pointers:NULL
 
-243	ID
+Iterating over next child of Node 243:
+
+	v9
+
+244	ID
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next child of Node 242:
+Iterating over next child of Node 243:
+//This node was made NULL and thereby does not exist!:
+Iterating over next list element of node 218:
 
-	2
-
-	2
-
-244	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 1:
-
-245	DRIVER
+245	OUTPUT
 No of children: 1 
-Childrens:STATEMENTS ,
-Next pointers:NULL
+Childrens:ID ,
+Next pointers:DECLARE ,
 
 Iterating over next child of Node 245:
 
-246	STATEMENTS
+	result_
+
+246	ID
 No of children: 0 
 Childrens:
-Next pointers:DECLARE ,DECLARE ,DECLARE ,MODULEREUSE ,SWITCH ,
+Next pointers:NULL
 
-Iterating over next list element of node 246:
+Iterating over next list element of node 218:
 
 247	DECLARE
 No of children: 2 
-Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,DECLARE ,MODULEREUSE ,SWITCH ,
+Childrens:ID_LIST_HEAD ,REAL ,
+Next pointers:NULL
 
 Iterating over next child of Node 247:
 
-	a
+	u1
 
 248	ID_LIST_HEAD
 No of children: 0 
 Childrens:
-Next pointers:ID ,
-
-Iterating over next list element of node 248:
-
-	b
-
-249	ID
-No of children: 0 
-Childrens:
 Next pointers:NULL
 
 Iterating over next child of Node 247:
 
-	integer
-
-250	INTEGER
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 246:
-
-251	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,REAL ,
-Next pointers:DECLARE ,MODULEREUSE ,SWITCH ,
-
-Iterating over next child of Node 251:
-
-	c
-
-252	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 251:
-
 	real
 
-253	REAL
+249	REAL
 No of children: 0 
 Childrens:
 Next pointers:NULL
 
-Iterating over next list element of node 246:
-
-254	DECLARE
-No of children: 2 
-Childrens:ID_LIST_HEAD ,BOOLEAN ,
-Next pointers:MODULEREUSE ,SWITCH ,
-
-Iterating over next child of Node 254:
-
-	d
-
-255	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 254:
-
-	boolean
-
-256	BOOLEAN
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 246:
-
-257	MODULEREUSE
-No of children: 3 
-Childrens:ID ,ID_LIST_HEAD ,PARALIST_HEAD ,
-Next pointers:SWITCH ,
-
-Iterating over next child of Node 257:
-
-	for_loop_demo
-
-258	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 257:
-
-	a
-
-259	ID_LIST_HEAD
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 257:
-
-260	PARALIST_HEAD
-No of children: 2 
-Childrens:NON_CONST_PARAMETER ,
-Next pointers:PARALIST ,PARALIST ,
-
-Iterating over next child of Node 260:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 260:
-
-261	NON_CONST_PARAMETER
-No of children: 2 
-Childrens:ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 261:
-
-	b
-
-262	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 261:
-//This node was made NULL and thereby does not exist!:
-Iterating over next list element of node 260:
-
-263	PARALIST
-No of children: 2 
-Childrens:NON_CONST_PARAMETER ,
-Next pointers:PARALIST ,
-
-Iterating over next child of Node 263:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 263:
-
-264	NON_CONST_PARAMETER
-No of children: 2 
-Childrens:ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 264:
-
-	c
-
-265	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 264:
-//This node was made NULL and thereby does not exist!:
-Iterating over next list element of node 260:
-
-266	PARALIST
-No of children: 2 
-Childrens:NON_CONST_PARAMETER ,
-Next pointers:NULL
-
-Iterating over next child of Node 266:
-//This node was made NULL and thereby does not exist!:
-Iterating over next child of Node 266:
-
-267	NON_CONST_PARAMETER
-No of children: 2 
-Childrens:ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 267:
-
-	d
-
-268	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 267:
-//This node was made NULL and thereby does not exist!:
-Iterating over next list element of node 246:
-
-269	SWITCH
-No of children: 3 
-Childrens:ID ,CASE_HEAD ,
-Next pointers:NULL
-
-Iterating over next child of Node 269:
-
-	a
-
-270	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 269:
-
-271	CASE_HEAD
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:CASE ,CASE ,CASE ,
-
-Iterating over next child of Node 271:
-
-	1
-
-	1
-
-272	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 271:
-
-273	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 273:
-
-274	ASSIGN
-No of children: 2 
-Childrens:ID ,PLUS ,
-Next pointers:NULL
-
-Iterating over next child of Node 274:
-
-	a
-
-275	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 274:
-
-276	PLUS
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 276:
-
-	a
-
-277	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 276:
-
-	b
-
-278	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 271:
-
-279	CASE
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:CASE ,CASE ,
-
-Iterating over next child of Node 279:
-
-	2
-
-	2
-
-280	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 279:
-
-281	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 281:
-
-282	ASSIGN
-No of children: 2 
-Childrens:ID ,MINUS ,
-Next pointers:NULL
-
-Iterating over next child of Node 282:
-
-	a
-
-283	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 282:
-
-284	MINUS
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 284:
-
-	a
-
-285	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 284:
-
-	b
-
-286	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 271:
-
-287	CASE
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:CASE ,
-
-Iterating over next child of Node 287:
-
-	3
-
-	3
-
-288	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 287:
-
-289	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 289:
-
-290	ASSIGN
-No of children: 2 
-Childrens:ID ,MUL ,
-Next pointers:NULL
-
-Iterating over next child of Node 290:
-
-	a
-
-291	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 290:
-
-292	MUL
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 292:
-
-	a
-
-293	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 292:
-
-	b
-
-294	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next list element of node 271:
-
-295	CASE
-No of children: 2 
-Childrens:NUM ,STATEMENTS ,
-Next pointers:NULL
-
-Iterating over next child of Node 295:
-
-	4
-
-	4
-
-296	NUM
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 295:
-
-297	STATEMENTS
-No of children: 0 
-Childrens:
-Next pointers:ASSIGN ,
-
-Iterating over next list element of node 297:
-
-298	ASSIGN
-No of children: 2 
-Childrens:ID ,DIV ,
-Next pointers:NULL
-
-Iterating over next child of Node 298:
-
-	a
-
-299	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 298:
-
-300	DIV
-No of children: 2 
-Childrens:ID ,ID ,
-Next pointers:NULL
-
-Iterating over next child of Node 300:
-
-	a
-
-301	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 300:
-
-	b
-
-302	ID
-No of children: 0 
-Childrens:
-Next pointers:NULL
-
-Iterating over next child of Node 269:
-//This node was made NULL and thereby does not exist!:
 Iterating over next child of Node 1:
 //This node was made NULL and thereby does not exist!:

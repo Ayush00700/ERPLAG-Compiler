@@ -2,7 +2,8 @@
 ** Multiple level nesting using primitive data types**
 **Variant of test case 1**
 
-**Error recovery issue**
+**Here the issue is, that shadowing happens after a point. At first, the value should be checked **
+**Another issue is the evaluation of long sum and divide operations**
 <<module var_demo>>
 takes input [x:integer, w: boolean, p:real];
 returns [m:integer, n:integer, u: boolean];
@@ -69,7 +70,7 @@ start
  				   s:= w1 + 54.24e-2+ q4;
 				   abc_1:=  w2 + a*pqr_2 - c*abc_1;
 				   break;	
-			case false: w1:= w1+59;  	       **w1 uses static parent definition 
+			case false: w1:= w1+59;  	       **w1 uses static parent definition **
 				    s:= s*k;                   **ERROR: variable k is not declared, declaration of k in case true does not apply here**
 				    break;	
 		end
