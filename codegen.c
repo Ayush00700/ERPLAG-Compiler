@@ -935,7 +935,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST,func_entry** glob
     {
         char* nameRight;
         int indexRight;
-        char* true_label = newLabel();
+        char* true_label;
 
         case LT:
             // Get offset of right operand temp

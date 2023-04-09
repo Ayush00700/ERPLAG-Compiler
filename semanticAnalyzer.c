@@ -63,7 +63,7 @@ int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp)
             else{x=INT_OFFSET;}
             int l = temp.arr_data->lower_bound;
             int u = temp.arr_data->upper_bound;
-            local_table->offset += (u-l+1)*x;
+            local_table->offset = local_table->offset + (u-l+1)*x + 1;
         }
         else{
             local_table->offset += POINTER_OFFSET;
@@ -190,7 +190,7 @@ void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset,int initial){
             else{x=INT_OFFSET;}
             int l = temp.arr_data->lower_bound;
             int u = temp.arr_data->upper_bound;
-            *offset += (u-l+1)*x;
+            *offset += (u-l+1)*x + 1;
         }
         else{
             *offset += POINTER_OFFSET;
@@ -428,6 +428,13 @@ void local_populate(var_record* local_table,ast_node* ast_root){
     else if(!strcmp(ast_root->name,"DECLARE")){
         compute_expression(ast_root,local_table);
         local_populate(local_table,ast_root->next);
+    }
+    else if(!strcmp(ast_root->name, "ASSIGN")){
+    // need to migrate the assign and ARRAY_ASSIGN from the temp check to here TODO
+    // just perform type checking for these statements over here TODO
+    }
+    else if(!strcmp(ast_root->name, "ARRAY_ASSIGN")){
+    //TODO
     }
     else if(ast_root->isTerminal){
         local_populate(local_table,ast_root->next);
@@ -850,8 +857,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                //I think error here, because we should return the inside element type rather than array
                 type_exp* temp=(type_exp*)malloc(sizeof(type_exp));
                 temp->datatype=arr_data->arr_data->arr_datatype;
-                return arr_data;
-        }
+                return arr_data; //should be return temp TODO
+        }//this function is yet to be completed TODO
     }
     else if(!strcmp(node->name,"LT_result")||!strcmp(node->name,"LE_result")){
         type_exp* op1 = type_checking(node->child_pointers[0],curr);
@@ -927,10 +934,19 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* ret;
         if(left&&strcmp(left->datatype,"array")){
         line=line_number_finder(node);
+
         ret=compare_dTypes(left, right,line);}//Might need to check child's line number
         else{line=line_number_finder(node);
-        if(left && right && !strcmp(left->arr_data->arr_datatype,right->datatype));
-        return NULL;
+        if(left && right && !strcmp(left->arr_data->arr_datatype,right->datatype)){
+            if(strcmp(node->child_pointers[0]->name,"ARRAY_ASSIGN")){
+            throw_error(UNSUPPORTED_DTYPE,line);
+            printf("--\"%s\" can't be assigned\n",node->child_pointers[0]->token->lexeme);
+            }else {
+                ret = compare_dTypes(left->arr_data->arr_datatype,right,line);
+                return ret;
+            }
+        }
+        return NULL; //TODO need to print the actual error 
         }
         return ret;
     }
@@ -1203,13 +1219,98 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     return ;
 }
 
+void print_ipop_list(sym_tab_entry* list,int level){
+    if(list == NULL){
+        return;
+    }
+    printf("variable name : %s  ",list->name);
+    if(strcmp(list->type.datatype,"array")){
+        printf("||  type : %s   ||  is_array : %s   ||  static/dynamic : ** ||  array_range : **    ",list->type.datatype,"no");
+        int width;
+        if(!strcmp(list->type.datatype,"real")){
+            width = REAL_OFFSET;
+        }
+        if(!strcmp(list->type.datatype,"boolean")){
+            width = BOOL_OFFSET;
+        }
+        if(!strcmp(list->type.datatype,"integer")){
+            width = INT_OFFSET;
+        }
+        printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+    }
+    else{
+        char* stat_dy;
+        if(list->type.is_static){
+            stat_dy = "static";
+        }
+        else{
+            stat_dy = "dynamic";
+        }
+        printf("||  type : %s   ||  is_array : %s   ||  static/dynamic : %s ",list->type.arr_data->arr_datatype,"yes",stat_dy);
+        if(list->type.is_static){
+            printf("||  array_range : [%d,%d]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+        }
+        else{
+            printf("||  array_range : **    ");
+        }
+        int width;
+        if(!strcmp(list->type.arr_data->arr_datatype,"real")){
+            width = REAL_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
+        }
+        if(!strcmp(list->type.arr_data->arr_datatype,"boolean")){
+            width = BOOL_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
+        }
+        if(!strcmp(list->type.arr_data->arr_datatype,"integer")){
+            width = INT_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
+        }
+        printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+    }
+    print_ipop_list(list->next,level);
+}
+
+void print_level(var_record* node,int level){
+    if(node == NULL){
+        return;
+    }
+    for(int i=0;i<TABLE_SIZE;i++){
+        print_ipop_list(node->entries[i],level);
+    }
+    print_level(node->r_sibiling,level);
+    print_level(node->child,level+1);
+}
+
+void printer_(func_entry* node){
+    // input and output list
+    if(node->input_list!=NULL){
+        print_ipop_list(node->input_list,0);
+    }
+    if(node->ouput_list!=NULL){
+        print_ipop_list(node->ouput_list,0);
+    }
+    print_level(node->func_root,1);
+}
+
+void print_symbol_table(){
+    // variable_name    scope_name_(start line to end line)   type    is_array    static/dynamic  range   width   offset  nesting_level
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_func_table[i] != NULL){
+            printer_(global_func_table[i]);
+            func_entry* temp = global_func_table[i];
+            while(temp->next!=NULL){
+                printer_(temp->next);
+                temp = temp->next;
+            }
+        }
+    }
+}
+
 void semantic(){
     ast_node* ast_root = get_ast_root();
     initialize_global_func_table();
     //get_global_symbol_table(ast_root);
     populate_(ast_root);
+    print_symbol_table(); //isme dikkat hai....
     perform_type_checking(ast_root,NULL);
-    
     //perform bound checking
 }
 
