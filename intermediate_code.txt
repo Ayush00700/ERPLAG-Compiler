@@ -1,5 +1,5 @@
 FUNC	main		
-x = 5		
-GET_VALUE	x		
-PRINT	x		
+a = 5		
+b = 9		
+PRINT	false		
 RET		

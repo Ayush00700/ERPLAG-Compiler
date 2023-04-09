@@ -71,34 +71,34 @@ extern printf, scanf, exit
 
 		global main
 main:
+		push_regs                    ; save values
 		mov      rbp , rsp               ; set base to current stack top
+		pop_regs                     ; save values
 		; Code for getting assignment statement
 		push_regs                    ; save values
-		xor    rax , rax           ; flush out the rax register
+		xor      rax , rax           ; flush out the rax register
 		mov      rax , 5                    ; immediate to register
-		mov      [RBP - 0] , rax            ; register to memory
-		pop_regs                    ; restore values		; Code for getting user input
+		mov      [RBP - 12] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for getting assignment statement
 		push_regs                    ; save values
-		mov      rdi , fmt_spec_int_in          ; get corresponding format specifier
-		mov      rdx , rbp                               ; take base pointer in rdx
-		sub      rdx , 0                                ; move pointer to place where we have to store
-		mov      rax , 0x0000_0000_ffff_ffff             ; set size
-		mov     [rdx] , rax
-		mov      rsi , rdx                               ; move source index
-		mov      rax , zero
-		mov      rsi , rdx
-		rsp_align                                        ; align stack pointer
-		call     scanf                                   ; system call for input
-		rsp_realign                                      ; restore previos alignment of stack
-		pop_regs        ; restore register values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , 9                    ; immediate to register
+		mov      [RBP - 16] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
 		; Code for printing output
 		push_regs                    ; save values
-		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
-		mov      rdx , rbp                               ; take base pointer in rdx
-		sub      rdx , 0                                ; move pointer to place from where we have to read
-		mov      rsi , [rdx]                               ; move source index
-		xor      rax , rax
-		rsp_align                                     ; align stack pointer
-		call     printf                                   ; system call for output
-		rsp_realign                                      ; restore previos alignment of stack
+		mov rax, 1                  ; system call for write
+		mov rdi, 1                  ; file handle 1 is stdout
+		mov rsi, false               ; address of string to output
+		mov rdx, false_len           ; number of bytes
+		syscall                     ; invoke operating system to do the write
 		pop_regs        ; restore register values
+
+
+main_end:
+		retq

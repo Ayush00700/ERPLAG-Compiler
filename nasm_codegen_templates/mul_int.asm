@@ -59,7 +59,8 @@ extern printf
         global main
 main:
         mov     eax , [a]
-        imul    eax , [b]
+        mov     ebx , [b]
+        imul    ebx
         mov     [c] , eax
 
         lea     rdi , [rel fmt]

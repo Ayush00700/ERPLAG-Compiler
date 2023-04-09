@@ -20,14 +20,14 @@ Iterating over next child of Node 2:
 3	STATEMENTS
 No of children: 0 
 Childrens:
-Next pointers:DECLARE ,DECLARE ,ASSIGN ,INPUT_ID ,OUTPUT ,
+Next pointers:DECLARE ,DECLARE ,ASSIGN ,ASSIGN ,OUTPUT ,
 
 Iterating over next list element of node 3:
 
 4	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:DECLARE ,ASSIGN ,INPUT_ID ,OUTPUT ,
+Next pointers:DECLARE ,ASSIGN ,ASSIGN ,OUTPUT ,
 
 Iterating over next child of Node 4:
 
@@ -70,7 +70,7 @@ Iterating over next list element of node 3:
 9	DECLARE
 No of children: 2 
 Childrens:ID_LIST_HEAD ,INTEGER ,
-Next pointers:ASSIGN ,INPUT_ID ,OUTPUT ,
+Next pointers:ASSIGN ,ASSIGN ,OUTPUT ,
 
 Iterating over next child of Node 9:
 
@@ -113,11 +113,11 @@ Iterating over next list element of node 3:
 14	ASSIGN
 No of children: 2 
 Childrens:ID ,NUM ,
-Next pointers:INPUT_ID ,OUTPUT ,
+Next pointers:ASSIGN ,OUTPUT ,
 
 Iterating over next child of Node 14:
 
-	x
+	a
 
 15	ID
 No of children: 0 
@@ -137,25 +137,43 @@ Next pointers:NULL
 
 Iterating over next list element of node 3:
 
-	x
+17	ASSIGN
+No of children: 2 
+Childrens:ID ,NUM ,
+Next pointers:OUTPUT ,
 
-17	INPUT_ID
+Iterating over next child of Node 17:
+
+	b
+
+18	ID
 No of children: 0 
 Childrens:
-Next pointers:OUTPUT ,
+Next pointers:NULL
+
+Iterating over next child of Node 17:
+
+	9
+
+	9
+
+19	NUM
+No of children: 0 
+Childrens:
+Next pointers:NULL
 
 Iterating over next list element of node 3:
 
-18	OUTPUT
+20	OUTPUT
 No of children: 1 
-Childrens:ID ,
+Childrens:FALSE ,
 Next pointers:NULL
 
-Iterating over next child of Node 18:
+Iterating over next child of Node 20:
 
-	x
+	false
 
-19	ID
+21	FALSE
 No of children: 0 
 Childrens:
 Next pointers:NULL
