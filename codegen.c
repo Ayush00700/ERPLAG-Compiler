@@ -75,14 +75,16 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     // Finding the symbol table entry for lhs variable
     int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexLHS];
+    if(indexLHS!=-1)
+        temp = local_ST->func_curr->entries[indexLHS];
     while(temp!=NULL){  //Hashing collision
         if(!strcmp(temp->name,nameLHS)){
             break;
         }
         temp = temp->next;
     }
-    int offsetLHS = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    int offsetLHS = 0;
+    if(indexLHS!=-1)offsetLHS = temp->offset;               // Get the memory offset for the lhs variable from the symbol
 
     int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
     sprintf(buff, "\t\t; Code for getting assignment statement\n");
@@ -94,8 +96,8 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
         // CHECK ------> detect if immediate value is int or real
-
-        if(!strcmp(temp->type.datatype, "integer"))
+        int type_right_int = (strchr(nameLHS, '.'))? 1 : 0;
+        if(type_right_int)
         {    
             sprintf(buff, "\t\tmov      rax , %s                    ; immediate to register\n",nameRHS);
             strcat(asmCode, buff);
@@ -186,8 +188,9 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     // If left operand is a constant
     if(indexLeft == -1)
     {
+        int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
         // TODO ----> identifying if immediate value is int or real
-        if(!strcmp(resultType, "integer"))
+        if( type_left_int)
         {
             sprintf(buff1, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
             strcat(asmCode, buff1);
@@ -236,8 +239,10 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
+                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+
                 // CHECK ----> identifying if immediate value is int or real
-                if(!strcmp(resultType, "integer"))
+                if(type_right_int)
                 {
                     sprintf(buff2, "\t\tand     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
@@ -256,7 +261,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -288,8 +293,9 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
+                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 // CHECK ----> identifying if immediate value is int or real
-                if(!strcmp(resultType, "integer"))
+                if(type_right_int)
                 {
                     sprintf(buff2, "\t\tor     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
@@ -308,7 +314,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -614,8 +620,9 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     // If left operand is a constant
     if(indexLeft == -1)
     {
+        int type_left_int = (strchr(nameLeft, '.'))? 1 : 0;
         // TODO ----> identifying if immediate value is int or real
-        if(!strcmp(resultType, "integer"))
+        if(type_left_int)
         {
             sprintf(buff1, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
             strcat(asmCode, buff1);
@@ -664,8 +671,9 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
+                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 // CHECK ----> identifying if immediate value is int or real
-                if(!strcmp(resultType, "integer"))
+                if(type_right_int)
                 {
                     sprintf(buff2, "\t\tadd     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
@@ -684,7 +692,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -716,8 +724,9 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
+                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
                 // CHECK ----> identifying if immediate value is int or real
-                if(!strcmp(resultType, "integer"))
+                if(type_right_int)
                 {
                     sprintf(buff2, "\t\tsub     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
@@ -736,7 +745,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -768,8 +777,10 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             // If right operand is a constant
             if(indexRight == -1)
             {
+                int type_right_int = (strchr(nameRight, '.'))? 1 : 0;
+
                 // CHECK ----> identifying if immediate value is int or real
-                if(!strcmp(resultType, "integer"))
+                if(type_right_int)
                 {
                     sprintf(buff2, "\t\tmul     rax , %s\n", nameRight);
                     strcat(asmCode, buff2);
@@ -788,7 +799,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -828,7 +839,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -982,7 +993,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -1070,7 +1081,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -1160,7 +1171,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -1252,7 +1263,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -1342,7 +1353,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
@@ -1430,7 +1441,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
 
             else
             {
-                temp = local_ST->func_curr->entries[indexLeft];
+                temp = local_ST->func_curr->entries[indexRight];
                 while(temp!=NULL){
                     if(!strcmp(temp->name,nameRight)){
                         break;
