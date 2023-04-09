@@ -1042,6 +1042,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 real->datatype="real";
                 return real;
             }
+        if(ret)node->type = ret->datatype;
         return ret;
         }
      }

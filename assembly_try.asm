@@ -42,10 +42,4 @@ extern printf, scanf, exit
 		push      rsp
 		push      rdx
 		push      rcx
-		push      rbx
-		push      rax
-		% endmacro
-
-
-		global main
-main:
+		push      r
