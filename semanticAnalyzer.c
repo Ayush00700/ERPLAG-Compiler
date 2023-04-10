@@ -301,13 +301,51 @@ void compute_expression(ast_node* ast_root,var_record* local_table){
         temp.arr_data->arr_datatype =  ast_root->child_pointers[1]->child_pointers[1]->token->lexeme;
         int lower = check_static(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]);
         int upper = check_static(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]);
-        if(lower&&upper){
+        if(lower){
             temp.arr_data->lower_bound = index_finder(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]);
+            temp.arr_data->lo = 1;
+        }
+        else{
+            temp.arr_data->lo = 0;
+        }
+        if(upper){
             temp.arr_data->upper_bound = index_finder(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]);
+            temp.arr_data->up = 1;
+        }
+        else{
+            temp.arr_data->up = 0;
+        }
+        if(upper&&lower){
             temp.is_static = 1;
         }
         else{
             temp.is_static = 0;
+        }
+        if(!temp.arr_data->lo){
+            char* tempo = ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]->child_pointers[1]->token->lexeme;
+            char* tempo2 = (char*)malloc(sizeof(char)*2);
+            tempo2[0] = '-';
+            tempo2[1] = '\0';
+            if(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]->child_pointers[0]==NULL || !strcmp(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]->child_pointers[0]->name,"PLUS")){
+                tempo2 = tempo;
+            }
+            else{
+                strcat(tempo2,tempo);
+            }
+            temp.arr_data->lower_bound_lex = tempo2;
+        }
+        if(!temp.arr_data->up){
+            char* tempo = ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]->child_pointers[1]->token->lexeme;
+            char* tempo2 = (char*)malloc(sizeof(char)*2);
+            tempo2[0] = '-';
+            tempo2[1] = '\0';
+            if(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]->child_pointers[0]==NULL || !strcmp(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]->child_pointers[0]->name,"PLUS")){
+                tempo2 = tempo;
+            }
+            else{
+                strcat(tempo2,tempo);
+            }
+            temp.arr_data->upper_bound_lex = tempo2;
         }
     }
     ast_node* temp_node = ast_root;
@@ -1328,7 +1366,6 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         else if(switch_id&&!strcmp(switch_id->datatype,"real"))
         {
             throw_error(UNSUPPORTED_DTYPE, line);
-            return NULL;
         }
         type_checking(node->child_pointers[2],curr);
 
@@ -1457,19 +1494,53 @@ void print_ipop_list(sym_tab_entry* list,int level){
             printf("||  array_range : [%d,%d]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
         }
         else{
-            printf("||  array_range : **    ");
+            int a;
+            int b;
+            if(list->type.arr_data->lo){
+                int lower_num = list->type.arr_data->lower_bound;
+                a = 0;
+            }
+            else{
+                char* lower_lex = list->type.arr_data->lower_bound_lex; 
+                a = 1;
+            }
+            if(list->type.arr_data->up){
+                int upper_num = list->type.arr_data->upper_bound;
+                b = 0;
+            }
+            else{
+                char* upper_lex = list->type.arr_data->upper_bound_lex;
+                b = 1;
+            }
+            if(a&&b){
+                printf("||  array_range : [%s,%s]    ",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+            }
+            else if(a && !b){
+                printf("||  array_range : [%d,%s]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+            }
+            else if(!a && b){
+                printf("||  array_range : [%s,%d]    ",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+            }
+            else{
+                printf("||  array_range : [%d,%d]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            }
         }
-        int width;
-        if(!strcmp(list->type.arr_data->arr_datatype,"real")){
+        int width = 0;
+        if(!strcmp(list->type.arr_data->arr_datatype,"real") && list->type.is_static){
             width = REAL_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
         }
-        if(!strcmp(list->type.arr_data->arr_datatype,"boolean")){
+        if(!strcmp(list->type.arr_data->arr_datatype,"boolean") && list->type.is_static){
             width = BOOL_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
         }
-        if(!strcmp(list->type.arr_data->arr_datatype,"integer")){
+        if(!strcmp(list->type.arr_data->arr_datatype,"integer") && list->type.is_static){
             width = INT_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
         }
-        printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+        if(list->type.is_static){
+            printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+        }
+        else{
+            printf("||  width : %s  ||  offset : %d ||  nesting_level : %d\n","**",list->offset,level);
+        }
     }
     print_ipop_list(list->next,level);
 }
@@ -1518,7 +1589,7 @@ void semantic(){
         function_declare_name[i] =  NULL;
     }
     populate_(ast_root);
-    // print_symbol_table(); //isme dikkat hai....
+    print_symbol_table(); //isme dikkat hai....
     perform_type_checking(ast_root,NULL);
     //perform bound checking
 
@@ -1527,24 +1598,56 @@ void semantic(){
 
 void number(var_record* node, char* reach){
 
-if(node&&node->parent==NULL){
-    char* temp = (char*) malloc(sizeof(char)*3);
-    memset(temp,'\0',sizeof(temp));
-    strcpy(temp,reach);
-    node->reach = temp;
-    number( node->child,strcat(reach,"d")); //direction : 0 go down
-}else if(node){
-    char* temp = (char*) malloc(sizeof(char)*100);
-    memset(temp,'\0',sizeof(temp));
-    strcpy(temp,reach);
-    node->reach = temp;
-    number(node->child,strcat(reach,"d"));
-    int n = strlen(reach);
-    reach[n-1] = '\0';
-    number(node->r_sibiling,strcat(reach,"r"));
-    n = strlen(reach);
-    reach[n-1] = '\0';
-}else return;
+    if(node&&node->parent==NULL){
+        char* temp = (char*) malloc(sizeof(char)*3);
+        memset(temp,'\0',sizeof(temp));
+        strcpy(temp,reach);
+        node->reach = temp;
+        number( node->child,strcat(reach,"d")); //direction : 0 go down
+    }else if(node){
+        char* temp = (char*) malloc(sizeof(char)*100);
+        memset(temp,'\0',sizeof(temp));
+        strcpy(temp,reach);
+        node->reach = temp;
+        number(node->child,strcat(reach,"d"));
+        int n = strlen(reach);
+        reach[n-1] = '\0';
+        number(node->r_sibiling,strcat(reach,"r"));
+        n = strlen(reach);
+        reach[n-1] = '\0';
+    }else return;
+}
+
+void add_reach_for_entries(sym_tab_entry* entries[],char* reach){
+
+for(int i=0;i<TABLE_SIZE;i++){
+    if(entries[i]){
+
+        sym_tab_entry* entry = entries[i];
+
+        while(entry!=NULL){
+            entry->type.reach_defined = reach;
+            entry = entry->next;
+        }
+    }
+}
+
+
+}
+
+
+void add_reach_for_variable(var_record* node){
+
+    if(node&&node->parent==NULL){
+        add_reach_for_entries(node->entries,node->reach);
+
+        add_reach_for_variable( node->child); //direction : 0 go down
+    }else if(node){
+        add_reach_for_entries(node->entries, node->reach);
+        add_reach_for_variable(node->child);
+        add_reach_for_variable(node->r_sibiling);
+    }else return;
+
 }
 
 void get_global_symbol_table(ast_node* ast_root){
@@ -1558,6 +1661,7 @@ void get_global_symbol_table(ast_node* ast_root){
             char* reach = (char*)malloc(sizeof(char)*100);
             memset(reach,'\0',sizeof(reach));
             number(global_TABLE[i]->func_root,reach);
+            add_reach_for_variable(global_TABLE[i]->func_root);
         }
     }
 

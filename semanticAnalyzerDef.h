@@ -9,8 +9,12 @@ typedef enum semErrors{
 } semErrors;
 
 typedef struct arr_struct{
+    int lo;
+    int up;
     int lower_bound;
     int upper_bound;
+    char* lower_bound_lex;
+    char* upper_bound_lex;
     char* arr_datatype; //real boolean integer
 }arr_struct;
 
@@ -33,9 +37,11 @@ typedef struct arr_struct{
 // }List;
 
 typedef struct type_exp{
+    char* reach_defined;
     char* datatype; //real boolean integer ; array 
     int is_static; //1->static and 0->dynamic
     int offset;
+   
     arr_struct* arr_data;
     int line_defined;
     int isChanged;

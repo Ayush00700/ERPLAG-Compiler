@@ -202,8 +202,8 @@ int main(int argc, char* args[]){ //DRIVER
                     create_abstract_tree();//creation of abstract syntax tree 
                     ast_node* ast_root = get_ast_root();
                     semantic();
-                    if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
-                    else return -1;
+                    get_global_symbol_table(ast_root);
+                 
                     FILE* fptr = fopen("intermediate_code.txt","w+");
                     ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
                     print_ir_code(fptr,intermediate_code);
