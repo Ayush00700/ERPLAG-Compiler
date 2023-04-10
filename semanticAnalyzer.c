@@ -398,6 +398,10 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->r_sibiling = NULL;
         local_case->offset = local_table->parent->offset;
         local_case->construct_name = "CASE";
+        if(ast_root->next!=NULL){
+            local_case->start_line_no = ast_root->next->start_line_no;
+            local_case->end_line_no = ast_root->next->end_line_no;
+        }
         initialize_entries(local_case);
         //local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
@@ -411,6 +415,10 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_case->r_sibiling = NULL;
         local_case->offset = local_table->parent->offset;
         local_case->construct_name = "CASE";
+        if(ast_root->next!=NULL){
+            local_case->start_line_no = ast_root->next->start_line_no;
+            local_case->end_line_no = ast_root->next->end_line_no;
+        }
         initialize_entries(local_case);
         //local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
@@ -424,6 +432,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_for->r_sibiling = NULL;
         local_for->offset = local_table->offset;
         local_for->construct_name = "FORLOOP";
+        local_for->start_line_no = ast_root->start_line_no;
+        local_for->end_line_no = ast_root->end_line_no;
         initialize_entries(local_for);
         if(local_table->child == NULL){
             local_table->child = local_for;
@@ -447,6 +457,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_while->r_sibiling = NULL;
         local_while->offset = local_table->offset;
         local_while->construct_name = "WHILELOOP";
+        local_while->start_line_no = ast_root->start_line_no;
+        local_while->end_line_no = ast_root->end_line_no;
         initialize_entries(local_while);
         if(local_table->child == NULL){
             local_table->child = local_while;
@@ -470,6 +482,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         int temp = local_table->offset;
         local_switch->offset = local_table->offset;
         local_switch->construct_name = "CASE_HEAD";
+        local_switch->start_line_no = ast_root->child_pointers[1]->start_line_no;
+        local_switch->end_line_no = ast_root->child_pointers[1]->end_line_no;
         initialize_entries(local_switch);
         if(local_table->child == NULL){
             local_table->child = local_switch;
@@ -494,6 +508,8 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch_default->r_sibiling = NULL;
         local_switch_default->offset = local_table->offset;
         local_switch_default->construct_name = "DEFAULT";
+        local_switch_default->start_line_no = ast_root->child_pointers[2]->start_line_no;
+        local_switch_default->end_line_no = ast_root->child_pointers[2]->end_line_no;
         initialize_entries(local_switch_default);
          if(local_table->child == NULL){
             local_table->child = local_switch_default;
@@ -534,11 +550,25 @@ void func_def_(ast_node* ast_root,func_entry* global[]){
     if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
-        local = func_tab_entry_add("DRIVER",global,ip_list,op_list,&offset);
+        local = func_tab_entry_add("DRIVER",global_TABLE,ip_list,op_list,&offset);
+        local->end_line_no = ast_root->end_line_no;
+        local->start_line_no = ast_root->start_line_no;
+        local->func_root->start_line_no = ast_root->start_line_no;
+        local->func_root->end_line_no  = ast_root->end_line_no;
         local_populate(local->func_root,ast_root->child_pointers[0]);
     }else{
-        local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global,ip_list,op_list,&offset);
+        local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_TABLE,ip_list,op_list,&offset);
+        
+        if(local){
+        local->end_line_no = ast_root->end_line_no;
+        local->start_line_no = ast_root->start_line_no;
+        local->func_root->start_line_no = ast_root->start_line_no;
+        local->func_root->end_line_no  = ast_root->end_line_no;
         local_populate(local->func_root,ast_root->child_pointers[3]);
+        
+        }
+        else
+        throw_error(FUNCTION_OVERLOADING, ast_root->child_pointers[0]->token->line_no);
     }
 }
 
@@ -550,14 +580,21 @@ void func_def(ast_node* ast_root){
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global_func_table,ip_list,op_list,&offset);
+        local->end_line_no = ast_root->end_line_no;
+        local->start_line_no = ast_root->start_line_no;
+        local->func_root->start_line_no = ast_root->start_line_no;
+        local->func_root->end_line_no  = ast_root->end_line_no;
         local_populate(local->func_root,ast_root->child_pointers[0]);
     }else{
-        //Might need to add an overloading check?
-
-        
         local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_func_table,ip_list,op_list,&offset);
-        if(local)
+
+        if(local){
+        local->end_line_no = ast_root->end_line_no;
+        local->start_line_no = ast_root->start_line_no;
+        local->func_root->start_line_no = ast_root->start_line_no;
+        local->func_root->end_line_no  = ast_root->end_line_no;
         local_populate(local->func_root,ast_root->child_pointers[3]);
+        }
         else
         throw_error(FUNCTION_OVERLOADING, ast_root->child_pointers[0]->token->line_no);
     }
@@ -1463,11 +1500,15 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     return ;
 }
 
-void print_ipop_list(sym_tab_entry* list,int level){
+void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
     if(list == NULL){
         return;
     }
-    printf("variable name : %s  ",list->name);
+    var_record* temp = record;
+    while(temp->parent!=NULL){
+        temp = temp->parent;
+    }
+    printf("variable name : %s  ||  scope : %s  ||  scope(line_no) : [%d-%d]    ",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
     if(strcmp(list->type.datatype,"array")){
         printf("||  type : %s   ||  is_array : %s   ||  static/dynamic : ** ||  array_range : **    ",list->type.datatype,"no");
         int width;
@@ -1543,7 +1584,7 @@ void print_ipop_list(sym_tab_entry* list,int level){
             printf("||  width : %s  ||  offset : %d ||  nesting_level : %d\n","**",list->offset,level);
         }
     }
-    print_ipop_list(list->next,level);
+    print_ipop_list(list->next,level,record);
 }
 
 void print_level(var_record* node,int level){
@@ -1551,7 +1592,7 @@ void print_level(var_record* node,int level){
         return;
     }
     for(int i=0;i<TABLE_SIZE;i++){
-        print_ipop_list(node->entries[i],level);
+        print_ipop_list(node->entries[i],level,node);
     }
     print_level(node->r_sibiling,level);
     print_level(node->child,level+1);
@@ -1560,10 +1601,10 @@ void print_level(var_record* node,int level){
 void printer_(func_entry* node){
     // input and output list
     if(node->input_list!=NULL){
-        print_ipop_list(node->input_list,0);
+        print_ipop_list(node->input_list,0,node->func_root);
     }
     if(node->ouput_list!=NULL){
-        print_ipop_list(node->ouput_list,0);
+        print_ipop_list(node->ouput_list,0,node->func_root);
     }
     print_level(node->func_root,1);
 }
@@ -1590,7 +1631,7 @@ void semantic(){
         function_declare_name[i] =  NULL;
     }
     populate_(ast_root);
-    print_symbol_table(); //isme dikkat hai....
+     //isme dikkat hai....
     perform_type_checking(ast_root,NULL);
     //perform bound checking
 

@@ -146,6 +146,8 @@ typedef struct ast_node{
     char* type;
     Boolean isTerminal;
     token_info* token;
+    int start_line_no;
+    int end_line_no;
 }ast_node;
 
 typedef struct treeNodes{

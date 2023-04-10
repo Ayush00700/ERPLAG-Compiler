@@ -66,6 +66,8 @@ typedef struct var_record{
     // int nesting;
     // int sibiling;
     char* reach;
+    int start_line_no;
+    int end_line_no;
 }var_record;
 
 typedef struct func_entry{
@@ -79,5 +81,7 @@ typedef struct func_entry{
     int offset;
     int visited;
     int defined;
+    int start_line_no;
+    int end_line_no;
 }func_entry;
 

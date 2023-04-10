@@ -204,8 +204,8 @@ int main(int argc, char* args[]){ //DRIVER
                     semantic();
                     get_global_symbol_table(ast_root);
                  
-                    if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
-                    else return -1;
+                    // if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
+                    // else return -1;
                     print_symbol_table(); //isme dikkat hai....
                     FILE* fptr = fopen("intermediate_code.txt","w+");
                     ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);

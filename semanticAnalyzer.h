@@ -29,7 +29,7 @@ extern sym_tab_entry* getlist(ast_node* ast_root,int* offset);
 extern void populate_(ast_node* ast_root);
 extern type_exp* type_checking(ast_node* node, func_entry* curr);
 extern void perform_type_checking(ast_node* ast_root,func_entry* func);
-extern void print_ipop_list(sym_tab_entry* list,int level);
+extern void print_ipop_list(sym_tab_entry* list,int level,var_record* record);
 extern void print_level(var_record* node,int level);
 extern void printer_(func_entry* node);
 extern void print_symbol_table();

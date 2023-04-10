@@ -116,6 +116,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->next = NULL;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[4]->child_pointers[2]->token->line_no;
             
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
@@ -146,6 +148,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers[1] = child1;
             parent->child_pointers[2] = child2;
             parent->child_pointers[3] = child3;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[11]->child_pointers[2]->token->line_no;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
@@ -1347,6 +1351,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = statement;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[5]->token->line_no;
             ast_node* child3 = create_ast(root->child_pointers[6]);
             parent->next= child3;
             free(root->child_pointers[0]);
@@ -1373,6 +1379,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = statement;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[5]->token->line_no;
             ast_node* child3 = create_ast(root->child_pointers[6]);
             parent->next= child3;
             free(root->child_pointers[0]);
@@ -1425,6 +1433,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->no_of_children = 1;
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = statement;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[4]->token->line_no;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -1458,6 +1468,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers[0] = temp;
             parent->child_pointers[1] = child1;
             parent->child_pointers[2] = statement;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[8]->token->line_no;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[3]);
@@ -1483,6 +1495,8 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->child_pointers = (ast_node**)malloc(parent->no_of_children*sizeof(ast_node*));
             parent->child_pointers[0] = child1;
             parent->child_pointers[1] = statement;
+            parent->start_line_no = root->child_pointers[0]->token->line_no;
+            parent->end_line_no = root->child_pointers[6]->token->line_no;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);

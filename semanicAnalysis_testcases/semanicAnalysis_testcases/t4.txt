@@ -7,8 +7,6 @@ takes input [x:integer, m:array [2..20] of integer, p:real];
 returns [ n:integer, k: boolean];
 start
 	declare a,b:integer;
-	n1 := 12;
-	declare A1: array[-n1..n1] of integer;	
 	get_value(b);
 	declare p: array[2..20] of integer;	**Not an error as local variable can shadow the definition of input parameter**
 	a:= m[5]+3;
