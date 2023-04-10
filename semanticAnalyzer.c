@@ -153,6 +153,7 @@ func_entry* func_tab_entry_add(char* key,func_entry* table[],sym_tab_entry* inpu
     // first checks whether it is already present or not 
     while(current!=NULL){
         if(strcmp(current->name,key)==0){
+            // throw_error(FUNCTION_OVERLOADING).
             return NULL; //in case it doesn't need to add
         }
         current = current->next;
@@ -514,8 +515,13 @@ void func_def(ast_node* ast_root){
         local_populate(local->func_root,ast_root->child_pointers[0]);
     }else{
         //Might need to add an overloading check?
+
+        
         local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_func_table,ip_list,op_list,&offset);
+        if(local)
         local_populate(local->func_root,ast_root->child_pointers[3]);
+        else
+        throw_error(FUNCTION_OVERLOADING, ast_root->child_pointers[0]->token->line_no);
     }
 }
 
@@ -596,6 +602,8 @@ type_exp* throw_error(semErrors error, int line)
         {printf("Error found at line no %d : Value was not modified for the construct at line \n", line);break;}
         case FUNCTION_NOT_DEFINED:
         {printf("Error found at line no %d : Function not defined \n", line);break;}
+        case FUNCTION_OVERLOADING:
+        {printf("Error found at line no %d : Function overloading \n", line);break;}
         
     }
     return NULL;
@@ -696,9 +704,15 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
     type_exp* type=find_in_table(key, current_rec,line);
     if(type&&line<type->line_defined)
     {
-        printf("Variable declared later. ");
-        throw_error(OUT_OF_SCOPE_VARIABLE, line);
-        return NULL;
+        type_exp* input=find_in_func_table(node, curr, line);
+        if(input)
+            return input;
+        else
+        {
+            printf("Variable declared later. ");
+            throw_error(OUT_OF_SCOPE_VARIABLE, line);
+            return NULL;
+        }
     }
     if(type)
         return type;
@@ -784,7 +798,9 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
        //check if value is assigned throughout
     }
     if(actual||formal)
+
     {
+
         throw_error(PARAMETER_LIST_MISMATCH,line);
 
 
