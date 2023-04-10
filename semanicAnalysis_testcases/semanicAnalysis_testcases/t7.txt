@@ -14,10 +14,11 @@ declare module function4;
 
 <<module var_demo_array>>
 takes input [x:integer, m:array [2..20] of integer, p:real];
-returns [ n:integer, k: boolean];
+returns [ n:integer, k: boolean, vasu:integer];
 start
 	declare a,b,h:integer;	
 	get_value(b);
+	vasu:=1;
 	declare b4: array[100..150] of boolean;
 	declare p: array[2..20] of integer;	
 	a:= m[5]+3;				   **Not an error: array index within bounds**
@@ -28,8 +29,9 @@ start
 	declare v1, v2:real;	
 	p[10]:= a*b-20*h;                          **Not an error: array index within bounds**
 	declare b7: array[35..50] of real;			 
-	while(k AND x<=m[11] OR false)
+	for(vasu in 1..20)
 	start
+		vasu:=1;
 		declare p, u:integer;
 		declare b: array[2..20] of integer;
 		declare b5, b6: array[35..50] of real;
@@ -64,7 +66,7 @@ start
 	declare E: array[2..20] of integer;
 	declare Var3, var4: array[100..150] of boolean;
 	get_value(y);
-	get_value(x);
+	get_value(x)
 	declare A,B: array[4..10] of integer;
 	declare Var1, Var2: array[35..50] of real;
 	get_value(B);
@@ -78,7 +80,8 @@ start
 
  
 	[ k, m]:=use module var_demo_array with parameters k,B,p;       **ERROR: Input parameter type of B does not match with formal parameter type**						 
-	for (k in 15..40)
+	declare vasu:integer;
+	while(vasu<10)
 	start
 		x:=x+k*y;				    **ERROR: Type mismatch error**
 		declare u, v:real;
@@ -87,7 +90,7 @@ start
 		v:= u-c*p-20.5E+2;
 		[x, int1, m, k]:=use module function1 with parameters Var3, c, k, Var4, k; **ERROR: Input parameter type of Var4 does not match with formal parameter type**		
 		x:=x + u*v- u<=v;                             **ERROR: Type mismatch error**
-	end
+	end   ** Should it be another error? Since k is assigned some value**
 	x:=c+y;	
 	[p]:= use module function3 with parameters x,y;       **ERROR: module function3 is not defined**
 	C[18]:= a[18]+ b[18];
@@ -104,7 +107,7 @@ returns [c:real];
 start
 	c:= a+b;
 end
-
+									**Why is this an error?**
 <<module function4>>			    **ERROR: function4 definition and its declaration both appear before its call**
 takes input [a: boolean, b:boolean];
 returns [c:boolean];

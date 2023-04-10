@@ -998,7 +998,6 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     // For right operand
     switch(ir->operator)
     {
-
         case LT:
             // Get offset of right operand temp
             nameRight = ir->right_op;

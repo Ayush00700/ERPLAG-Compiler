@@ -1,8 +1,8 @@
 #include "semanticAnalyzerDef.h"
-#define INT_OFFSET 4 
-#define REAL_OFFSET 8
+#define INT_OFFSET 2 
+#define REAL_OFFSET 4
 #define BOOL_OFFSET 1
-#define POINTER_OFFSET 4
+#define POINTER_OFFSET 1
 
 // Function to add key into the table along with the entry number
 extern int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp);
@@ -29,11 +29,17 @@ extern sym_tab_entry* getlist(ast_node* ast_root,int* offset);
 extern void populate_(ast_node* ast_root);
 extern type_exp* type_checking(ast_node* node, func_entry* curr);
 extern void perform_type_checking(ast_node* ast_root,func_entry* func);
+extern void print_ipop_list(sym_tab_entry* list,int level);
+extern void print_level(var_record* node,int level);
+extern void printer_(func_entry* node);
+extern void print_symbol_table();
 extern void semantic();
 extern void get_global_symbol_table(ast_node* ast_root);
 extern int sym_tab_entry_add(char* key,var_record* local_table,type_exp temp);
 extern type_exp* find_expr(ast_node* node, func_entry* curr,int line);
-
+extern type_exp* compare_dTypes(type_exp* left, type_exp* right, int line);
+extern type_exp* throw_error(semErrors error, int line);
+extern int line_number_finder(ast_node* ast_root);
 
 // traverse functions
 extern var_record* find_local_construct(char* func_name, char* arr);

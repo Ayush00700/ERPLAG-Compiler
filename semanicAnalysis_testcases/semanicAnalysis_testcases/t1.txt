@@ -1,11 +1,7 @@
 ** Test case 1: Testing symbol table creation for variable declaration and redeclaration checks**
 ** Single level nesting using primitive data types**
 
-**Line 57 not being caught**
-**out of order errors**
-**Redundant errors**
-**Add auxillary info on the errors better**
-
+**Line 36 should be an error?**
 <<module var_demo>>
 takes input [x:integer, w: boolean, p:real];
 returns [m:integer, n:integer, u: boolean];
@@ -37,7 +33,7 @@ start
 	declare abc_1, pqr_2: integer;
 	pqr_2:= abc_1 + 6;
 	declare abc_1: real;				**ERROR: variable abc_1 is re-declared**
-	res_2_a:= -(a*b-c/pqr_2);
+	res_2_a:= -(a*b-c/pqr_2);   **This should be an error that should be propogated as outpout not changed**
 	declare s: integer;				**Not an error as a local variable can shadow the input parameter**
 	res_2__b:= res_2__b + p *12+22.34E-2;		**ERROR variable p is not declared**
 	declare m,n: boolean;
@@ -54,7 +50,7 @@ end
 <<<driver program>>>
 start
 	declare v_1_2_3:integer;
-	get_value(v_1_2_43); **We are not catching this error**				**ERROR: variable v_1_2_43 is not declared**		
+	get_value(v_1_2_43); 			**ERROR: variable v_1_2_43 is not declared**		
 	declare result_, v7, v9:integer;
 	declare u1:boolean;
 	[u1, result_, k]:=use module compute with parameters v_1_2_3, v7, v9;	**ERROR: variable k is not declared**

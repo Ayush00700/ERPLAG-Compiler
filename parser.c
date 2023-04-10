@@ -21,6 +21,7 @@ entry* non_Terminals_table[TABLE_SIZE]; //set of non-terminals (hashed)
 entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
 Stack parse_stack;
 parse_tree ptree;
+int PARSER_ERRORS = 0;
 
 // ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
 
@@ -1377,8 +1378,4 @@ void parseCompletely(int lflag){
 
     free_parser_data(nont,rules);
 
-    //TODO Print parseTree
-    // print_first_Sets(nont);
-    // printf("\n");
-    // print_follow_sets(nont);
 }
