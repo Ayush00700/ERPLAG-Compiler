@@ -65,12 +65,12 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     */
 
     
-    char* nameRHS = ir->left_op;      // temporary variable name for rhs
+    char* nameRHS = ir->left_op->name;      // temporary variable name for rhs
 
     
     
 
-    char* nameLHS = ir->result;      // temporary variable name for rhs
+    char* nameLHS = ir->result->name;      // temporary variable name for rhs
 
     // Finding the symbol table entry for lhs variable
     int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
@@ -164,7 +164,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     
 
     // Get offset of result
-    char* result = ir->result;
+    char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
@@ -178,7 +178,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
     char* resultType = temp->type.datatype;
 
     // Get offset of left operand temp
-    char* nameLeft = ir->left_op;
+    char* nameLeft = ir->left_op->name;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     fprintf(assembly, "\t\t; Code for logical op\n");
     
@@ -234,7 +234,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
         int indexRight;
         case AND:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -288,7 +288,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             break;
         case OR:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -356,7 +356,7 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
     
 
     // Get offset of result
-    char* result = ir->result;
+    char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
@@ -413,7 +413,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
     */
     
     // Get offset of result
-    char* result = ir->result;
+    char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);   // Checks if the symbol table contains - if yes we get the index
     if(indexResult==-1)
     {   
@@ -627,7 +627,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     */
 
     // Get offset of result
-    char* result = ir->result;
+    char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
@@ -639,7 +639,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     }
     int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
-    char* nameLeft = ir->left_op;
+    char* nameLeft = ir->left_op->name;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
 
     // Get offset of left operand temp
@@ -697,7 +697,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
         int indexRight;
         case ADD:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -750,7 +750,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             break;
         case SUB:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -803,7 +803,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             break;
         case MUL:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -816,7 +816,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
                     
-                    fprintf(assembly, "\t\tmul     rbx\n");
+                    fprintf(assembly, "\t\timul     rbx\n");
                     
                     fprintf(assembly, "\t\tmov    [RBP - %d] , rax\n", offsetResult);
                     
@@ -848,7 +848,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 {
                     fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
 
-                    fprintf(assembly, "\t\tmul     rbx\n");
+                    fprintf(assembly, "\t\timul     rbx\n");
                     
                     fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
                     
@@ -866,7 +866,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             break;
         case DIV:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -916,7 +916,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     
 
     // Get offset of result
-    char* result = ir->result;
+    char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
@@ -930,7 +930,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     char* resultType = temp->type.datatype;
 
     // Get offset of left operand temp
-    char* nameLeft = ir->left_op;
+    char* nameLeft = ir->left_op->name;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     fprintf(assembly, "\t\t; Code for relational\n");
     
@@ -989,7 +989,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     {
         case LT:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1077,7 +1077,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             break;
         case GT:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1165,7 +1165,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             break;
         case LE:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1257,7 +1257,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             break;
         case GE:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1349,7 +1349,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             break;
         case EQ:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1437,7 +1437,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             break;
         case NEQ:
             // Get offset of right operand temp
-            nameRight = ir->right_op;
+            nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             // If right operand is a constant
             if(indexRight == -1)
@@ -1556,7 +1556,7 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     
     
    
-    char* funcName = ir->result;
+    char* funcName = ir->result->name;
 
     fprintf(assembly, "%s:\n",funcName);
 
@@ -1685,13 +1685,14 @@ void starter(FILE* assembly_file,ir_code* IR)
         if(IR_head->operator==FUNC){ //if you reach FUNC --> then change the context
             
             //in case it is main --we have to search for DRIVER
-            if (!strcmp(IR_head->result,"main")) local_ST = find_module_global("DRIVER");
-            else local_ST = find_module_global(IR_head->result);
+            if (!strcmp(IR_head->result->name,"main")) local_ST = find_module_global("DRIVER");
+            else local_ST = find_module_global(IR_head->result->name);
             func_curr = local_ST->func_root; //once we get the local_ST then just locate the root
         }
+        
+        
 
-
-        char* reach = IR_head->reach; 
+        char* reach = IR_head->result->reach; 
 
         if(strcmp(reach,"")){ //if reach is not "" then find the local construct
                               //in the current local_ST

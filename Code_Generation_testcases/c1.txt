@@ -8,36 +8,42 @@ start
 	declare a, b, c, d1,  d2,  d3,  d4,  d5,  d6,  d7,  d8,  d9 :integer;
 	a:= 5;
 	b:= 9;
-	x:= 2;
-	y:= 3;
-	**get_value(y);
-	get_value(x);**
-
-	d1 := y*b;
+	**x:= 2;
+	y:= 3;**
+	get_value(x);
+	get_value(y);
+	
+	**d1 := y*b;
 	d2 := x + d1;
-	d3 := a - b;	
-	print(d1);
-	print(d2);
-	print(d3);	
+	d3 := a - b;
 	d4 := d3 * y;		
 	d5 := d2 + d4;		
 	d6 := a * 2	;	
 	d7 := d5 + d6;		
 	d8 := b * x	;	
 	d9 := d7 - d8;		
-	z  := d9;		
+	z  := d9;	**	
 
 	**z:= x + y*b +(a-b)*y+ a*2 - b*x;**	
-	
-	**print(z);**
+**	print(y);
+	print(z);	
+	print(d1);
+	print(d2);	
+	print(d3);
 	print(d4);
 	print(d5);
 	print(d6);
 	print(d7);
 	print(d8);
-	print(d9);
+	print(d9);**
+
+	z := a-b;
+	y := z + a;
 	print(x);
+	print(z);
 	print(y);
+	print(a);
+	print(b);
 end
 
 ** On the console
