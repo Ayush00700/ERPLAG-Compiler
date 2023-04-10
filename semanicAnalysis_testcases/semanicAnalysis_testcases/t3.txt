@@ -58,7 +58,7 @@ start
 	res_1 := a <=  b AND c >= a OR  a<0 AND false;
 	
 	m:= n AND (abc_1<=pqr_2);
-	while(m OR a>=b AND res_2_b<=129.54e+3)
+	while(m OR a>=b AND res_2__b<=129.54e+3) **Ma'am had error here**
 	start
 		b:=b+1;
 		m:= n OR b>=res_2_a;

@@ -1,10 +1,49 @@
 #include "semanticAnalyzer.h"
+#include <stdarg.h>
 #include <string.h>
 
 
-
+char* function_declare_name[100];
 func_entry* global_func_table[TABLE_SIZE];
 func_entry* global_TABLE[TABLE_SIZE];
+int func_index = 0;
+int SEMANTIC_ERRORS = 0;
+// List output_list;
+// List iter_list;
+
+// void add_to_list(con_change* entry,List list)
+// {
+
+// }
+// void update_constructs(int conType, var_change variable)
+// {
+//     switch (conType)
+//     {
+//     case 1:
+//         {
+//             variable.loop->isChanged=1;
+//             break;
+//         }
+//     case 2:
+//         {
+//             variable.loop->isChanged=1;
+//             break;
+//         }
+//     case 3:
+//         {
+//             variable.output.isChanged=1;
+//             break;
+//         }
+//     default:
+//         printf("Implementation Error. \n");
+//         break;
+//     }
+// }
+
+// Boolean search_in_list(List list, char* variable)
+// {
+
+// }
 
 void initialize_global_func_table(){
 
@@ -141,11 +180,14 @@ void list_add(sym_tab_entry* list,ast_node* ast_root,int* offset,int initial){
     type_exp temp;
     if(strcmp(ast_root->child_pointers[1]->name,"ARRAY_DATATYPE")){
         temp.datatype = ast_root->child_pointers[1]->token->lexeme;
+        temp.line_defined=ast_root->child_pointers[1]->token->line_no;
     }
     else{
         temp.datatype = "array";
         temp.arr_data = (arr_struct*) malloc(sizeof(arr_struct));
         temp.arr_data->arr_datatype =  ast_root->child_pointers[1]->child_pointers[1]->token->lexeme;
+        temp.line_defined=ast_root->child_pointers[1]->child_pointers[1]->token->line_no;
+
         int lower = check_static(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[0]);
         int upper = check_static(ast_root->child_pointers[1]->child_pointers[0]->child_pointers[1]);
         if(lower&&upper){
@@ -237,10 +279,13 @@ int index_finder(ast_node* node){
 }
 
 void populate_symbol_table(ast_node* temp_node,type_exp temp,var_record* local_table){
+    int line=temp_node->token->line_no;
+    temp.line_defined=line;
     int a = sym_tab_entry_add(temp_node->token->lexeme,local_table,temp);
+
     if(a == -1){ // to change as the abstraction is increased
-        printf(" \"%s\" redeclared variable :: Error found at line no %d\n",temp_node->token->lexeme
-        ,temp_node->token->line_no);
+        printf("%s: ",temp_node->token->lexeme);
+        throw_error(VAR_REDECLARED,line);
     }
 }
 
@@ -429,13 +474,6 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         compute_expression(ast_root,local_table);
         local_populate(local_table,ast_root->next);
     }
-    else if(!strcmp(ast_root->name, "ASSIGN")){
-    // need to migrate the assign and ARRAY_ASSIGN from the temp check to here TODO
-    // just perform type checking for these statements over here TODO
-    }
-    else if(!strcmp(ast_root->name, "ARRAY_ASSIGN")){
-    //TODO
-    }
     else if(ast_root->isTerminal){
         local_populate(local_table,ast_root->next);
         return;
@@ -449,6 +487,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         return;
     }
 }
+
 void func_def_(ast_node* ast_root,func_entry* global[]){
      int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
@@ -526,6 +565,7 @@ type_exp* throw_error(semErrors error, int line)
 {
     //check with enum 
     type_exp* gen_error=(type_exp*) malloc(sizeof(type_exp));
+    SEMANTIC_ERRORS = 1;
     switch(error)
     {
         case TYPE_NOT_MATCHED: {
@@ -548,6 +588,14 @@ type_exp* throw_error(semErrors error, int line)
         {printf("Error found at line no %d : Unexpected default found \n", line);break;}
          case INDEX_OUT_OF_BOUNDS:
         {printf("Error found at line no %d : Index out of bounds\n", line);break;}
+        case VAR_REDECLARED:
+        {printf("Error found at line no %d : Variable redeclared\n", line);break;}
+        case VALUE_MODIFIED:
+        {printf("Error found at line no %d : Value was modified for the construct at line \n", line);break;}
+        case VALUE_NOT_MODIFIED:
+        {printf("Error found at line no %d : Value was not modified for the construct at line \n", line);break;}
+        case FUNCTION_NOT_DEFINED:
+        {printf("Error found at line no %d : Function not defined \n", line);break;}
         
     }
     return NULL;
@@ -577,31 +625,45 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right, int line)
     }else return NULL;
 }
 
+type_exp* find_in_list(sym_tab_entry* output,char* key)
+{
+    while(output){
+        if(!strcmp(output->name,key)){
+            return &output->type;
+        }
+        output = output->next;
+    }  
+    return NULL;
+}
+
 type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr,int line){
     //extract the lexeme out of ast_root
     char* key = ast_root->token->lexeme;
     //check if the module has any parameters or not :
   
     //check in the input list 
-    sym_tab_entry* temp = curr->input_list;
-    while(temp!=NULL){
-        if(!strcmp(temp->name,key)){
-            return &temp->type;
-        }
-        temp = temp->next;
-    }   
-
+    // sym_tab_entry* temp = curr->input_list;
+    // while(temp!=NULL){
+    //     if(!strcmp(temp->name,key)){
+    //         return &temp->type;
+    //     }
+    //     temp = temp->next;
+    // }   
+    type_exp* input=find_in_list(curr->input_list, key);
+    if(input)
+    return input;
+    type_exp* output=find_in_list(curr->ouput_list, key);
+    if(output)
+    return output;
     //check in the output list 
-    temp = curr->ouput_list;
-    while(temp!=NULL){
-        if(!strcmp(temp->name,key)){
-            return &temp->type;
-        }
-        temp = temp->next;
-    }
-
-
-    printf(" \"%s\" could not be found ::",key);
+    // temp = curr->ouput_list;
+    // while(temp!=NULL){
+    //     if(!strcmp(temp->name,key)){
+    //         return &temp->type;
+    //     }
+    //     temp = temp->next;
+    // }
+    printf("%s: ",key);
 
     return throw_error(OUT_OF_SCOPE_VARIABLE,line);
 }
@@ -632,19 +694,28 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
     var_record* temp = current_rec;
     char * key=node->token->lexeme;
     type_exp* type=find_in_table(key, current_rec,line);
-    if(type!=NULL)
+    if(type&&line<type->line_defined)
+    {
+        printf("Variable declared later. ");
+        throw_error(OUT_OF_SCOPE_VARIABLE, line);
+        return NULL;
+    }
+    if(type)
         return type;
     else
     {
         curr->func_curr=curr->func_curr->parent; //also need to add for checking variable in the op list and ip list of the function record
-        if(curr->func_curr==NULL){
+        if(curr->func_curr==NULL)
+        {
             // just check in the function parameter list
             type = find_in_func_table(node,curr,line);
             curr->func_curr = temp;
             //return from here only
-        }else{
-        type = find_expr(node,curr,line);
-        curr->func_curr = temp;
+        }
+        else
+        {
+            type = find_expr(node,curr,line);
+            curr->func_curr = temp;
         }
         return type;
     }
@@ -698,6 +769,12 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
     {
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
        type_exp* act= find_expr(actual, curr, line);
+       act->isChanged=1;
+    //    if(!act->isChanged)
+    //    {
+    //     printf("The return variable of function: ");
+    //     throw_error(VALUE_NOT_MODIFIED, curr->defined);
+    //    }
        type_exp* form=&formal->type;
        compare_dTypes(act, form, line);
        actual=actual->next;
@@ -708,6 +785,21 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
     {
         throw_error(PARAMETER_LIST_MISMATCH,line);
     }
+}
+
+void is_value_changed(func_entry* curr)
+{
+    sym_tab_entry* node=curr->ouput_list;
+    while(node)
+    {
+        if(!node->type.isChanged)
+       {
+        printf("The return variable of function: ");
+        throw_error(VALUE_NOT_MODIFIED, curr->defined);
+       }
+       node=node->next;
+    }
+
 }
 void perform_type_matching_in(ast_node* actual, sym_tab_entry* formal, func_entry* curr, int line)
 {
@@ -765,10 +857,64 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     {
         find_expr(node,curr, node->token->line_no);
     }
+    else if(!strcmp(node->name,"ASSIGN"))
+    {
+        type_exp* left =type_checking(node->child_pointers[0],curr);
+        type_exp* right=type_checking(node->child_pointers[1],curr);
+        int line;
+        type_exp* ret;
+
+        line=line_number_finder(node);
+        ret=compare_dTypes(left, right,line);
+        if(right)
+        {
+            ast_node* temp_node=node->child_pointers[0]->isTerminal==1?node->child_pointers[0]:node->child_pointers[0]->child_pointers[0];
+            type_exp* temp;
+            
+            temp= find_in_list(curr->ouput_list,temp_node->token->lexeme);
+            if(temp)
+            temp->isChanged=1;
+
+            left->isChanged=1;
+        }
+        //Add a check for the array's message to be different.
+        // if(node->child_pointers[0])
+        // {
+        //     // printf("The type of L value of assignment is not supported for the given r value.\n");
+        //     // throw_error(UNSUPPORTED_DTYPE, line);
+        // }
+
+        return NULL;
+        // if(left&&strcmp(left->datatype,"array"))
+        // {
+        // }
+        // else{
+        //     line=line_number_finder(node);
+        //     if(left && right && ret){
+        //         // if(strcmp(node->child_pointers[0]->name,"ASSIGN"))
+        //         // {
+        //         //     printf("%s:",node->child_pointers[0]->token->lexeme);
+        //         //     throw_error(UNSUPPORTED_DTYPE,line);
+        //         // }
+        //         // else  
+        //         // {
+        //         //     return NULL;
+        //         // }
+        //     }
+        //     else
+        //     {
+        //         throw_error(UNSUPPORTED_DTYPE, line);
+        //     }
+        //     return NULL; //TODO need to print the actual error 
+        // }
+        // return NULL;
+    }
     else if(!strcmp(node->name,"ID"))
     {
         int line=node->token->line_no;
         type_exp* var_exp= find_expr(node, curr,line);
+        // var_exp->isChanged=1;
+        //update the values in both the list
         return var_exp;
     }
     else if(!strcmp(node->name,"MODULEREUSE"))
@@ -800,11 +946,11 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                  throw_error(PARAMETER_LIST_MISMATCH, line);
                 }
             }
-            else
-            {
+            // else
+            // {
 
-                //check proper use such that it is not present in an expression
-            }
+            //     //check proper use such that it is not present in an expression
+            // }
 
             if(node->child_pointers[2])
             {
@@ -816,6 +962,16 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 {
                     throw_error(PARAMETER_LIST_MISMATCH, line);
                 }
+            }
+            // check if module reuse id in func_dec_name or not
+            int flag = 0;
+            for(int i=0;i<100;i++){
+                if(function_declare_name[i]!=NULL && !strcmp(node->child_pointers[0]->token->lexeme,function_declare_name[i])){
+                    flag = 1;
+                }
+            }
+            if(!flag){
+                printf("function not declared or defined yet.... line no. is %d\n",line);
             }
         }
     }
@@ -832,7 +988,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             }
         }else if(var_id){
             //Convert this into throw_error()
-            printf("Error line no %d Array index expression couldn't be found under scope\n",line);
+            printf("R value expression/index type error:");
+            throw_error(OUT_OF_SCOPE_VARIABLE, line);
         }
         return NULL;
 
@@ -846,7 +1003,6 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 return throw_error(UNSUPPORTED_DTYPE,line);
             }
         }
-
     }
     else if(!strcmp(node->name,"ARRAY_ASSIGN")){
         type_exp* arr_data = type_checking(node->child_pointers[0],curr);
@@ -855,9 +1011,10 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             && !strcmp(arr_data->datatype,"array")
             && !strcmp(arr_index->datatype,"integer")){
                //I think error here, because we should return the inside element type rather than array
-                type_exp* temp=(type_exp*)malloc(sizeof(type_exp));
-                temp->datatype=arr_data->arr_data->arr_datatype;
-                return arr_data; //should be return temp TODO
+            type_exp* temp=(type_exp*)malloc(sizeof(type_exp));
+            temp->datatype=arr_data->arr_data->arr_datatype;
+            // temp->isChanged=1; //How to handle the corner case of A[15] getting changed and A[15] in the while statement
+            return temp;
         }//this function is yet to be completed TODO
     }
     else if(!strcmp(node->name,"LT_result")||!strcmp(node->name,"LE_result")){
@@ -872,6 +1029,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 &&compare){
                 type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
                 temp->datatype = "boolean";
+                if(op1->isChanged||op2->isChanged)
+                temp->isChanged=1;
                 return temp;
             }else{
                 printf("\nError found at line number %d: expected boolean operation",
@@ -890,6 +1049,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
           &&compare){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
+            if(op1->isChanged||op2->isChanged)
+            temp->isChanged=1;
             return temp;
         }else{
             return compare;
@@ -905,6 +1066,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
           &&compare){
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
+            if(op1->isChanged||op2->isChanged)
+            temp->isChanged=1;
             return temp;
         }else{
            return compare;
@@ -921,40 +1084,19 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
             node->type = temp->datatype;
+            if(op1->isChanged||op2->isChanged)
+            temp->isChanged=1;
             return temp;
         }else{
             return compare;
         }
-    }
-    else if(!strcmp(node->name,"ASSIGN"))
-    {
-        type_exp* left =type_checking(node->child_pointers[0],curr);
-        type_exp* right=type_checking(node->child_pointers[1],curr);
-        int line;
-        type_exp* ret;
-        if(left&&strcmp(left->datatype,"array")){
-        line=line_number_finder(node);
-
-        ret=compare_dTypes(left, right,line);}//Might need to check child's line number
-        else{line=line_number_finder(node);
-        if(left && right && !strcmp(left->arr_data->arr_datatype,right->datatype)){
-            if(strcmp(node->child_pointers[0]->name,"ARRAY_ASSIGN")){
-            throw_error(UNSUPPORTED_DTYPE,line);
-            printf("--\"%s\" can't be assigned\n",node->child_pointers[0]->token->lexeme);
-            }else {
-                ret = compare_dTypes(left->arr_data->arr_datatype,right,line);
-                return ret;
-            }
-        }
-        return NULL; //TODO need to print the actual error 
-        }
-        return ret;
     }
     else if(!strcmp(node->name,"NUM"))
     {
         type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
         temp->datatype="integer";
         temp->is_static=1;
+        // temp->isChanged=1;
         return temp;
     }
     else if(!strcmp(node->name,"RNUM"))
@@ -962,12 +1104,14 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
         temp->datatype="real";
         temp->is_static=1;
+        // temp->isChanged=1;
         return temp;
     }
     else if(!strcmp(node->name,"TRUE")||!strcmp(node->name,"FALSE"))
     {
         type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
         temp->datatype="boolean";
+        // temp->isChanged=1;
         return temp;
     }else if(!strcmp(node->name,"UNARY")){
         int line=node->child_pointers[0]->token->line_no;
@@ -995,7 +1139,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             if(!strcmp(var_id->datatype,"array")){
                 type_exp* temp =(type_exp*) malloc(sizeof(type_exp));
                 temp->datatype = var_id->arr_data->arr_datatype;
-
+                temp->isChanged=1;
                 if(arr_expr->is_static)
                 {
                     ast_node* index=node->child_pointers[1];
@@ -1003,8 +1147,10 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                     {
                         int val=index->token?index->token->values.num:index->child_pointers[1]->token->values.num;
                         //write a case for handling negative numbers
-                        if(!(val<var_id->arr_data->upper_bound&&val>var_id->arr_data->lower_bound))
-                        return throw_error(INDEX_OUT_OF_BOUNDS, line);
+                        if((val>var_id->arr_data->upper_bound||val<var_id->arr_data->lower_bound))
+                        {
+                            return throw_error(INDEX_OUT_OF_BOUNDS, line); //Check if it will be equal or less. Language specification allows what?
+                        }
                     }
                 }
                 return temp;
@@ -1039,6 +1185,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             int line=line_number_finder(node);//Might need to check child's line number
             //for PLUS operator need not be always line number tractable
             type_exp* ret=compare_dTypes(left, right,line);
+            if(ret&&((left&&left->isChanged)||(right&&right->isChanged)))
+                ret->isChanged=1;
             if(ret&&(!strcmp(ret->datatype,"boolean")||!strcmp(ret->datatype,"array")))
             {
                 throw_error(UNSUPPORTED_DTYPE, line);
@@ -1048,6 +1196,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             {
                 type_exp* real=(type_exp*)malloc(sizeof(type_exp));
                 real->datatype="real";
+                if(real&&left->isChanged||right->isChanged)
+                real->isChanged=1;
                 return real;
             }
         return ret;
@@ -1088,9 +1238,15 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         curr->func_curr=curr->func_curr->child;
         //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
         type_exp* id_type = type_checking(node->child_pointers[0],curr);
-        //special case to be added when we dont want to change the for variable
         type_exp* range_type = type_checking(node->child_pointers[1],curr);
+        int line=line_number_finder(node->child_pointers[0]);
         perform_type_checking(node->child_pointers[2],curr);
+        if(id_type->isChanged==1) //A little error here. How to chekc for isChanged garbage value
+        {
+            printf("The conditional variable of for: ");
+            throw_error(VALUE_MODIFIED, line);
+        }
+        //pop the for node, free the memory space
         curr->func_curr=temp;
         curr->func_curr->child = curr->func_curr->child->r_sibiling;
     }
@@ -1100,12 +1256,19 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         curr->func_curr=curr->func_curr->child;
         //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
         type_exp* condition = type_checking(node->child_pointers[0],curr);
+        int line= line_number_finder(node);
         if(!strcmp(node->child_pointers[0]->name,"ID")
            && strcmp(condition->datatype,"boolean")){
-            printf("Error found at line no: %d expected boolean expression",
-            node->child_pointers[0]->token->line_no);
+            // printf("Error found at line no: %d expected boolean expression",);
+            printf("The conditional variable of while: ");
+            throw_error(TYPE_NOT_MATCHED, line);
            }
         perform_type_checking(node->child_pointers[1],curr);
+        if(!condition||!condition->isChanged) //!condition is the edge case
+        {
+            printf("The conditional variable of while: ");
+            throw_error(VALUE_NOT_MODIFIED, line);
+        }
         curr->func_curr=temp;
         curr->func_curr->child = curr->func_curr->child->r_sibiling;
     }
@@ -1133,7 +1296,6 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             {
                  printf("Switch variable of type boolean. ");
                 throw_error(DEFAULT_FOUND,line);
-                
             }
         }
         else if(switch_id&&!strcmp(switch_id->datatype,"real"))
@@ -1150,9 +1312,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         curr->func_curr = temp;
         }
         else {curr->func_curr = temp;}
-        // type_exp* compare;
-        // if(case_ids)compare = compare_dTypes(switch_id,case_ids,line);
-        // return compare;
+
     }
     else if(!strcmp(node->name,"DEFAULTCASE")){
         perform_type_checking(node->child_pointers[0],curr);
@@ -1198,10 +1358,22 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
         func = find_module("DRIVER");
     }
     else if(!strcmp(ast_root->name,"MODULE")){
-        func = find_module(ast_root->child_pointers[0]->token->lexeme);
-        if(func==NULL){
-        printf("\nError found at line no %d : Function Not Defined",ast_root->child_pointers[0]->token->line_no);
-        }else func->visited = 1;
+        func = find_module(ast_root->child_pointers[0]->token->lexeme); //function name
+        func->defined=ast_root->child_pointers[0]->token->line_no;
+        
+        if(!func){
+            int line=ast_root->child_pointers[0]->token->line_no;
+            throw_error(FUNCTION_NOT_DEFINED, line);
+        }else{
+            // add function name to the character array
+            function_declare_name[func_index] = func->name;
+            func_index++;
+        }
+    }
+    else if(!strcmp(ast_root->name, "MOD_DEC_ID")){
+        //add function name to the character array of names
+        function_declare_name[func_index] = ast_root->token->lexeme;
+        func_index++;
     }
     else if(!strcmp(ast_root->name,"STATEMENTS")){
         while(ast_root->next!=NULL){
@@ -1214,8 +1386,14 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
     int num_of_children = ast_root->no_of_children;
     for(int i=0;i<num_of_children;i++){
         perform_type_checking(ast_root->child_pointers[i],func);
+        if(func&&strcmp(func->name,"DRIVER")&&ast_root->child_pointers[i]&&!strcmp(ast_root->child_pointers[i]->name, "STATEMENTS"))
+            is_value_changed(find_module(ast_root->child_pointers[0]->token->lexeme));
     }
     perform_type_checking(ast_root->next,func);
+    // if(ast_root&&!strcmp(ast_root->name, "FUNC_ID"))
+    // {
+    //         is_value_changed(find_module(ast_root->token->lexeme));
+    // }
     return ;
 }
 
@@ -1308,10 +1486,14 @@ void semantic(){
     ast_node* ast_root = get_ast_root();
     initialize_global_func_table();
     //get_global_symbol_table(ast_root);
+    for(int i=0;i<100;i++){
+        function_declare_name[i] =  NULL;
+    }
     populate_(ast_root);
-    print_symbol_table(); //isme dikkat hai....
+    // print_symbol_table(); //isme dikkat hai....
     perform_type_checking(ast_root,NULL);
     //perform bound checking
+
 }
 
 
@@ -1374,3 +1556,22 @@ var_record* find_local_construct(char* func_name, char* arr){
 
 // function call (after defiinition or declaration only) check ??
 // offset computation needs to be corrected (KIYA KYA PEHLE SE) ??
+
+
+/*
+
+driver
+{
+    local_populate
+    
+    performtypechecking()
+
+}
+module
+stmts
+
+*/
+
+
+
+

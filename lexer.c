@@ -20,6 +20,7 @@ token_node* stack_head; //STACK FOR ERRORS
 token_node* current; //LAST NODE THAT WAS ADDED
 token_node* get_next_curr;
 hash_table_contents* hash_table[TABLE_SIZE];
+int LEXER_ERRORS = 0;
 // #endif
 
 

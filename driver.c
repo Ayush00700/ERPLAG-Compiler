@@ -14,6 +14,8 @@
 #include <string.h>
 
 extern func_entry* global_TABLE[TABLE_SIZE];
+extern int SEMANTIC_ERRORS;
+extern int PARSER_ERRORS;
 
 int main(int argc, char* args[]){ //DRIVER
     clock_t l_start_time, l_end_time;
@@ -200,7 +202,8 @@ int main(int argc, char* args[]){ //DRIVER
                     create_abstract_tree();//creation of abstract syntax tree 
                     ast_node* ast_root = get_ast_root();
                     semantic();
-                    get_global_symbol_table(ast_root);
+                    if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
+                    else return -1;
                     FILE* fptr = fopen("intermediate_code.txt","w+");
                     ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
                     print_ir_code(fptr,intermediate_code);
