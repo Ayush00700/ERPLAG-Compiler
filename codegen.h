@@ -8,3 +8,5 @@ extern void codegen_output(ir_code_node* ir, func_entry* local_ST);
 extern void codegen_switch(ir_code_node* ir, func_entry* local_ST);
 extern void codegen_iterative(ir_code_node* ir, func_entry* local_ST);
 extern void codegen_procedure(ir_code_node* ir, func_entry* local_ST);
+extern type_exp* find_expr_codegen(char* key, func_entry* curr);
+extern void data_read(FILE* assembly);

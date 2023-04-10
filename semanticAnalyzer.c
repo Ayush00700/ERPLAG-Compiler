@@ -1745,7 +1745,54 @@ module
 stmts
 
 */
+void print_ipop_list_codegen(sym_tab_entry* list,int level,FILE* assembly){
+    if(list == NULL){
+        return;
+    }
+    strcat(list->name,list->type.reach_defined);
+    fprintf(assembly, "\t\t%s:   dd   0\n",list->name);
+    printf("variable name : %s  ",list->name);
+    print_ipop_list_codegen(list->next,level,assembly);
+}
 
 
+
+void print_level_codegen(var_record* node,int level,FILE* assembly){
+    if(node == NULL){
+        return;
+    }
+    for(int i=0;i<TABLE_SIZE;i++){
+        print_ipop_list_codegen(node->entries[i],level,assembly);
+    }
+    print_level_codegen(node->r_sibiling,level,assembly);
+    print_level_codegen(node->child,level+1,assembly);
+}
+
+void code_gen(FILE* assembly){
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_TABLE[i] != NULL){
+                if(global_TABLE[i]->input_list!=NULL){
+                    print_ipop_list_codegen(global_TABLE[i]->input_list,0,assembly);
+                }
+                if(global_TABLE[i]->ouput_list!=NULL){
+                    print_ipop_list_codegen(global_TABLE[i]->ouput_list,0,assembly);
+                }
+                print_level_codegen(global_TABLE[i]->func_root,1,assembly);
+
+            func_entry* temp = global_TABLE[i];
+            while(temp->next!=NULL){
+                    if(temp->next->input_list!=NULL){
+                        print_ipop_list_codegen(temp->next->input_list,0,assembly);
+                    }
+                    if(temp->next->ouput_list!=NULL){
+                        print_ipop_list_codegen(temp->next->ouput_list,0,assembly);
+                    }
+                    print_level_codegen(temp->next->func_root,1,assembly);
+
+                temp = temp->next;
+            }
+        }
+    }
+}
 
 

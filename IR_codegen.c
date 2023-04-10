@@ -36,8 +36,7 @@ ir_code_node* getNew_ir_code_node(func_entry* local_ST)
     newNode->result->name = NULL;
     newNode->left_op->reach = NULL;
     newNode->right_op->reach = NULL;
-
-    // newNode->reach = local_ST->func_curr->reach;
+    newNode->reach = local_ST->func_curr->reach;
     return newNode;
 }   
 
@@ -187,19 +186,23 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
             type_exp temp;
             temp.is_static = 1;
             temp.datatype = node->type;
+            temp.reach_defined = local_ST->func_curr->reach;
         sym_tab_entry_add(t,local_ST->func_curr,temp); //TODO DEBUG
+
     }
     else{
         type_exp temp;
         // if(!strcmp(node->child_pointers[0]->token->type,"NUM")){
         temp.is_static = 1;
         temp.datatype = node->type;
+        temp.reach_defined = local_ST->func_curr->reach;
         // }
         // else if(!strcmp(node->child_pointers[0]->token->type,"RNUM")){
         //     temp.is_static = 1;
         //     temp.datatype = "real";
         // }
         sym_tab_entry_add(t,local_ST->func_curr,temp); //TODO DEBUG
+
     }
     if(!strcmp(node->name,"PLUS")){
         newNode->operator = ADD;
@@ -256,6 +259,7 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
 
     char* exitLabelString = newLabel();
@@ -433,6 +437,7 @@ void IR_iterative_for(ast_node* node,func_entry* local_ST,func_entry** global_ST
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
 
     char* begin = newLabel();
@@ -511,6 +516,7 @@ void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
 
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
@@ -625,6 +631,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(relOp1->result->name,local_ST->func_curr,temp);
 
     char* string2 = (char*) malloc(sizeof(char)*20);
@@ -642,6 +649,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(relOp2->result->name,local_ST->func_curr,temp);
 
     orNode->operator = OR;
@@ -656,6 +664,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(orNode->result->name,local_ST->func_curr,temp);
 
     ifNode->operator = IF;
@@ -666,6 +675,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(ifNode->result->name,local_ST->func_curr,temp);
     int width;
     if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
@@ -696,6 +706,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     
     temp.is_static = 1;
     temp.datatype = "integer";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(offsetNode1->result->name,local_ST->func_curr,temp);
 
     char* string4 = (char*) malloc(sizeof(char)*20);
@@ -712,6 +723,7 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     
     temp.is_static = 1;
     temp.datatype = "integer";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(offsetNode2->result->name,local_ST->func_curr,temp);
 
     if(tarr->is_static==1){
@@ -783,6 +795,7 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(relOp1->result->name,local_ST->func_curr,temp);
 
     char* string2 = (char*) malloc(sizeof(char)*20);
@@ -799,6 +812,7 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(relOp2->result->name,local_ST->func_curr,temp);
 
     orNode->operator = OR;
@@ -812,6 +826,7 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(orNode->result->name,local_ST->func_curr,temp);
 
     ifNode->operator = IF;
@@ -822,6 +837,7 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(ifNode->result->name,local_ST->func_curr,temp);
     int width;
     if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
@@ -851,6 +867,7 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "integer";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(offsetNode1->result->name,local_ST->func_curr,temp);
 
     char* string4 = (char*) malloc(sizeof(char)*20);
@@ -867,11 +884,13 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     
     temp.is_static = 1;
     temp.datatype = "integer";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(offsetNode2->result->name,local_ST->func_curr,temp);
 
     node->tempName = newTemp();
     temp.is_static = 1;
     temp.datatype = tarr->arr_data->arr_datatype;
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
 
     if(tarr->is_static==1){
@@ -921,6 +940,7 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
     sym_tab_entry_add(node->tempName,local_ST->func_curr,temp); //TODO DEBUG
 
     if(!strcmp(node->name,"LT_result")){
@@ -1121,6 +1141,7 @@ void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         else{
             temp.datatype = node->child_pointers[1]->type;
         }
+        temp.reach_defined = local_ST->func_curr->reach;
         sym_tab_entry_add(minusNode->result->name,local_ST->func_curr,temp);
 
         node->code = add_node_end(minusNode,node->child_pointers[1]->code);

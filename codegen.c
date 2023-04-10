@@ -57,7 +57,7 @@ void macros_starter(){
 
 }
 
-void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
+void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,type_exp res_type){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |   ASSIGN   |    lhs   |    rhs   |    NULL   |
@@ -1665,6 +1665,8 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tfalse_len: equ $ - false\n");
         fprintf(assembly, "\t\tzero: equ 0\n");
 
+        data_read(assembly);
+
         /* Data declaration of various types to be done by going thro each entry of the symbol table*/
 
         fprintf(assembly, "\n\n\t\tsection      .text\n");
@@ -1679,6 +1681,8 @@ void starter(FILE* assembly_file,ir_code* IR)
     var_record* func_curr;
     func_entry* local_ST;
 
+
+
     // Go through each entry of the IR quadruple
     while(IR_head)
     {
@@ -1689,17 +1693,35 @@ void starter(FILE* assembly_file,ir_code* IR)
             else local_ST = find_module_global(IR_head->result->name);
             func_curr = local_ST->func_root; //once we get the local_ST then just locate the root
         }
-        
-        
+        type_exp* left_exp;
+        type_exp* right_exp;
+        type_exp* res_exp;
 
-        char* reach = IR_head->result->reach; 
 
-        if(strcmp(reach,"")){ //if reach is not "" then find the local construct
-                              //in the current local_ST
-            func_curr = find_local_construct(local_ST->name,reach);
-        }else {
-            func_curr = local_ST->func_root;
+        if(IR_head->left_op->name){
+            left_exp = find_expr_codegen(IR_head->left_op->name,local_ST);
+            strcat(IR_head->left_op->name, left_exp->reach_defined);
+            // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->left_op->name,IR_head->left_op->reach));
         }
+        if(IR_head->right_op->name){
+            right_exp = find_expr_codegen(IR_head->right_op->name,local_ST);
+            strcat(IR_head->right_op->name, right_exp->reach_defined);
+            // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->right_op->name,IR_head->right_op->reach));
+        }
+        if(IR_head->result->name){
+            res_exp = find_expr_codegen(IR_head->result->name,local_ST);
+            strcat(IR_head->result->name, res_exp->reach_defined);
+        }
+        char* reach = "";   
+        func_curr = local_ST->func_root;
+
+        // char* reach = IR_head->result->reach; 
+        // if(reachstrcmp(reach,"")){ //if reach is not "" then find the local construct
+        //                       //in the current local_ST
+        //     func_curr = find_local_construct(local_ST->name,reach);
+        // }else {
+        //     func_curr = local_ST->func_root;
+        // }
 
         local_ST->func_curr = func_curr;
 
@@ -1779,4 +1801,96 @@ void starter(FILE* assembly_file,ir_code* IR)
     fprintf(assembly, "main_end:\n");
     fprintf(assembly, "\t\tretq");
     fclose(assembly);
+}
+
+
+type_exp* find_in_list_codegen(sym_tab_entry* output,char* key)
+{
+    while(output){
+        if(!strcmp(output->name,key)){
+            return &output->type;
+        }
+        output = output->next;
+    }  
+    return NULL;
+}
+
+type_exp* find_in_func_table_codegen(char* key, func_entry* curr){
+    //extract the lexeme out of ast_root
+     
+    //check if the module has any parameters or not :
+  
+    //check in the input list 
+    // sym_tab_entry* temp = curr->input_list;
+    // while(temp!=NULL){
+    //     if(!strcmp(temp->name,key)){
+    //         return &temp->type;
+    //     }
+    //     temp = temp->next;
+    // }   
+    type_exp* input=find_in_list_codegen(curr->input_list, key);
+    if(input)
+    return input;
+    type_exp* output=find_in_list_codegen(curr->ouput_list, key);
+    if(output)
+    return output;
+    printf("%s: ",key);
+}
+
+type_exp* find_in_table_codegen(char* key,var_record* table){
+    int index = sym_tab_entry_contains(key,table->entries);
+    if(index==-1) return NULL;
+
+    sym_tab_entry* temp = table->entries[index];
+
+    while(temp!=NULL){
+        if(!strcmp(temp->name,key)){
+            return &temp->type;
+        }
+        temp = temp->next;
+    }
+    return NULL;//think should return NULL
+}
+
+type_exp* find_expr_codegen(char* key, func_entry* curr)
+{
+    if(!curr)
+    {
+        return NULL;
+    }
+    var_record* current_rec = curr->func_curr;
+    var_record* temp = current_rec;
+    type_exp* type=find_in_table_codegen(key, current_rec);
+    if(type)
+    {
+        type_exp* input=find_in_func_table_codegen(key,curr);
+        if(input)
+            return input;
+        else
+        {
+            return NULL;
+        }
+    }
+    if(type)
+        return type;
+    else
+    {
+        curr->func_curr=curr->func_curr->parent; //also need to add for checking variable in the op list and ip list of the function record
+        if(curr->func_curr==NULL)
+        {
+            // just check in the function parameter list
+            type = find_in_func_table_codegen(key,curr);
+            curr->func_curr = temp;
+            //return from here only
+        }
+        else
+        {
+            type = find_expr_codegen(key,curr);
+            curr->func_curr = temp;
+        }
+        return type;
+    }
+}
+void data_read(FILE* assembly){
+    code_gen(assembly);
 }
