@@ -1,6 +1,6 @@
 #include <string.h>
 #include "IR_codegen.h"
-
+#include <ctype.h>
 static int currentLabel = 1;
 static int currentTempVar = 1;
 
@@ -960,6 +960,23 @@ void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         minusNode->result = newTemp();
         minusNode->left_op = str;
         minusNode->right_op = node->child_pointers[1]->tempName;
+        
+        type_exp temp;
+        temp.is_static = 1;
+        if(isdigit(minusNode->right_op[0])){
+            int type_left_int = (strchr(minusNode->right_op, '.'))? 0 : 1;
+            if(type_left_int){
+                temp.datatype  = "integer";
+            }
+            else{
+                temp.datatype  = "real";
+            }
+        }
+        else{
+            temp.datatype = node->child_pointers[1]->type;
+        }
+        sym_tab_entry_add(minusNode->result,local_ST->func_curr,temp);
+
         node->code = add_node_end(minusNode,node->child_pointers[1]->code);
         node->tempName = minusNode->result;
     }
@@ -1026,8 +1043,7 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
     }    
     else if(!strcmp(root->name,"ARRAY_ACCESS")){
         IR_arrayAccess(root,local_ST,global_ST);
-    }    
-
+    }   
 
     else if(!strcmp(root->name,"OUTPUT")){
         IR_outputStmt(root,local_ST,global_ST);

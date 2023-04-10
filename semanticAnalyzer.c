@@ -1265,6 +1265,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 real->isChanged=1;
                 return real;
             }
+        if(ret)node->type = ret->datatype;
         return ret;
         }
      }
@@ -1570,9 +1571,9 @@ void printer_(func_entry* node){
 void print_symbol_table(){
     // variable_name    scope_name_(start line to end line)   type    is_array    static/dynamic  range   width   offset  nesting_level
     for(int i=0;i<TABLE_SIZE;i++){
-        if(global_func_table[i] != NULL){
-            printer_(global_func_table[i]);
-            func_entry* temp = global_func_table[i];
+        if(global_TABLE[i] != NULL){
+            printer_(global_TABLE[i]);
+            func_entry* temp = global_TABLE[i];
             while(temp->next!=NULL){
                 printer_(temp->next);
                 temp = temp->next;
