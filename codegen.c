@@ -57,7 +57,7 @@ void macros_starter(){
 
 }
 
-void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,type_exp res_type){
+void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |   ASSIGN   |    lhs   |    rhs   |    NULL   |
@@ -101,7 +101,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,type_exp res_type
         {    
             fprintf(assembly, "\t\tmov      rax , %s                    ; immediate to register\n",nameRHS);
             
-            fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
+            fprintf(assembly, "\t\tmov      [%s] , rax            ; register to memory\n",ir->result->name);
             
         }
 
@@ -109,7 +109,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,type_exp res_type
         {
             fprintf(assembly, "\t\tmovsd      xmm0 , %s                    ; immediate to register\n",nameRHS);
             
-            fprintf(assembly, "\t\tmovsd      [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
+            fprintf(assembly, "\t\tmovsd      [%s] , xmm0            ; register to memory\n",ir->result->name);
             
         }
     }
@@ -129,17 +129,17 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST,type_exp res_type
 
         if(!strcmp(temp->type.datatype, "integer"))
         {
-            fprintf(assembly, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetRHS);
+            fprintf(assembly, "\t\tmov      rax , [%s]                    ; memory to register\n",ir->left_op->name);
             
-            fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
+            fprintf(assembly, "\t\tmov      [%s] , rax            ; register to memory\n",ir->result->name);
             
         }
 
         else
         {
-            fprintf(assembly, "\t\tmovsd      xmm0 , [RBP - %d]                    ; memory to register\n",offsetRHS);
+            fprintf(assembly, "\t\tmovsd      xmm0 , [%s]                    ; memory to register\n",ir->left_op->name);
             
-            fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0            ; register to memory\n",offsetLHS);
+            fprintf(assembly, "\t\tmovsd     [%s] , xmm0            ; register to memory\n",ir->result->name);
             
         }
     }
@@ -390,15 +390,15 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
         
     }
 
-    fprintf(assembly, 
-            "\t\t\t\tmov RDX, RBP\n\
-                sub RDX, %d     ; make RDX to point at location of variable on the stack\n\
+    fprintf(assembly,\
+    "\t\t\t\tmov RDX, RBP\n\
+                ;sub RDX, 0     ; make RDX to point at location of variable on the stack\n\
                 ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later\n\
-                mov RSI, RDX \n\
+                mov RSI, %s \n\
                 mov RAX, 0 \n\
                 rsp_align ;align RSP to 16 byte boundary for scanf call\n\
                 call scanf \n\
-                rsp_realign ;realign it to original position\n", offsetResult);
+                rsp_realign ;realign it to original position\n", ir->result->name);
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
 
@@ -451,10 +451,10 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
                 fprintf(assembly, "\t\tpush_regs                    ; save values\n");
                 
 
-                fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_int_out]                ; get corresponding format specifier\n");
+                fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_out                ; get corresponding format specifier\n");
                 
 
-                fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+                fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", ir->result->name);
                 
                 fprintf(assembly, "\t\txor      rax , rax\n");
                 
@@ -473,10 +473,10 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
                 fprintf(assembly, "\t\tpush_regs                    ; save values\n");
                 
 
-                fprintf(assembly, "\t\tlea      rdi , [rel fmt_spec_real_out]                ; get corresponding format specifier\n");
+                fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_real_out                ; get corresponding format specifier\n");
                 
 
-                fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
+                fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", ir->result->name);
                 
                 fprintf(assembly, "\t\txor      rax , rax\n");
                 
@@ -512,11 +512,11 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                  ; get corresponding format specifier\n");
             
 
-            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
-            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", ir->result->name);
             
-            fprintf(assembly, "\t\tmov      rsi , [rdx]                               ; move source index\n");
+            fprintf(assembly, "\t\tmov      rsi , [%s]                               ; move source index\n",ir->result->name);
             
             fprintf(assembly, "\t\txor      rax , rax\n");
             
@@ -532,11 +532,11 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out          ; get corresponding format specifier\n");
             
 
-            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
-            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
             
-            fprintf(assembly, "\t\tmovq      xmm0 ,[rdx]                               ; move source index\n");
+            fprintf(assembly, "\t\tmovq      xmm0 ,[%s]                               ; move source index\n",ir->result->name);
             
             fprintf(assembly, "\t\tmov      rax , 1\n");
             
@@ -556,11 +556,11 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             char* true_label = newLabel();
             char* next_label = newLabel();
 
-            fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+            // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
-            fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+            // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
             
-            fprintf(assembly, "\t\tmov      rax , [rdx]                               ; move source index\n");
+            fprintf(assembly, "\t\tmov      rax , [%s]                               ; move source index\n",ir->result->name);
             
             fprintf(assembly, "\t\tcmp      rax , 0\n");
             
@@ -679,12 +679,12 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
         if(!strcmp(resultType, "integer"))
         {
-            fprintf(assembly, "\t\tmov     rax , [RBP - %d]\n", offsetLeft);
+            fprintf(assembly, "\t\tmov     rax , [%s]\n", ir->left_op->name);
             
         }
         else
         {
-            fprintf(assembly, "\t\tmovsd     xmm0 , [RBP - %d]\n", offsetLeft);
+            fprintf(assembly, "\t\tmovsd     xmm0 , [%s]\n", ir->left_op->name);
             
         }
         
@@ -706,17 +706,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 // CHECK ----> identifying if immediate value is int or real
                 if(type_right_int)
                 {
-                    fprintf(assembly, "\t\tadd     rax , %s\n", nameRight);
+                    fprintf(assembly, "\t\tadd     rax , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
                     
                 }
 
                 else
                 {
-                    fprintf(assembly, "\t\taddsd     xmm0 , %s\n", nameRight);
+                    fprintf(assembly, "\t\taddsd     xmm0 , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -734,16 +734,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    fprintf(assembly, "\t\tadd     rax , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tadd     rax , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
                     
                 }
                 else
                 {
-                    fprintf(assembly, "\t\taddsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\taddsd     xmm0 , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -761,7 +761,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 {
                     fprintf(assembly, "\t\tsub     rax , %s\n", nameRight);
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
                     
                 }
 
@@ -769,7 +769,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 {
                     fprintf(assembly, "\t\tsubsd     xmm0 , %s\n", nameRight);
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -787,16 +787,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    fprintf(assembly, "\t\tsub     rax , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tsub     rax , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
                     
                 }
                 else
                 {
-                    fprintf(assembly, "\t\tsubsd     xmm0 , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tsubsd     xmm0 , [%s]\n", ir->right_op->name);
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -818,7 +818,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     
                     fprintf(assembly, "\t\timul     rbx\n");
                     
-                    fprintf(assembly, "\t\tmov    [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov    [%s] , rax\n", ir->result->name);
                     
                 }
 
@@ -828,7 +828,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                     fprintf(assembly, "\t\tmulsd     xmm1\n");
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -846,20 +846,20 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
 
                 if(!strcmp(resultType, "integer"))
                 {
-                    fprintf(assembly, "\t\tmov     rbx , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
 
                     fprintf(assembly, "\t\timul     rbx\n");
                     
-                    fprintf(assembly, "\t\tmov     [RBP - %d] , rax\n", offsetResult);
+                    fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
                     
                 }
                 else
                 {
-                    fprintf(assembly, "\t\tmovsd     xmm1 , [RBP - %d]\n", offsetRight);
+                    fprintf(assembly, "\t\tmovsd     xmm1 , [%s]\n", ir->right_op->name);
                   
                     fprintf(assembly, "\t\tmulsd     xmm1\n");
                     
-                    fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                    fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                     
                 }
             }
@@ -873,7 +873,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             {
                 fprintf(assembly, "\t\tdivsd     xmm0 , %s\n", nameRight);
                 
-                fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                 
             }
 
@@ -888,9 +888,9 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 }
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
-                fprintf(assembly, "\t\tdivsd     xmm0 , [RBP - %d]\n", offsetRight);
+                fprintf(assembly, "\t\tdivsd     xmm0 , [%s]\n", ir->right_op->name);
                 
-                fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0\n", offsetResult);
+                fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
                 
             }
             break;
@@ -1698,20 +1698,37 @@ void starter(FILE* assembly_file,ir_code* IR)
         type_exp* res_exp;
 
 
-        if(IR_head->left_op->name){
+        // int index = ;        // Checks if the symbol table contains - if yes we get the index
+        
+        if(IR_head->left_op->name&& (sym_tab_entry_contains(IR_head->left_op->name,local_ST->func_curr->entries)!=-1)){
             left_exp = find_expr_codegen(IR_head->left_op->name,local_ST);
-            strcat(IR_head->left_op->name, left_exp->reach_defined);
+            char* temp = (char*)malloc(sizeof(char)*30);
+            memset(temp,'\0',sizeof(temp));
+            strcpy(temp, IR_head->left_op->name);
+            strcat(temp, left_exp->reach_defined);
+            IR_head->left_op->name = temp;
+            // strcat(IR_head->left_op->name, left_exp->reach_defined);
             // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->left_op->name,IR_head->left_op->reach));
         }
-        if(IR_head->right_op->name){
+        if(IR_head->right_op->name&& (sym_tab_entry_contains(IR_head->right_op->name,local_ST->func_curr->entries)!=-1)){
             right_exp = find_expr_codegen(IR_head->right_op->name,local_ST);
-            strcat(IR_head->right_op->name, right_exp->reach_defined);
+            char* temp = (char*)malloc(sizeof(char)*30);
+            memset(temp,'\0',sizeof(temp));
+            strcpy(temp, IR_head->right_op->name);
+            strcat(temp, right_exp->reach_defined);
+            IR_head->right_op->name = temp;
+            // strcat(IR_head->right_op->name, right_exp->reach_defined);
             // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->right_op->name,IR_head->right_op->reach));
         }
-        if(IR_head->result->name){
+        if(IR_head->result->name&&strcmp(IR_head->result->name,"main")&& (sym_tab_entry_contains(IR_head->result->name,local_ST->func_curr->entries)!=-1)){
             res_exp = find_expr_codegen(IR_head->result->name,local_ST);
-            strcat(IR_head->result->name, res_exp->reach_defined);
+            char* temp = (char*)malloc(sizeof(char)*30);
+            memset(temp,'\0',sizeof(temp));
+            strcpy(temp, IR_head->result->name);
+            strcat(temp, res_exp->reach_defined);
+            IR_head->result->name = temp;
         }
+        
         char* reach = "";   
         func_curr = local_ST->func_root;
 
@@ -1861,16 +1878,6 @@ type_exp* find_expr_codegen(char* key, func_entry* curr)
     var_record* current_rec = curr->func_curr;
     var_record* temp = current_rec;
     type_exp* type=find_in_table_codegen(key, current_rec);
-    if(type)
-    {
-        type_exp* input=find_in_func_table_codegen(key,curr);
-        if(input)
-            return input;
-        else
-        {
-            return NULL;
-        }
-    }
     if(type)
         return type;
     else

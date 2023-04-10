@@ -1049,6 +1049,7 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     // sprintf(newNode->result->name,"main");
     
     newNode->result->name = "main";
+    newNode->reach = "";
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
     //TODO AYUSUDU
     // currentSibilingLevel = 0;

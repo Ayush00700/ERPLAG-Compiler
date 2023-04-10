@@ -1750,7 +1750,7 @@ void print_ipop_list_codegen(sym_tab_entry* list,int level,FILE* assembly){
         return;
     }
     strcat(list->name,list->type.reach_defined);
-    fprintf(assembly, "\t\t%s:   dd   0\n",list->name);
+    fprintf(assembly, "\t\t%s:   dq   0\n",list->name);
     printf("variable name : %s  ",list->name);
     print_ipop_list_codegen(list->next,level,assembly);
 }
