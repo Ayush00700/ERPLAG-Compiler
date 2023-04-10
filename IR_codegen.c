@@ -7,8 +7,10 @@ static int currentTempVar = 1;
 
 // static int currentChildLabel = 0;
 
-char* concat(char* t1,char*t2){
+char* findReach(char* val, func_entry* local_ST){
+    return "";
 }
+
 
 ir_code* initialize_ir_code()
 /* This function initializes the Quadruple LISt to store the intermediate 3 address code*/
@@ -23,12 +25,19 @@ ir_code_node* getNew_ir_code_node(func_entry* local_ST)
 /* This function initializes the Quadruple to store the intermediate 3 address code*/
 {
     ir_code_node* newNode = (ir_code_node*)malloc(sizeof(ir_code_node));
-    newNode->left_op = NULL;
-    newNode->result = NULL;
-    newNode->right_op = NULL;
+    newNode->left_op = (char_offset*) malloc(sizeof(char_offset));
+    newNode->right_op = (char_offset*) malloc(sizeof(char_offset));
+    newNode->result = (char_offset*) malloc(sizeof(char_offset));
+    newNode->left_op->name = NULL;
+    newNode->result->name= NULL;
+    newNode->right_op->name = NULL;
     newNode->next = NULL;
     newNode->operator = -1;
-    newNode->reach = local_ST->func_curr->reach;
+    newNode->result->name = NULL;
+    newNode->left_op->reach = NULL;
+    newNode->right_op->reach = NULL;
+
+    // newNode->reach = local_ST->func_curr->reach;
     return newNode;
 }   
 
@@ -147,7 +156,8 @@ void IR_inputStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     // generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//STMTS
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
     newNode->operator = GET_VALUE;
-    newNode->result = node->token->lexeme;
+    newNode->result->name = node->token->lexeme;
+    newNode->result->reach = findReach(newNode->result->name, local_ST);
     node->code = add_node_beg(newNode,NULL);
 }
 
@@ -156,10 +166,12 @@ void IR_outputStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
     newNode->operator = PRINT;
     if(node->child_pointers[0]->isTerminal){
-        newNode->result = node->child_pointers[0]->token->lexeme;
+        newNode->result->name = node->child_pointers[0]->token->lexeme;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
     }else{
-        newNode->result = node->child_pointers[0]->tempName;
-        // sprintf(newNode->result,"%s",node->child_pointers[0]->tempName);
+        newNode->result->name = node->child_pointers[0]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        // sprintf(newNode->result->name,"%s",node->child_pointers[0]->tempName);
     }
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
 }
@@ -191,28 +203,43 @@ void IR_arithmeticExpr(ast_node* node,func_entry* local_ST,func_entry** global_S
     }
     if(!strcmp(node->name,"PLUS")){
         newNode->operator = ADD;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
     }
     else if(!strcmp(node->name,"MINUS")){
         newNode->operator = SUB;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
 
     }
     else if(!strcmp(node->name,"MUL")){
         newNode->operator = MUL;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
     else if(!strcmp(node->name,"DIV")){
         newNode->operator = DIV;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
     node->code = add_node_end(newNode,node->child_pointers[1]->code);
     node->code = add_list_beg(node->child_pointers[0]->code,node->code);
@@ -239,18 +266,25 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         char* caseId = curr->child_pointers[0]->tempName;
         ir_code_node* eqCheck = getNew_ir_code_node(local_ST);
         eqCheck->operator = EQ;
-        eqCheck->result = boolCheckTemp;
-        eqCheck->left_op = idName;
-        eqCheck->right_op = caseId;
+        eqCheck->result->name = boolCheckTemp;
+        eqCheck->left_op->name = idName;
+        eqCheck->right_op->name = caseId;
+        eqCheck->result->reach = findReach(eqCheck->result->name, local_ST);
+        eqCheck->left_op->reach = findReach(eqCheck->left_op->name, local_ST);
+        eqCheck->right_op->reach = findReach(eqCheck->right_op->name, local_ST);
+
 
         ir_code_node* ifNode = getNew_ir_code_node(local_ST);
         ifNode->operator = IF;
-        ifNode->result = boolCheckTemp;
-        ifNode->left_op = currLabel;
+        ifNode->result->name = boolCheckTemp;
+        ifNode->left_op->name = currLabel;
+        ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+        // ifNode->left_op->reach = findReach(ifNode->left_op->name, local_ST);
+        
 
         ir_code_node* caseLabelNode = getNew_ir_code_node(local_ST);
         caseLabelNode->operator = LABEL;
-        caseLabelNode->result = currLabel;
+        caseLabelNode->result->name = currLabel;
 
 
         ifConds = add_node_end(eqCheck,ifConds);
@@ -269,7 +303,7 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
         ir_code_node* exitGoto = getNew_ir_code_node(local_ST);
         exitGoto->operator = GOTO;
-        exitGoto->result = exitLabelString;
+        exitGoto->result->name = exitLabelString;
 
         caseStmts = add_node_end(exitGoto,caseStmts);
         
@@ -284,7 +318,7 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
     ir_code_node* exitGoto = getNew_ir_code_node(local_ST);
     exitGoto->operator = GOTO;
-    exitGoto->result = exitLabelString;
+    exitGoto->result->name = exitLabelString;
     curr = node->child_pointers[2];
     if(node->child_pointers[2]&&!strcmp(node->child_pointers[2]->name,"DEFAULTCASE")){
 
@@ -292,12 +326,12 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
         ir_code_node* exitGotoDefault = getNew_ir_code_node(local_ST);
         exitGotoDefault->operator = GOTO;
-        exitGotoDefault->result = currLabel;
+        exitGotoDefault->result->name = currLabel;
 
         
         ir_code_node* caseLabelNode = getNew_ir_code_node(local_ST);
         caseLabelNode->operator = LABEL;
-        caseLabelNode->result = currLabel;
+        caseLabelNode->result->name = currLabel;
 
         generate_IR_for_module(curr->child_pointers[0],local_ST,global_ST);//TODO fix the local_ST context change
 
@@ -312,7 +346,7 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
         ir_code_node* exitGoto = getNew_ir_code_node(local_ST);
         exitGoto->operator = GOTO;
-        exitGoto->result = exitLabelString;
+        exitGoto->result->name = exitLabelString;
 
         ifConds = add_node_end(exitGotoDefault,ifConds);
         caseStmts = add_node_end(exitGoto,caseStmts);
@@ -323,7 +357,7 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
     ir_code_node* exitLabel = getNew_ir_code_node(local_ST);
     exitLabel->operator = LABEL;
-    exitLabel->result = exitLabelString;
+    exitLabel->result->name = exitLabelString;
 
     node->code = add_list_end(ifConds,node->code);
     node->code = add_list_end(caseStmts,node->code);
@@ -341,30 +375,33 @@ void IR_iterative_while(ast_node* node,func_entry* local_ST,func_entry** global_
 
     ir_code_node* labelNode0 = getNew_ir_code_node(local_ST);
     labelNode0->operator = LABEL;
-    labelNode0->result = begin;
+    labelNode0->result->name = begin;
 
     ir_code_node* ifNode = getNew_ir_code_node(local_ST);
     ifNode->operator = IF;
-    ifNode->left_op = trueLabel;
-    ifNode->result = node->child_pointers[0]->tempName;
+    ifNode->left_op->name = trueLabel;
+    ifNode->result->name = node->child_pointers[0]->tempName;
+    ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+    
 
     ir_code_node* gotoNode = getNew_ir_code_node(local_ST);
     gotoNode->operator = GOTO;
-    gotoNode->result = falseLabel;
+    gotoNode->result->name = falseLabel;
+    
 
     ir_code_node* labelNode1 = getNew_ir_code_node(local_ST);
     labelNode1->operator = LABEL;
-    labelNode1->result = trueLabel;
+    labelNode1->result->name = trueLabel;
 
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);
 
     ir_code_node* gotoNode2 = getNew_ir_code_node(local_ST);
     gotoNode2->operator = GOTO;
-    gotoNode2->result = begin;
+    gotoNode2->result->name = begin;
 
     ir_code_node* labelNode2 = getNew_ir_code_node(local_ST);
     labelNode2->operator = LABEL;
-    labelNode2->result = falseLabel;
+    labelNode2->result->name = falseLabel;
 
     node->code = add_node_end(labelNode0,node->code);
     node->code = add_list_end(node->child_pointers[0]->code,node->code);
@@ -387,8 +424,11 @@ void IR_iterative_for(ast_node* node,func_entry* local_ST,func_entry** global_ST
 
     ir_code_node* assignNode = getNew_ir_code_node(local_ST);
     assignNode->operator = ASSIGN;
-    assignNode->result = indexName;
-    assignNode->left_op = tempNameLeftRangeOP;
+    assignNode->result->name = indexName;
+    assignNode->left_op->name = tempNameLeftRangeOP;
+    assignNode->result->reach = findReach(assignNode->result->name, local_ST);
+    assignNode->left_op->reach = findReach(assignNode->left_op->name, local_ST);
+
 
     type_exp temp;
     temp.is_static = 1;
@@ -401,26 +441,32 @@ void IR_iterative_for(ast_node* node,func_entry* local_ST,func_entry** global_ST
 
     ir_code_node* labelNode0 = getNew_ir_code_node(local_ST);
     labelNode0->operator = LABEL;
-    labelNode0->result = begin;
+    labelNode0->result->name = begin;
 
     ir_code_node* relOp1 = getNew_ir_code_node(local_ST);
     relOp1->operator = LE;
-    relOp1->left_op = indexName;
-    relOp1->right_op = tempNameRightRangeOP;
-    relOp1->result = boolCheckTemp;
+    relOp1->left_op->name = indexName;
+    relOp1->right_op->name = tempNameRightRangeOP;
+    relOp1->result->name = boolCheckTemp;
+    relOp1->result->reach = findReach(relOp1->result->name, local_ST);
+    relOp1->left_op->reach = findReach(relOp1->left_op->name, local_ST);
+    relOp1->right_op->reach = findReach(relOp1->right_op->name, local_ST);
+
 
     ir_code_node* ifNode = getNew_ir_code_node(local_ST);
     ifNode->operator = IF;
-    ifNode->result = boolCheckTemp;
-    ifNode->left_op = trueLabel;
+    ifNode->result->name = boolCheckTemp;
+    ifNode->left_op->name = trueLabel;
+    ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+
 
     ir_code_node* gotoNode = getNew_ir_code_node(local_ST);
     gotoNode->operator = GOTO;
-    gotoNode->result = falseLabel;
+    gotoNode->result->name = falseLabel;
 
     ir_code_node* labelNode1 = getNew_ir_code_node(local_ST);
     labelNode1->operator = LABEL;
-    labelNode1->result = trueLabel;
+    labelNode1->result->name = trueLabel;
 
     generate_IR_for_module(node->child_pointers[2],local_ST,global_ST);
 
@@ -428,17 +474,21 @@ void IR_iterative_for(ast_node* node,func_entry* local_ST,func_entry** global_ST
     sprintf(one,"%d",1);
     ir_code_node* incNode = getNew_ir_code_node(local_ST);
     incNode->operator = ADD;
-    incNode->left_op = indexName;
-    incNode->right_op = one;
-    incNode->result = indexName;
+    incNode->left_op->name = indexName;
+    incNode->right_op->name = one;
+    incNode->result->name = indexName;
+    incNode->result->reach = findReach(incNode->result->name, local_ST);
+    incNode->left_op->reach = findReach(incNode->left_op->name, local_ST);
+    incNode->right_op->reach = findReach(incNode->right_op->name, local_ST);
+
 
     ir_code_node* gotoNode2 = getNew_ir_code_node(local_ST);
     gotoNode2->operator = GOTO;
-    gotoNode2->result = begin;
+    gotoNode2->result->name = begin;
 
     ir_code_node* labelNode2 = getNew_ir_code_node(local_ST);
     labelNode2->operator = LABEL;
-    labelNode2->result = falseLabel;
+    labelNode2->result->name = falseLabel;
 
     node->code = add_node_end(assignNode,node->code);
     node->code = add_node_end(labelNode0,node->code);
@@ -470,9 +520,13 @@ void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     }else if(!strcmp(node->name,"OR")){
         newNode->operator = OR;
     }
-    newNode->result = node->tempName;
-    newNode->left_op = node->child_pointers[0]->tempName;
-    newNode->right_op = node->child_pointers[1]->tempName;
+    newNode->result->name = node->tempName;
+    newNode->left_op->name = node->child_pointers[0]->tempName;
+    newNode->right_op->name = node->child_pointers[1]->tempName;
+    newNode->result->reach = findReach(newNode->result->name, local_ST);
+    newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+    newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     node->code = add_list_end(node->child_pointers[0]->code,node->code);
     node->code = add_list_end(node->child_pointers[1]->code,node->code);
     node->code = add_node_end(newNode,node->code);
@@ -482,20 +536,22 @@ void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_S
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//RHS
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
     newNode->operator = ASSIGN;
-    if(node->child_pointers[0]->isTerminal)
-        newNode->result = node->child_pointers[0]->token->lexeme;
+    if(node->child_pointers[0]->isTerminal){
+        newNode->result->name = node->child_pointers[0]->token->lexeme;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+    }
     else{
         IR_arrayAssign(node->child_pointers[0],local_ST,global_ST,node->child_pointers[1]);
 
-        // newNode->result = node->child_pointers[0]->tempName;
+        // newNode->result->name = node->child_pointers[0]->tempName;
         node->code = node->child_pointers[0]->code;
         return;
-        //TODO
-        // newNode->result = newTemp();
-        // node->child_pointers[0]->tempName = newNode->result; //MODIFY
+        //
+        // newNode->result->name = newTemp();
+        // node->child_pointers[0]->tempName = newNode->result->name; //MODIFY
         //add add_list_end()
     }
-    newNode->left_op = node->child_pointers[1]->tempName;
+    newNode->left_op->name = node->child_pointers[1]->tempName;
     node->code = add_node_end(newNode,node->child_pointers[1]->code);
 }
 
@@ -504,7 +560,7 @@ void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST)
     ir_code* paraInList = NULL;
     ir_code* paraOutList = NULL;
     callNode->operator = CALL;
-    callNode->result = node->child_pointers[0]->token->lexeme;
+    callNode->result->name = node->child_pointers[0]->token->lexeme;
     ast_node* curr = node->child_pointers[2];
     int rightParaCount = 0;
     int leftParaCount = 0;
@@ -514,7 +570,8 @@ void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST)
             generate_IR_for_module(curr->child_pointers[1]->child_pointers[0],local_ST,global_ST);
         ir_code_node* paraInNode = getNew_ir_code_node(local_ST);
         paraInNode->operator = PARA_IN;
-        paraInNode->result = curr->child_pointers[1]->child_pointers[0]->tempName;
+        paraInNode->result->name = curr->child_pointers[1]->child_pointers[0]->tempName;
+        paraInNode->result->reach = findReach(paraInNode->result->name, local_ST);
         paraInList = add_node_end(paraInNode,paraInList);
         curr = curr->next;
     }
@@ -523,7 +580,9 @@ void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST)
         leftParaCount++;
         ir_code_node* paraOutNode = getNew_ir_code_node(local_ST);
         paraOutNode->operator = PARA_OUT;
-        paraOutNode->result = curr->tempName;
+        paraOutNode->result->name = curr->tempName;
+        paraOutNode->result->reach = findReach(paraOutNode->result->name, local_ST);
+
         paraOutList = add_node_end(paraOutNode,paraOutList);
         curr = curr->next;
     }
@@ -531,8 +590,8 @@ void IR_functionCall(ast_node* node,func_entry* local_ST,func_entry** global_ST)
     sprintf(rightChar,"%d",rightParaCount);
     char* leftChar = (char*) malloc(sizeof(char)*2);
     sprintf(leftChar,"%d",leftParaCount);
-    callNode->left_op = leftChar;
-    callNode->right_op = rightChar;
+    callNode->left_op->name = leftChar;
+    callNode->right_op->name = rightChar;
     node->code = add_list_end(paraInList,node->code);
     node->code = add_node_end(callNode,node->code);
     node->code = add_list_end(paraOutList,node->code);
@@ -555,43 +614,59 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     sprintf(string1,"%d",tarr->arr_data->lower_bound);
 
     relOp1->operator = LT;
-    relOp1->left_op = node->child_pointers[1]->tempName;
-    relOp1->right_op = string1;
-    relOp1->result = newTemp();
+    relOp1->left_op->name = node->child_pointers[1]->tempName;
+    relOp1->right_op->name = string1;
+    relOp1->result->name = newTemp();
+    relOp1->result->reach = findReach(relOp1->result->name, local_ST);
+    relOp1->left_op->reach = findReach(relOp1->left_op->name, local_ST);
+    relOp1->right_op->reach = findReach(relOp1->right_op->name, local_ST);
+
     
     type_exp temp;
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(relOp1->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(relOp1->result->name,local_ST->func_curr,temp);
 
     char* string2 = (char*) malloc(sizeof(char)*20);
     sprintf(string2,"%d",tarr->arr_data->upper_bound);
 
     relOp2->operator = GT;
-    relOp2->left_op = node->child_pointers[1]->tempName;
-    relOp2->right_op = string2;
-    relOp2->result = newTemp();
+    relOp2->left_op->name = node->child_pointers[1]->tempName;
+    relOp2->right_op->name = string2;
+    relOp2->result->name = newTemp();
+    relOp2->result->reach = findReach(relOp2->result->name, local_ST);
+    relOp2->left_op->reach = findReach(relOp2->left_op->name, local_ST);
+    relOp2->right_op->reach = findReach(relOp2->right_op->name, local_ST);
+
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(relOp2->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(relOp2->result->name,local_ST->func_curr,temp);
 
     orNode->operator = OR;
-    orNode->left_op = relOp1->result;
-    orNode->right_op = relOp2->result;
-    orNode->result = newTemp();
+    orNode->left_op->name = relOp1->result->name;
+    orNode->right_op->name = relOp2->result->name;
+    orNode->result->name = newTemp();
+    orNode->result->reach = findReach(orNode->result->name, local_ST);
+    orNode->left_op->reach = findReach(orNode->left_op->name, local_ST);
+    orNode->right_op->reach = findReach(orNode->right_op->name, local_ST);
+
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(orNode->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(orNode->result->name,local_ST->func_curr,temp);
 
     ifNode->operator = IF;
-    ifNode->left_op = newLabel();
-    ifNode->result = orNode->result;
+    ifNode->left_op->name = newLabel();
+    ifNode->result->name = orNode->result->name;
+    ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(ifNode->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(ifNode->result->name,local_ST->func_curr,temp);
     int width;
     if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
         width = INT_OFFSET;
@@ -611,36 +686,52 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     sprintf(string3,"%d",width);
 
     offsetNode1->operator = MUL;
-    offsetNode1->left_op = node->child_pointers[1]->tempName;
-    offsetNode1->right_op = string3;
-    offsetNode1->result = newTemp();
+    offsetNode1->left_op->name = node->child_pointers[1]->tempName;
+    offsetNode1->right_op->name = string3;
+    offsetNode1->result->name = newTemp();
+    offsetNode1->result->reach = findReach(offsetNode1->result->name, local_ST);
+    offsetNode1->left_op->reach = findReach(offsetNode1->left_op->name, local_ST);
+    offsetNode1->right_op->reach = findReach(offsetNode1->right_op->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "integer";
-    sym_tab_entry_add(offsetNode1->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(offsetNode1->result->name,local_ST->func_curr,temp);
 
     char* string4 = (char*) malloc(sizeof(char)*20);
     sprintf(string4,"%d",tempOffset);
     offsetNode2->operator = ADD;
-    offsetNode2->left_op = string4;
-    offsetNode2->right_op = offsetNode1->result;
-    offsetNode2->result = newTemp();
+    offsetNode2->left_op->name = string4;
+    offsetNode2->right_op->name = offsetNode1->result->name;
+    offsetNode2->result->name = newTemp();
+    offsetNode2->result->reach = findReach(offsetNode2->result->name, local_ST);
+    offsetNode2->left_op->reach = findReach(offsetNode2->left_op->name, local_ST);
+    offsetNode2->right_op->reach = findReach(offsetNode2->right_op->name, local_ST);
+
+
     
     temp.is_static = 1;
     temp.datatype = "integer";
-    sym_tab_entry_add(offsetNode2->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(offsetNode2->result->name,local_ST->func_curr,temp);
 
     if(tarr->is_static==1){
         memWriteNode->operator = MEMWRITE_ST;
-        memWriteNode->result = node->child_pointers[0]->token->lexeme;
-        memWriteNode->left_op = offsetNode2->result;
-        memWriteNode->right_op = nodeExp2->tempName;
+        memWriteNode->result->name = node->child_pointers[0]->token->lexeme;
+        memWriteNode->left_op->name = offsetNode2->result->name;
+        memWriteNode->right_op->name = nodeExp2->tempName;
+        memWriteNode->result->reach = findReach(memWriteNode->result->name, local_ST);
+        memWriteNode->left_op->reach = findReach(memWriteNode->left_op->name, local_ST);
+        memWriteNode->right_op->reach = findReach(memWriteNode->right_op->name, local_ST);
+
     }
     else{
         memWriteNode->operator = MEMWRITE;
-        memWriteNode->result = node->child_pointers[0]->token->lexeme;
-        memWriteNode->left_op = offsetNode2->result;
-        memWriteNode->right_op = nodeExp2->tempName;
+        memWriteNode->result->name = node->child_pointers[0]->token->lexeme;
+        memWriteNode->left_op->name = offsetNode2->result->name;
+        memWriteNode->right_op->name = nodeExp2->tempName;
+        memWriteNode->result->reach = findReach(memWriteNode->result->name, local_ST);
+        memWriteNode->left_op->reach = findReach(memWriteNode->left_op->name, local_ST);
+        memWriteNode->right_op->reach = findReach(memWriteNode->right_op->name, local_ST);
     }
 
     node->code = add_list_end(nodeExp2->code,node->code);
@@ -682,42 +773,56 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     sprintf(string1,"%d",tarr->arr_data->lower_bound);
 
     relOp1->operator = LT;
-    relOp1->left_op = node->child_pointers[1]->tempName;
-    relOp1->right_op = string1;
-    relOp1->result = newTemp();
+    relOp1->left_op->name = node->child_pointers[1]->tempName;
+    relOp1->right_op->name = string1;
+    relOp1->result->name = newTemp();
+    relOp1->result->reach = findReach(relOp1->result->name, local_ST);
+    relOp1->left_op->reach = findReach(relOp1->left_op->name, local_ST);
+    relOp1->right_op->reach = findReach(relOp1->right_op->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(relOp1->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(relOp1->result->name,local_ST->func_curr,temp);
 
     char* string2 = (char*) malloc(sizeof(char)*20);
     sprintf(string2,"%d",tarr->arr_data->upper_bound);
 
     relOp2->operator = GT;
-    relOp2->left_op = node->child_pointers[1]->tempName;
-    relOp2->right_op = string2;
-    relOp2->result = newTemp();
+    relOp2->left_op->name = node->child_pointers[1]->tempName;
+    relOp2->right_op->name = string2;
+    relOp2->result->name = newTemp();
+    relOp2->result->reach = findReach(relOp2->result->name, local_ST);
+    relOp2->left_op->reach = findReach(relOp2->left_op->name, local_ST);
+    relOp2->right_op->reach = findReach(relOp2->right_op->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(relOp2->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(relOp2->result->name,local_ST->func_curr,temp);
 
     orNode->operator = OR;
-    orNode->left_op = relOp1->result;
-    orNode->right_op = relOp2->result;
-    orNode->result = newTemp();
+    orNode->left_op->name = relOp1->result->name;
+    orNode->right_op->name = relOp2->result->name;
+    orNode->result->name = newTemp();
+    orNode->result->reach = findReach(orNode->result->name, local_ST);
+    orNode->left_op->reach = findReach(orNode->left_op->name, local_ST);
+    orNode->right_op->reach = findReach(orNode->right_op->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(orNode->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(orNode->result->name,local_ST->func_curr,temp);
 
     ifNode->operator = IF;
-    ifNode->left_op = newLabel();
-    ifNode->result = orNode->result;
+    ifNode->left_op->name = newLabel();
+    ifNode->result->name = orNode->result->name;
+    ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+
     
     temp.is_static = 1;
     temp.datatype = "boolean";
-    sym_tab_entry_add(ifNode->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(ifNode->result->name,local_ST->func_curr,temp);
     int width;
     if(!strcmp(tarr->arr_data->arr_datatype,"integer")){
         width = INT_OFFSET;
@@ -737,24 +842,32 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     sprintf(string3,"%d",width);
 
     offsetNode1->operator = MUL;
-    offsetNode1->left_op = node->child_pointers[1]->tempName;
-    offsetNode1->right_op = string3;
-    offsetNode1->result = newTemp();
+    offsetNode1->left_op->name = node->child_pointers[1]->tempName;
+    offsetNode1->right_op->name = string3;
+    offsetNode1->result->name = newTemp();
+    offsetNode1->result->reach = findReach(offsetNode1->result->name, local_ST);
+    offsetNode1->left_op->reach = findReach(offsetNode1->left_op->name, local_ST);
+    offsetNode1->right_op->reach = findReach(offsetNode1->right_op->name, local_ST);
     
     temp.is_static = 1;
     temp.datatype = "integer";
-    sym_tab_entry_add(offsetNode1->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(offsetNode1->result->name,local_ST->func_curr,temp);
 
     char* string4 = (char*) malloc(sizeof(char)*20);
     sprintf(string4,"%d",tempOffset);
     offsetNode2->operator = ADD;
-    offsetNode2->left_op = string4;
-    offsetNode2->right_op = offsetNode1->result;
-    offsetNode2->result = newTemp();
+    offsetNode2->left_op->name = string4;
+    offsetNode2->right_op->name = offsetNode1->result->name;
+    offsetNode2->result->name = newTemp();
+    offsetNode2->result->reach = findReach(offsetNode2->result->name, local_ST);
+    offsetNode2->left_op->reach = findReach(offsetNode2->left_op->name, local_ST);
+    offsetNode2->right_op->reach = findReach(offsetNode2->right_op->name, local_ST);
+
+
     
     temp.is_static = 1;
     temp.datatype = "integer";
-    sym_tab_entry_add(offsetNode2->result,local_ST->func_curr,temp);
+    sym_tab_entry_add(offsetNode2->result->name,local_ST->func_curr,temp);
 
     node->tempName = newTemp();
     temp.is_static = 1;
@@ -763,15 +876,21 @@ void IR_arrayAccess(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
     if(tarr->is_static==1){
         memWriteNode->operator = MEMREAD_ST;
-        memWriteNode->result =node->tempName; 
-        memWriteNode->left_op = node->child_pointers[0]->token->lexeme;
-        memWriteNode->right_op = offsetNode2->result;
+        memWriteNode->result->name =node->tempName; 
+        memWriteNode->left_op->name = node->child_pointers[0]->token->lexeme;
+        memWriteNode->right_op->name = offsetNode2->result->name;
+        memWriteNode->result->reach = findReach(memWriteNode->result->name, local_ST);
+        memWriteNode->left_op->reach = findReach(memWriteNode->left_op->name, local_ST);
+        memWriteNode->right_op->reach = findReach(memWriteNode->right_op->name, local_ST);
     }
     else{
         memWriteNode->operator = MEMREAD;
-        memWriteNode->result =node->tempName; 
-        memWriteNode->left_op = node->child_pointers[0]->token->lexeme;
-        memWriteNode->right_op = offsetNode2->result;
+        memWriteNode->result->name =node->tempName; 
+        memWriteNode->left_op->name = node->child_pointers[0]->token->lexeme;
+        memWriteNode->right_op->name = offsetNode2->result->name;
+        memWriteNode->result->reach = findReach(memWriteNode->result->name, local_ST);
+        memWriteNode->left_op->reach = findReach(memWriteNode->left_op->name, local_ST);
+        memWriteNode->right_op->reach = findReach(memWriteNode->right_op->name, local_ST);
     }
     
 
@@ -806,41 +925,64 @@ void IR_relational(ast_node* node,func_entry* local_ST,func_entry** global_ST){
 
     if(!strcmp(node->name,"LT_result")){
         newNode->operator = LT;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
     else if(!strcmp(node->name,"GT_result")){
         newNode->operator = GT;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
 
     }
     else if(!strcmp(node->name,"NE_result")){
         newNode->operator = NEQ;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
     else if(!strcmp(node->name,"EQ_result")){
         newNode->operator = EQ;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
     }
     
     else if(!strcmp(node->name,"LE_result")){
         newNode->operator = LE;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
     else if(!strcmp(node->name,"GE_result")){
         newNode->operator = GE;
-        newNode->result = node->tempName;
-        newNode->left_op = node->child_pointers[0]->tempName;
-        newNode->right_op = node->child_pointers[1]->tempName;
+        newNode->result->name = node->tempName;
+        newNode->left_op->name = node->child_pointers[0]->tempName;
+        newNode->right_op->name = node->child_pointers[1]->tempName;
+        newNode->result->reach = findReach(newNode->result->name, local_ST);
+        newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+        newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
     }
 
     node->code = add_list_end(node->child_pointers[0]->code,node->code);
@@ -884,9 +1026,9 @@ void IR_driverCreation(ast_node* node,func_entry* local_ST,func_entry** global_S
     // currentChildLabel = 0;
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
     newNode->operator = FUNC;
-    // sprintf(newNode->result,"main");
+    // sprintf(newNode->result->name,"main");
     
-    newNode->result = "main";
+    newNode->result->name = "main";
     node->code = add_node_beg(newNode,node->child_pointers[0]->code);
     //TODO AYUSUDU
     // currentSibilingLevel = 0;
@@ -907,8 +1049,8 @@ void IR_functionCreation(ast_node* node,func_entry* local_ST,func_entry** global
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
     ir_code_node* endNode = getNew_ir_code_node(local_ST);
     newNode->operator = FUNC;
-    // newNode->result = local_ST->name;
-    newNode->result = node->child_pointers[0]->token->lexeme;
+    // newNode->result->name = local_ST->name;
+    newNode->result->name = node->child_pointers[0]->token->lexeme;
     node->code = add_node_beg(newNode,node->child_pointers[3]->code);
     endNode->operator = RET;
     node->code = add_node_end(endNode,node->code);
@@ -957,14 +1099,18 @@ void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         minusNode->operator = MUL;
         char* str = (char *) malloc(sizeof(char)*10);
         sprintf(str,"%d",-1);
-        minusNode->result = newTemp();
-        minusNode->left_op = str;
-        minusNode->right_op = node->child_pointers[1]->tempName;
+        minusNode->result->name = newTemp();
+        minusNode->left_op->name = str;
+        minusNode->right_op->name = node->child_pointers[1]->tempName;
+        minusNode->result->reach = findReach(minusNode->result->name, local_ST);
+        minusNode->left_op->reach = findReach(minusNode->left_op->name, local_ST);
+        minusNode->right_op->reach = findReach(minusNode->right_op->name, local_ST);
+
         
         type_exp temp;
         temp.is_static = 1;
-        if(isdigit(minusNode->right_op[0])){
-            int type_left_int = (strchr(minusNode->right_op, '.'))? 0 : 1;
+        if(isdigit(minusNode->right_op->name[0])){
+            int type_left_int = (strchr(minusNode->right_op->name, '.'))? 0 : 1;
             if(type_left_int){
                 temp.datatype  = "integer";
             }
@@ -975,10 +1121,10 @@ void IR_unaryStmts(ast_node* node,func_entry* local_ST,func_entry** global_ST){
         else{
             temp.datatype = node->child_pointers[1]->type;
         }
-        sym_tab_entry_add(minusNode->result,local_ST->func_curr,temp);
+        sym_tab_entry_add(minusNode->result->name,local_ST->func_curr,temp);
 
         node->code = add_node_end(minusNode,node->child_pointers[1]->code);
-        node->tempName = minusNode->result;
+        node->tempName = minusNode->result->name;
     }
 }
 
@@ -986,45 +1132,45 @@ void print_ir_code(FILE* fptr,ir_code* intermediate_code){
     ir_code_node* curr = intermediate_code->head;
     while(curr){
         if(curr->operator==FUNC||curr->operator==GET_VALUE||curr->operator==PRINT||curr->operator==PARA_IN||curr->operator==PARA_OUT||curr->operator==CALL||curr->operator==GOTO){
-            fprintf(fptr,"%s\t%s\t\t%s\n",OPCODE_str[curr->operator],curr->result,curr->reach);
+            fprintf(fptr,"%s\t%s\t\t\n",OPCODE_str[curr->operator],curr->result->name);
         }
         else if(curr->operator==LABEL){
-            fprintf(fptr,"%s: ",curr->result);
+            fprintf(fptr,"%s: ",curr->result->name);
         }
         else if(curr->operator==RET){
-            fprintf(fptr,"%s\t\t%s\n",OPCODE_str[curr->operator],curr->reach);
+            fprintf(fptr,"%s\t\t\n",OPCODE_str[curr->operator]);
         }
         else if(curr->operator==ADD){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,"+",curr->right_op,curr->reach);
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,"+",curr->right_op->name);
         }
         else if(curr->operator==SUB){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,"-",curr->right_op,curr->reach);
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,"-",curr->right_op->name);
         }
         else if(curr->operator==MUL){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,"*",curr->right_op,curr->reach);
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,"*",curr->right_op->name);
         }
         else if(curr->operator==DIV){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,"/",curr->right_op,curr->reach);   
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,"/",curr->right_op->name);   
         }
         else if(curr->operator==IF){
-            fprintf(fptr,"%s %s GOTO %s\t\t%s\n",OPCODE_str[curr->operator],curr->result,curr->left_op,curr->reach);   
+            fprintf(fptr,"%s %s GOTO %s\t\t\n",OPCODE_str[curr->operator],curr->result->name,curr->left_op->name);   
         }
         else if(curr->operator==ASSIGN){
-            fprintf(fptr,"%s = %s\t\t%s\n",curr->result,curr->left_op,curr->reach);   
+            fprintf(fptr,"%s = %s\t\t\n",curr->result->name,curr->left_op->name);   
         }
         else if(curr->operator==MEMWRITE_ST||curr->operator==MEMWRITE){
-            fprintf(fptr,"%s[%s] = %s\t\t%s\n",curr->result,curr->left_op,curr->right_op,curr->reach);   
+            fprintf(fptr,"%s[%s] = %s\t\t\n",curr->result->name,curr->left_op->name,curr->right_op->name);   
         }
         else if(curr->operator==MEMREAD_ST||curr->operator==MEMREAD){
-            fprintf(fptr,"%s = %s[%s]\t\t%s\n",curr->result,curr->left_op,curr->right_op,curr->reach);   
+            fprintf(fptr,"%s = %s[%s]\t\t\n",curr->result->name,curr->left_op->name,curr->right_op->name);   
         }
         
         else if(curr->operator==AND || curr->operator==OR){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,OPCODE_str[curr->operator],curr->right_op,curr->reach);        }
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,OPCODE_str[curr->operator],curr->right_op->name);        }
         else if(curr->operator==LT || curr->operator==LE|| curr->operator==GE|| curr->operator==GT|| curr->operator==NEQ|| curr->operator==EQ){
-            fprintf(fptr,"%s = %s %s %s\t\t%s\n",curr->result,curr->left_op,OPCODE_str[curr->operator],curr->right_op,curr->reach);        }
+            fprintf(fptr,"%s = %s %s %s\t\t\n",curr->result->name,curr->left_op->name,OPCODE_str[curr->operator],curr->right_op->name);        }
 
-        // fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result,curr->result,curr->left_op,(OPCODE)curr->operator,curr->result);
+        // fprintf(fptr,"%20s:=%20s\t%20s\t%20s\n",curr->result->name,curr->result->name,curr->left_op->name,(OPCODE)curr->operator,curr->result->name);
         curr = curr->next;      //TODO Debug for null
     }
 }
@@ -1098,3 +1244,4 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         root->code=NULL;
     }
 }
+

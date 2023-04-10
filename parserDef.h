@@ -9,6 +9,7 @@
 #ifndef PARSERDEF_H
 #define PARSERDEF_H
 #include "lexer.h"
+#include <string.h>
 
 #define MAX_MULTI_RULES 10
 #define NON_TERMINALS 75
@@ -16,6 +17,11 @@
 typedef enum Boolean {False,True}Boolean;
 
 //FOR IR CODE
+
+typedef struct char_offset{
+    char* name;
+    char* reach;
+}char_offset;
 
 
 typedef enum OPCODE
@@ -90,10 +96,10 @@ typedef struct ir_code_node
 {
     // int nestingLevel[2];
     OPCODE operator;
-    char* result;
-    char* left_op;
-    char* right_op;
-    char* reach;
+    char_offset* result;
+    char_offset* left_op;
+    char_offset* right_op;
+    // char* reach;
     struct ir_code_node* next;
 }ir_code_node;
 
