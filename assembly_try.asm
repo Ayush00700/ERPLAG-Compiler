@@ -78,7 +78,7 @@ main:
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
 		mov      rax , 5                    ; immediate to register
-		mov      [RBP - 12] , rax            ; register to memory
+		mov      [RBP - 96] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
@@ -86,17 +86,322 @@ main:
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
 		mov      rax , 9                    ; immediate to register
-		mov      [RBP - 16] , rax            ; register to memory
+		mov      [RBP - 128] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , 2                    ; immediate to register
+		mov      [RBP - 0] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , 3                    ; immediate to register
+		mov      [RBP - 32] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 32]
+		mov     rbx , [RBP - 128]
+		mul     rbx
+		mov     [RBP - 480] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 480]                    ; memory to register
+		mov      [RBP - 192] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 0]
+		add     rax , [RBP - 192]
+		mov     [RBP - 512] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 512]                    ; memory to register
+		mov      [RBP - 224] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 96]
+		sub     rax , [RBP - 128]
+		mov     [RBP - 544] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 544]                    ; memory to register
+		mov      [RBP - 256] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
 		; Code for printing output
 		push_regs                    ; save values
-		mov rax, 1                  ; system call for write
-		mov rdi, 1                  ; file handle 1 is stdout
-		mov rsi, false               ; address of string to output
-		mov rdx, false_len           ; number of bytes
-		syscall                     ; invoke operating system to do the write
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 192                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 224                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 256                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 256]
+		mov     rbx , [RBP - 32]
+		mul     rbx
+		mov     [RBP - 576] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 576]                    ; memory to register
+		mov      [RBP - 288] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 224]
+		add     rax , [RBP - 288]
+		mov     [RBP - 608] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 608]                    ; memory to register
+		mov      [RBP - 320] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 96]
+		mov     rbx , 2
+		mul     rbx
+		mov    [RBP - 640] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 640]                    ; memory to register
+		mov      [RBP - 352] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 320]
+		add     rax , [RBP - 352]
+		mov     [RBP - 672] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 672]                    ; memory to register
+		mov      [RBP - 384] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 128]
+		mov     rbx , [RBP - 0]
+		mul     rbx
+		mov     [RBP - 704] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 704]                    ; memory to register
+		mov      [RBP - 416] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for arithmetic
+		push_regs                    ; save values
+		mov     rax , [RBP - 384]
+		sub     rax , [RBP - 416]
+		mov     [RBP - 736] , rax
+		pop_regs        ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 736]                    ; memory to register
+		mov      [RBP - 448] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for getting assignment statement
+		push_regs                    ; save values
+		xor      rax , rax           ; flush out the rax register
+		mov      rax , [RBP - 448]                    ; memory to register
+		mov      [RBP - 64] , rax            ; register to memory
+		pop_regs                    ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 288                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 320                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 352                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 384                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 416                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 448                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 0                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
+		pop_regs        ; restore register values
+
+
+		; Code for printing output
+		push_regs                    ; save values
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rdx , rbp                               ; take base pointer in rdx
+		sub      rdx , 32                                ; move pointer to place from where we have to read
+		mov      rsi , [rdx]                               ; move source index
+		xor      rax , rax
+		rsp_align                                     ; align stack pointer
+		call     printf                                   ; system call for output
+		rsp_realign                                      ; restore previous alignment of stack
 		pop_regs        ; restore register values
 
 

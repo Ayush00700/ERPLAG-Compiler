@@ -1500,9 +1500,9 @@ void printer_(func_entry* node){
 void print_symbol_table(){
     // variable_name    scope_name_(start line to end line)   type    is_array    static/dynamic  range   width   offset  nesting_level
     for(int i=0;i<TABLE_SIZE;i++){
-        if(global_func_table[i] != NULL){
-            printer_(global_func_table[i]);
-            func_entry* temp = global_func_table[i];
+        if(global_TABLE[i] != NULL){
+            printer_(global_TABLE[i]);
+            func_entry* temp = global_TABLE[i];
             while(temp->next!=NULL){
                 printer_(temp->next);
                 temp = temp->next;
@@ -1519,7 +1519,6 @@ void semantic(){
         function_declare_name[i] =  NULL;
     }
     populate_(ast_root);
-    // print_symbol_table(); //isme dikkat hai....
     perform_type_checking(ast_root,NULL);
     //perform bound checking
 

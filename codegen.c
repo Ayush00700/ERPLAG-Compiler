@@ -84,7 +84,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
         temp = temp->next;
     }
     int offsetLHS = 0;
-    if(indexLHS!=-1)offsetLHS = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    if(indexLHS!=-1)offsetLHS = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
     int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
     fprintf(assembly, "\t\t; Code for getting assignment statement\n");
@@ -125,7 +125,7 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
             temp = temp->next;
         }
 
-        int offsetRHS = temp->offset;               // Get the memory offset for the rhs variable from the symbol
+        int offsetRHS = temp->offset*16;               // Get the memory offset for the rhs variable from the symbol
 
         if(!strcmp(temp->type.datatype, "integer"))
         {
@@ -174,7 +174,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
         }
         temp = temp->next;
     }
-    int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
 
     // Get offset of left operand temp
@@ -212,7 +212,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
             }
             temp = temp->next;
         }
-        int offsetLeft = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
         if(!strcmp(resultType, "integer"))
         {
@@ -268,7 +268,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -321,7 +321,7 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -366,7 +366,7 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
         }
         temp = temp->next;
     }
-    int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
 
     fprintf(assembly, "\t\t; Code for getting user input\n");
@@ -390,30 +390,19 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
         
     }
 
-    fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-    
-    fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place where we have to store\n", offsetResult);
-    
-    fprintf(assembly, "\t\tmov      rax , 0x0000_0000_ffff_ffff             ; set size\n");
-    
-    fprintf(assembly, "\t\tmov     [rdx] , rax\n");
-    
-    fprintf(assembly, "\t\tmov      rsi , rdx                               ; move source index\n");
-    
-    fprintf(assembly, "\t\tmov      rax , zero\n");
-    
-    fprintf(assembly, "\t\tmov      rsi , rdx\n");
-    
-    fprintf(assembly, "\t\trsp_align                                        ; align stack pointer\n");
-    // 
-    fprintf(assembly, "\t\tcall     scanf                                   ; system call for input\n");
-    
-    fprintf(assembly, "\t\trsp_realign                                      ; restore previous alignment of stack\n");
-    // 
+    fprintf(assembly, 
+            "\t\t\t\tmov RDX, RBP\n\
+                sub RDX, %d     ; make RDX to point at location of variable on the stack\n\
+                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later\n\
+                mov RSI, RDX \n\
+                mov RAX, 0 \n\
+                rsp_align ;align RSP to 16 byte boundary for scanf call\n\
+                call scanf \n\
+                rsp_realign ;realign it to original position\n", offsetResult);
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
-    
-    
+
+
 }
 
 void codegen_output(ir_code_node* ir, func_entry* local_ST){
@@ -510,7 +499,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
             }
             temp = temp->next;
         }
-        int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+        int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
         char* resultType = temp->type.datatype;
 
         fprintf(assembly, "\t\t; Code for printing output\n");
@@ -648,12 +637,12 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
         }
         temp = temp->next;
     }
-    int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
-
-    // Get offset of left operand temp
     char* nameLeft = ir->left_op;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+
+    // Get offset of left operand temp
     fprintf(assembly, "\t\t; Code for arithmetic\n");
     
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
@@ -686,7 +675,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
             }
             temp = temp->next;
         }
-        int offsetLeft = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
         if(!strcmp(resultType, "integer"))
         {
@@ -741,7 +730,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -794,7 +783,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -853,7 +842,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -897,7 +886,7 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 fprintf(assembly, "\t\tdivsd     xmm0 , [RBP - %d]\n", offsetRight);
                 
@@ -937,7 +926,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
         }
         temp = temp->next;
     }
-    int offsetResult = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
 
     // Get offset of left operand temp
@@ -976,7 +965,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             }
             temp = temp->next;
         }
-        int offsetLeft = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
         char* leftType = temp->type.datatype;
 
         if(!strcmp(leftType, "integer"))
@@ -1050,7 +1039,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1138,7 +1127,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1228,7 +1217,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1320,7 +1309,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1410,7 +1399,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1498,7 +1487,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                     }
                     temp = temp->next;
                 }
-                int offsetRight = temp->offset;               // Get the memory offset for the lhs variable from the symbol
+                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
                 if(!strcmp(rightType, "integer"))
@@ -1570,11 +1559,14 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     char* funcName = ir->result;
 
     fprintf(assembly, "%s:\n",funcName);
+
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+
     fprintf(assembly, "\t\tmov      rbp , rsp               ; set base to current stack top\n");
     fprintf(assembly, "\t\tpop_regs                     ; save values\n");
     
-    
+    // fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+
 
     
 }
