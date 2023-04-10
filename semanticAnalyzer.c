@@ -769,13 +769,15 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
     {
         //printf("%s \n",actual->child_pointers[0]->child_pointers[0]->token->lexeme);
        type_exp* act= find_expr(actual, curr, line);
-       act->isChanged=1;
     //    if(!act->isChanged)
     //    {
     //     printf("The return variable of function: ");
     //     throw_error(VALUE_NOT_MODIFIED, curr->defined);
     //    }
        type_exp* form=&formal->type;
+    //    if(form)
+
+    //    form->isChanged=1;
        compare_dTypes(act, form, line);
        actual=actual->next;
        formal=formal->next;
@@ -784,6 +786,8 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
     if(actual||formal)
     {
         throw_error(PARAMETER_LIST_MISMATCH,line);
+
+
     }
 }
 
@@ -874,7 +878,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             temp= find_in_list(curr->ouput_list,temp_node->token->lexeme);
             if(temp)
             temp->isChanged=1;
-
+            if(left)
             left->isChanged=1;
         }
         //Add a check for the array's message to be different.
@@ -1113,20 +1117,27 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         temp->datatype="boolean";
         // temp->isChanged=1;
         return temp;
-    }else if(!strcmp(node->name,"UNARY")){
+    }else if(!strcmp(node->name,"UNARY"))
+    {
         int line=node->child_pointers[0]->token->line_no;
-        
         //CHILD_POINTER[0] just has a plus or minus sign no need to call anything
         if(!node->child_pointers[0]) return throw_error(UNSUPPORTED_DTYPE,node->token->line_no);
-        //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or boolean
-        type_exp* temp = type_checking(node->child_pointers[1],curr);
+        //CHILD_POINTER[1] overall type can be a num, rnum, integer, real or 
+        //Can it be boolean?
+            type_exp* temp = type_checking(node->child_pointers[1],curr);
         //(only primitives)
-        if(temp&&!strcmp(temp->datatype,"array")){
+        if(temp&&!strcmp(temp->datatype,"array"))
+        {
              int line=node->child_pointers[0]->token->line_no;
-             return throw_error(UNSUPPORTED_DTYPE, line);}
+             return throw_error(UNSUPPORTED_DTYPE, line);
+        }
         else if(temp&&(!strcmp(temp->datatype,"integer")||
                 !strcmp(temp->datatype,"real"))/* ||
-                do we need to add other datatypes ?*/){return temp;}
+                do we need to add other datatypes ?*/)
+                {
+                    temp->isChanged=1;
+                    return temp;
+                }
         return throw_error(UNSUPPORTED_DTYPE,line);
     }
     else if(!strcmp(node->name, "ARRAY_ACCESS")){
@@ -1380,6 +1391,7 @@ void perform_type_checking(ast_node* ast_root,func_entry* func){
         type_checking(ast_root->next,func);
         ast_root = ast_root->next;
         }
+        
         // type_checking(ast_root,func);
         return;
     }

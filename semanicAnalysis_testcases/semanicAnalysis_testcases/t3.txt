@@ -50,6 +50,7 @@ start
 	pqr_2:= abc_1 + 6;
 	declare abc_1: real;					**ERROR: variable abc_1 is re-declared**
 	res_2_a:= -(a*b-c/pqr_2);				**ERROR: Type mismatch error**
+	**The above error should ideally propogate to output not changed**
 	declare s: integer;					**Not an error as a local variable can shadow the input parameter**
 	declare q4, q5: real;
 	res_2__b:= (res_2_b + p)*12+22.34E-2*q5;		**ERROR variable p is not declared**

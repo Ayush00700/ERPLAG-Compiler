@@ -33,7 +33,7 @@ start
 	declare abc_1, pqr_2: integer;
 	pqr_2:= abc_1 + 6;
 	declare abc_1: real;				**ERROR: variable abc_1 is re-declared**
-	res_2_a:= -(a*b-c/pqr_2);
+	res_2_a:= -(a*b-c/pqr_2);   **This should be an error that should be propogated as outpout not changed**
 	declare s: integer;				**Not an error as a local variable can shadow the input parameter**
 	res_2__b:= res_2__b + p *12+22.34E-2;		**ERROR variable p is not declared**
 	declare m,n: boolean;
