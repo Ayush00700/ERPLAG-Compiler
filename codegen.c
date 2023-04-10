@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "codegen.h"
 
 #define MAXBUFF 1024
@@ -158,6 +159,10 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
     |    PRINT   |    var   |   NULL   |    NULL   |
     +------------+----------+----------+-----------+
     */
+    fprintf(assembly,"lea     rdi , [rel fmt]\n");
+    fprintf(assembly,"mov     rsi , [c]\n");
+    fprintf(assembly,"xor     eax , eax\n");
+    fprintf(assembly,"call    printf\n");
 }
 
 void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
@@ -168,6 +173,88 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
     +------------+----------+----------+-----------+
     label can be one of ADD, SUB, MUL, DIv
     */
+    char* left_name = ir->left_op;
+    char* right_name = ir->right_op;
+    char* result_name = ir->result;
+    
+    switch(ir->operator)
+    {
+        case ADD:
+            fprintf(assembly,"\n\n\t\t; Code for addition\n");
+            // LEFT operand
+            // If immediate
+            if(isdigit(left_name[0]))
+                fprintf(assembly,"\t\tmov     rax , %s\n",left_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmov     rax , [%s]\n",left_name);
+            
+            // RIGHT operand
+            // If immediate
+            if(isdigit(right_name[0]))
+                fprintf(assembly,"\t\tadd     rax , %s\n",right_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tadd     rax , [%s]\n",right_name);
+            break;
+        case SUB:
+            fprintf(assembly,"\n\n\t\t; Code for subtraction\n");
+            // LEFT operand
+            // If immediate
+            if(isdigit(left_name[0]))
+                fprintf(assembly,"\t\tmov     rax , %s\n",left_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmov     rax , [%s]\n",left_name);
+            
+            // RIGHT operand
+            // If immediate
+            if(isdigit(right_name[0]))
+                fprintf(assembly,"\t\tsub     rax , %s\n",right_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tsub     rax , [%s]\n",right_name);
+            break;
+        case MUL:
+            fprintf(assembly,"\n\n\t\t; Code for multiplication\n");
+            // LEFT operand
+            // If immediate
+            if(isdigit(left_name[0]))
+                fprintf(assembly,"\t\tmov     rax , %s\n",left_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmov     rax , [%s]\n",left_name);
+            
+            // RIGHT operand
+            // If immediate
+            if(isdigit(right_name[0]))
+                fprintf(assembly,"\t\tmov     rbx , %s\n",right_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmov     rbx , [%s]\n",right_name);
+            fprintf(assembly,"\t\timul     rbx\n",right_name);
+            break;
+        case DIV:
+            fprintf(assembly,"\n\n\t\t; Code for division\n");
+            // LEFT operand
+            // If immediate
+            if(isdigit(left_name[0]))
+                fprintf(assembly,"\t\tmovsd     xmm0 , %s\n",left_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmovsd     xmm0 , [%s]\n",left_name);
+            
+            // RIGHT operand
+            // If immediate
+            if(isdigit(right_name[0]))
+                fprintf(assembly,"\t\tmovsd     xmm1 , %s\n",right_name);
+            // If variable
+            else
+                fprintf(assembly,"\t\tmovsd     xmm1 , [%s]\n",right_name);
+            fprintf(assembly,"\t\tdivsd     xmm0 , xmm1\n",right_name);
+            break;
+    }
+    fprintf(assembly,"mov     [%s] , eax\n",result_name);
 }
 
 void codegen_relational(ir_code_node* ir, func_entry* local_ST)
@@ -410,4 +497,4 @@ void starter(FILE* assembly_file,ir_code* IR)
     fprintf(assembly, "main_end:\n");
     fprintf(assembly, "\t\tretq");
     fclose(assembly);
-}
+}    
