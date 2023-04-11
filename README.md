@@ -230,3 +230,8 @@ We have used "3 Address Codes" IR. We have generated IR for the following:
     [:(] Short circuit evaluation
     [:(] Code Generation
     [:(] Driver
+    [:(] Print and getvalue of whole array
+    [:(] Floating point arithmetic debug (also check for arithmetic)
+    [:(] BoundCheck Error Label in codegen 
+    [:(] Functon codegen 
+    [:(] Dynamic array codegen 

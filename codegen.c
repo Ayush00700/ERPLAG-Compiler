@@ -68,25 +68,51 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST)
     Output:
         - Assembly code for assignment statements
     */
-    char* nameRHS = ir->left_op->name;      // temporary variable name for rhs
 
-    char* nameLHS = ir->result->name;      // temporary variable name for rhs
+    char* nameRHS = ir->left_op->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(nameRHS,local_ST);
+    int offsetRHS;
+    int indexRHS = 0;
+    if(rhsTypeExp){
+        offsetRHS =  rhsTypeExp->offset * 16;
+    }
+    else{
+        indexRHS = -1;
+    }
+
+    char* nameLHS = ir->result->name; 
+    type_exp* lhsTypeExp = find_expr_codegen(nameLHS,local_ST);
+    int offsetLHS;
+    int indexLHS = 0;
+    if(lhsTypeExp){
+        offsetLHS =  lhsTypeExp->offset * 16;
+    }
+    else{
+        indexLHS = -1;
+    }
+    
+    //TODO delete these comments after debug
+
+    // char* nameRHS = ir->left_op->name;      // temporary variable name for rhs
+
+    // char* nameLHS = ir->result->name;      // temporary variable name for rhs
 
     // Finding the symbol table entry for lhs variable
-    int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
+    // int indexLHS = sym_tab_entry_contains(nameLHS,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    // sym_tab_entry* temp = NULL;
     // if(indexLHS!=-1)
-    temp = local_ST->func_curr->entries[indexLHS];
-    while(temp!=NULL){  //Hashing collision
-        if(!strcmp(temp->name,nameLHS)){
-            break;
-        }
-        temp = temp->next;
-    }
-    int offsetLHS = 0;
-    if(indexLHS!=-1)offsetLHS = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+    // temp = local_ST->func_curr->entries[indexLHS];
+    // while(temp!=NULL){  //Hashing collision
+    //     if(!strcmp(temp->name,nameLHS)){
+    //         break;
+    //     }
+    //     temp = temp->next;
+    // }
 
-    int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
+    // int offsetLHS = 0;
+    // if(indexLHS!=-1)offsetLHS = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+
+    // int indexRHS = sym_tab_entry_contains(nameRHS,local_ST->func_curr->entries);        // Check if RHS is a expression/ variable/ a constant
 
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     fprintf(assembly, "\t\txor      rax , rax           ; flush out the rax register\n");
@@ -127,23 +153,22 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST)
     // If RHS not constant
     else
     {
-        temp = local_ST->func_curr->entries[indexRHS];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,nameRHS))
-            {
-                break;
-            }
-            temp = temp->next;
-        }
+        // temp = local_ST->func_curr->entries[indexRHS];
+        // while(temp!=NULL){
+        //     if(!strcmp(temp->name,nameRHS))
+        //     {
+        //         break;
+        //     }
+        //     temp = temp->next;
+        // }
 
-        int offsetRHS = temp->offset*16;               // Get the memory offset for the rhs variable from the symbol
+        // int offsetRHS = temp->offset*16;               // Get the memory offset for the rhs variable from the symbol
 
-        if(!strcmp(temp->type.datatype, "integer")||!strcmp(temp->type.datatype, "boolean"))
+        if(!strcmp(rhsTypeExp->datatype, "integer")||!strcmp(rhsTypeExp->datatype, "boolean"))
         {
             fprintf(assembly, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetRHS);
             
             fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetLHS);
-            
         }
 
         // REAL
@@ -174,28 +199,50 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
         - Assembly code for logical statements
     */
 
-    char* result = ir->result->name;                // temporary variable name for result
-
-    // Finding the symbol table entry for result variable
-    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexResult];
-    
-    // Hashing collision
-    while(temp!=NULL)
-    {
-        if(!strcmp(temp->name,result))
-        {
-            break;
-        }
-        temp = temp->next;
+    char* result = ir->result->name; 
+    type_exp* resTypeExp = find_expr_codegen(result,local_ST);
+    int offsetResult;
+    char* resultType;
+    int indexResult = 0;
+    if(resTypeExp){
+        offsetResult =  resTypeExp->offset * 16;
+        resultType = resTypeExp->datatype;
     }
-    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-    char* resultType = temp->type.datatype;
+    else{
+        indexResult = -1;
+    }
 
-    // Get offset of left operand temp
-    char* nameLeft = ir->left_op->name;
-    int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    char* nameLeft = ir->left_op->name; 
+    type_exp* lhsTypeExp = find_expr_codegen(nameLeft,local_ST);
+    int offsetLeft;
+    char* leftType;
+    int indexLeft = 0;
+    if(lhsTypeExp){
+        offsetLeft =  lhsTypeExp->offset * 16;
+        leftType = lhsTypeExp->datatype;
+    }
+    else{
+        indexLeft = -1;
+    }
+
+    char* nameRight = ir->right_op->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(nameRight,local_ST);
+    int offsetRight;
+    char* rightType;
+    int indexRight = 0;
+    if(rhsTypeExp){
+        offsetRight =  rhsTypeExp->offset * 16;
+        rightType = rhsTypeExp->datatype;
+    }
+    else{
+        indexRight = -1;
+    }
+
+
+
+
+
+    // char* result = ir->result->name;                // temporary variable name for result
     
     fprintf(assembly, "\t\t; Code for logical op\n");
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
@@ -209,14 +256,14 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
 
     else
     {
-        temp = local_ST->func_curr->entries[indexLeft];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,nameLeft)){
-                break;
-            }
-            temp = temp->next;
-        }
-        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+        // temp = local_ST->func_curr->entries[indexLeft];
+        // while(temp!=NULL){
+        //     if(!strcmp(temp->name,nameLeft)){
+        //         break;
+        //     }
+        //     temp = temp->next;
+        // }
+        // int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
         // if(!strcmp(resultType, "integer"))
         // {
@@ -231,15 +278,15 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
     }
 
     // For right operand
-    char* nameRight;
-    int indexRight;
+    // char* nameRight;
+    // int indexRight;
     
     switch(ir->operator)
     {
         case AND:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is a constant
             if(indexRight == -1)
@@ -266,14 +313,14 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // temp = local_ST->func_curr->entries[indexRight];
+                // while(temp!=NULL){
+                //     if(!strcmp(temp->name,nameRight)){
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 // if(!strcmp(resultType, "integer"))
                 // {
@@ -294,8 +341,8 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
         
         case OR:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is a constant
             if(indexRight == -1)
@@ -321,14 +368,14 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // temp = local_ST->func_curr->entries[indexRight];
+                // while(temp!=NULL){
+                //     if(!strcmp(temp->name,nameRight)){
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 // if(!strcmp(resultType, "integer"))
                 // {
@@ -366,22 +413,19 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST)
     */
 
     // Get offset of result
-    char* result = ir->result->name;
-    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexResult];
-    
-    // Hashing collision
-    while(temp!=NULL)
-    {
-        if(!strcmp(temp->name,result))
-        {
-            break;
-        }
-        temp = temp->next;
+
+    char* result = ir->result->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(result,local_ST);
+    int offsetResult;
+    char* resultType;
+    int indexRight = 0;
+    if(rhsTypeExp){
+        offsetResult =  rhsTypeExp->offset * 16;
+        resultType = rhsTypeExp->datatype;
     }
-    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-    char* resultType = temp->type.datatype;
+    else{
+        indexRight = -1;
+    }
 
     fprintf(assembly, "\t\t; Code for getting user input\n");
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
@@ -455,17 +499,18 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
     */
     
     // Get offset of result
-    char* result = ir->result->name;
-    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);   // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexResult];
-    while(temp!=NULL){
-        if(!strcmp(temp->name,result)){
-            break;
-        }
-        temp = temp->next;
+    char* result = ir->result->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(result,local_ST);
+    int offsetResult;
+    char* resultType;
+    int indexResult = 0;
+    if(rhsTypeExp){
+        offsetResult =  rhsTypeExp->offset * 16;
+        resultType = rhsTypeExp->datatype;
     }
-    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+    else{
+        indexResult = -1;
+    }
 
     if(indexResult==-1)
     {   
@@ -555,16 +600,6 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
 
     else
     {
-        sym_tab_entry* temp = NULL;
-        temp = local_ST->func_curr->entries[indexResult];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,result)){
-                break;
-            }
-            temp = temp->next;
-        }
-        int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-        char* resultType = temp->type.datatype;
 
         fprintf(assembly, "\t\t; Code for printing output\n");
 
@@ -666,26 +701,67 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
     */
 
     // Get offset of result
-    char* result = ir->result->name;
-    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexResult];
-    
-    // Hashing collision
-    while(temp!=NULL)
-    {
-        if(!strcmp(temp->name,result))
-        {
-            break;
-        }
-        temp = temp->next;
+
+    char* result = ir->result->name; 
+    type_exp* resTypeExp = find_expr_codegen(result,local_ST);
+    int offsetResult;
+    char* resultType;
+    int indexResult = 0;
+    if(resTypeExp){
+        offsetResult =  resTypeExp->offset * 16;
+        resultType = resTypeExp->datatype;
     }
-    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-    char* resultType = temp->type.datatype;
+    else{
+        indexResult = -1;
+    }
+
+    // char* result = ir->result->name;
+    // int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    // sym_tab_entry* temp = NULL;
+    // temp = local_ST->func_curr->entries[indexResult];
     
+    // // Hashing collision
+    // while(temp!=NULL)
+    // {
+    //     if(!strcmp(temp->name,result))
+    //     {
+    //         break;
+    //     }
+    //     temp = temp->next;
+    // }
+    // int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+    // char* resultType = temp->type.datatype;
+    
+    char* nameLeft = ir->left_op->name; 
+    type_exp* lhsTypeExp = find_expr_codegen(nameLeft,local_ST);
+    int offsetLeft;
+    char* leftType;
+    int indexLeft = 0;
+    if(lhsTypeExp){
+        offsetLeft =  lhsTypeExp->offset * 16;
+        leftType = lhsTypeExp->datatype;
+    }
+    else{
+        indexLeft = -1;
+    }
+
+    char* nameRight = ir->right_op->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(nameRight,local_ST);
+    int offsetRight;
+    char* rightType;
+    int indexRight = 0;
+    if(rhsTypeExp){
+        offsetRight =  rhsTypeExp->offset * 16;
+        rightType = rhsTypeExp->datatype;
+    }
+    else{
+        indexRight = -1;
+    }
+
+
     // LEFT operand
-    char* nameLeft = ir->left_op->name;
-    int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    // char* nameLeft = ir->left_op->name;
+    // int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
 
     // Get offset of left operand temp
     fprintf(assembly, "\t\t; Code for arithmetic\n");
@@ -713,17 +789,17 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
     else
     {
-        temp = local_ST->func_curr->entries[indexLeft];
+        // temp = local_ST->func_curr->entries[indexLeft];
         // Hashing collision
-        while(temp!=NULL)
-        {
-            if(!strcmp(temp->name,nameLeft))
-            {
-                break;
-            }
-            temp = temp->next;
-        }
-        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+        // while(temp!=NULL)
+        // {
+        //     if(!strcmp(temp->name,nameLeft))
+        //     {
+        //         break;
+        //     }
+        //     temp = temp->next;
+        // }
+        // int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
         // INT
         if(!strcmp(resultType, "integer"))
@@ -742,16 +818,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
     }
 
     // RIGHT operand
-    char* nameRight;
-    int indexRight;
+    // char* nameRight;
+    // int indexRight;
 
     // For right operand
     switch(ir->operator)
     {
         case ADD:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is a constant
             if(indexRight == -1)
@@ -781,18 +857,18 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 // INT
                 if(!strcmp(resultType, "integer"))
@@ -816,8 +892,8 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
         case SUB:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -847,16 +923,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // temp = local_ST->func_curr->entries[indexRight];
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 // INT
                 if(!strcmp(resultType, "integer"))
@@ -880,8 +956,8 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
         case MUL:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -914,16 +990,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // temp = local_ST->func_curr->entries[indexRight];
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 if(!strcmp(resultType, "integer"))
                 {
@@ -948,8 +1024,8 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
         case DIV:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -962,16 +1038,16 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // temp = local_ST->func_curr->entries[indexRight];
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 fprintf(assembly, "\t\tdivsd     xmm0 , [RBP - %d]\n", offsetRight);
                 
@@ -1000,26 +1076,65 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
     */
 
     // Get offset of result
-    char* result = ir->result->name;
-    int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-    sym_tab_entry* temp = NULL;
-    temp = local_ST->func_curr->entries[indexResult];
-    
-    // Hashing collision
-    while(temp!=NULL)
-    {
-        if(!strcmp(temp->name,result))
-        {
-            break;
-        }
-        temp = temp->next;
+    char* result = ir->result->name; 
+    type_exp* resTypeExp = find_expr_codegen(result,local_ST);
+    int offsetResult;
+    char* resultType;
+    int indexResult = 0;
+    if(resTypeExp){
+        offsetResult =  resTypeExp->offset * 16;
+        resultType = resTypeExp->datatype;
     }
-    int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-    char* resultType = temp->type.datatype;
+    else{
+        indexResult = -1;
+    }
 
-    // Get offset of left operand temp
-    char* nameLeft = ir->left_op->name;
-    int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    char* nameLeft = ir->left_op->name; 
+    type_exp* lhsTypeExp = find_expr_codegen(nameLeft,local_ST);
+    int offsetLeft;
+    char* leftType;
+    int indexLeft = 0;
+    if(lhsTypeExp){
+        offsetLeft =  lhsTypeExp->offset * 16;
+        leftType = lhsTypeExp->datatype;
+    }
+    else{
+        indexLeft = -1;
+    }
+
+    char* nameRight = ir->right_op->name; 
+    type_exp* rhsTypeExp = find_expr_codegen(nameRight,local_ST);
+    int offsetRight;
+    char* rightType;
+    int indexRight = 0;
+    if(rhsTypeExp){
+        offsetRight =  rhsTypeExp->offset * 16;
+        rightType = rhsTypeExp->datatype;
+    }
+    else{
+        indexRight = -1;
+    }
+    
+    // char* result = ir->result->name;
+    // int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+    // sym_tab_entry* temp = NULL;
+    // temp = local_ST->func_curr->entries[indexResult];
+    
+    // // Hashing collision
+    // while(temp!=NULL)
+    // {
+    //     if(!strcmp(temp->name,result))
+    //     {
+    //         break;
+    //     }
+    //     temp = temp->next;
+    // }
+    // int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+    // char* resultType = temp->type.datatype;
+
+    // // Get offset of left operand temp
+    // char* nameLeft = ir->left_op->name;
+    // int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     fprintf(assembly, "\t\t; Code for relational\n");
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     
@@ -1046,19 +1161,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
     else
     {
-        temp = local_ST->func_curr->entries[indexLeft];
+        // temp = local_ST->func_curr->entries[indexLeft];
         
         // Hashing collision
-        while(temp!=NULL)
-        {
-            if(!strcmp(temp->name,nameLeft))
-            {
-                break;
-            }
-            temp = temp->next;
-        }
-        int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-        char* leftType = temp->type.datatype;
+        // while(temp!=NULL)
+        // {
+        //     if(!strcmp(temp->name,nameLeft))
+        //     {
+        //         break;
+        //     }
+        //     temp = temp->next;
+        // }
+        // int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+        // char* leftType = temp->type.datatype;
 
         // INT
         if(!strcmp(leftType, "integer"))
@@ -1075,8 +1190,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
         }
         
     }
-    char* nameRight;
-    int indexRight;
+    // char* nameRight;
+    // int indexRight;
     char* true_label = newLabel();
     char* next_label = newLabel();
 
@@ -1085,8 +1200,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
     {
         case LT:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1134,19 +1249,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1190,8 +1305,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
         case GT:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1237,19 +1352,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1293,8 +1408,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
         case LE:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1343,19 +1458,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1400,8 +1515,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
         case GE:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1450,19 +1565,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1507,8 +1622,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
         case EQ:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1556,19 +1671,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1612,8 +1727,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
         case NEQ:
             // Get offset of right operand temp
-            nameRight = ir->right_op->name;
-            indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
+            // nameRight = ir->right_op->name;
+            // indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
             
             // If right operand is an immediate value
             if(indexRight == -1)
@@ -1662,19 +1777,19 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
 
             else
             {
-                temp = local_ST->func_curr->entries[indexRight];
+                // temp = local_ST->func_curr->entries[indexRight];
                 
-                // Hashing collision
-                while(temp!=NULL)
-                {
-                    if(!strcmp(temp->name,nameRight))
-                    {
-                        break;
-                    }
-                    temp = temp->next;
-                }
-                int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
-                char* rightType = temp->type.datatype;
+                // // Hashing collision
+                // while(temp!=NULL)
+                // {
+                //     if(!strcmp(temp->name,nameRight))
+                //     {
+                //         break;
+                //     }
+                //     temp = temp->next;
+                // }
+                // int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
+                // char* rightType = temp->type.datatype;
 
                 // INT
                 if(!strcmp(rightType, "integer"))
@@ -1788,10 +1903,10 @@ void codegen_mem_read_ST(ir_code_node* ir, func_entry* local_ST)
     type_exp* lhsTypeExp = find_expr_codegen(lhsArrayRead,local_ST);
     int offsetResultLhs =  lhsTypeExp->offset * 16;
 
-    char* rhsArrayIndex = ir->result->name; 
-    char* rhsArrayIndexReach = ir->result->reach;
-    type_exp* rhgTypeExp = find_expr_codegen(rhsArrayIndex,local_ST);
-    int offsetResultRhs =  rhgTypeExp->offset * 16;
+    char* rhsArrayIndex = ir->right_op->name; 
+    char* rhsArrayIndexReach = ir->right_op->reach;
+    type_exp* rhsTypeExp = find_expr_codegen(rhsArrayIndex,local_ST);
+    int offsetResultRhs =  rhsTypeExp->offset * 16;
 
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     fprintf(assembly, "\t\txor      rax , rax           ; flush out the rax register\n");
@@ -1818,12 +1933,34 @@ void codegen_mem_read_ST(ir_code_node* ir, func_entry* local_ST)
 
 void codegen_mem_write_ST(ir_code_node* ir, func_entry* local_ST)
 {
+    char* lhsArrayRead = ir->left_op->name; 
+    char* lhsArrayReadReach = ir->left_op->reach;
+    type_exp* lhsTypeExp = find_expr_codegen(lhsArrayRead,local_ST);
+    int offsetResultLhs =  lhsTypeExp->offset * 16;
+
+    char* rhsArrayIndex = ir->right_op->name; 
+    char* rhsArrayIndexReach = ir->right_op->reach;
+    type_exp* rhsTypeExp = find_expr_codegen(rhsArrayIndex,local_ST);
+    int offsetResultRhs =  rhsTypeExp->offset * 16;
+
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    fprintf(assembly, "\t\txor      rax , rax           ; flush out the rax register\n");
+
+    if(!strcmp(lhsTypeExp->datatype, "integer")||!strcmp(lhsTypeExp->datatype, "boolean"))
+    {
+        fprintf(assembly, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetResultRhs);
+        
+        fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetResultLhs);
+    }
+    // REAL
+    else
+    {
+        fprintf(assembly, "\t\tmovsd      xmm0 , [RBP - %d]                    ; memory to register\n",offsetResultRhs);
+        
+        fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0            ; register to memory\n",offsetResultLhs);   
+    }
     
-    /* Handling the symbol table ops*/
-
-    // Writing the assembly for label
-
-    /* Handling the symbol table ops*/
+    fprintf(assembly, "\t\tpop_regs                    ; restore register values\n\n\n");
 }
 
 void codegen_mem_read(ir_code_node* ir, func_entry* local_ST)
@@ -1963,6 +2100,9 @@ void starter(FILE* assembly_file,ir_code* IR)
         func_curr = local_ST->func_root;
         local_ST->func_curr = func_curr;
 
+
+        local_ST->func_curr = find_local_construct(local_ST->func_root->construct_name,IR_head->reach);
+
         // For calling respective code gen fns
         switch (IR_head->operator)
         {
@@ -2067,7 +2207,7 @@ type_exp* find_in_func_table_codegen(char* key, func_entry* curr)
     if(output)
         return output;
     
-    printf("%s: ",key);
+    return NULL;
 }
 
 type_exp* find_in_table_codegen(char* key,var_record* table)
