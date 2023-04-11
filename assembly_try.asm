@@ -31,21 +31,6 @@ extern printf, scanf, exit
 		false: db "false", 10, 0
 		false_len: equ $ - false
 		zero: equ 0
-		t1:   dq   0
-		t2:   dq   0
-		t3:   dq   0
-		t4:   dq   0
-		t5:   dq   0
-		t6:   dq   0
-		t7:   dq   0
-		t8:   dq   0
-		x:   dq   0
-		t9:   dq   0
-		y:   dq   0
-		z:   dq   0
-		a:   dq   0
-		b:   dq   0
-		c:   dq   0
 
 
 		section      .text
@@ -103,17 +88,15 @@ main:
 
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
-		; Code for assigning immediate INT
 		mov      rax , 5                    ; immediate to register
-		mov      [a] , rax            ; register to memory
+		mov      [RBP - 96] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
-		; Code for assigning immediate INT
 		mov      rax , 9                    ; immediate to register
-		mov      [b] , rax            ; register to memory
+		mov      [RBP - 128] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
@@ -128,12 +111,15 @@ main:
 
 		; Code to get integer input
 		mov      rdi , fmt_spec_int_in          ; get corresponding format specifier
-		mov      rdx , rbp
-		mov      rsi , x
-		xor      rax , rax
-		rsp_align                                ; align rsp to 16 byte boundary
-		call     scanf
-		rsp_realign                              ; realign rsp
+				mov RDX, RBP
+                ;sub RDX, 0     ; make RDX to point at location of variable on the stack
+                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later
+                mov RSI, RBP
+                sub RSI, 0 
+                mov RAX, 0 
+                rsp_align ;align RSP to 16 byte boundary for scanf call
+                call scanf 
+                rsp_realign ;realign it to original position
 		pop_regs        ; restore register values
 
 
@@ -148,96 +134,98 @@ main:
 
 		; Code to get integer input
 		mov      rdi , fmt_spec_int_in          ; get corresponding format specifier
-		mov      rdx , rbp
-		mov      rsi , y
-		xor      rax , rax
-		rsp_align                                ; align rsp to 16 byte boundary
-		call     scanf
-		rsp_realign                              ; realign rsp
+				mov RDX, RBP
+                ;sub RDX, 0     ; make RDX to point at location of variable on the stack
+                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later
+                mov RSI, RBP
+                sub RSI, 32 
+                mov RAX, 0 
+                rsp_align ;align RSP to 16 byte boundary for scanf call
+                call scanf 
+                rsp_realign ;realign it to original position
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [y]
-		mov     rbx , [b]
+		mov     rax , [RBP - 32]
+		mov     rbx , [RBP - 128]
 		imul     rbx
-		mov     [t1] , rax
+		mov     [RBP - 192] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [x]
-		add     rax , [t1]
-		mov     [t2] , rax
+		mov     rax , [RBP - 0]
+		add     rax , [RBP - 192]
+		mov     [RBP - 224] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [a]
-		sub     rax , [b]
-		mov     [t3] , rax
+		mov     rax , [RBP - 96]
+		sub     rax , [RBP - 128]
+		mov     [RBP - 256] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [t3]
-		mov     rbx , [y]
+		mov     rax , [RBP - 256]
+		mov     rbx , [RBP - 32]
 		imul     rbx
-		mov     [t4] , rax
+		mov     [RBP - 288] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [t2]
-		add     rax , [t4]
-		mov     [t5] , rax
+		mov     rax , [RBP - 224]
+		add     rax , [RBP - 288]
+		mov     [RBP - 320] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [a]
+		mov     rax , [RBP - 96]
 		mov     rbx , 2
 		imul     rbx
-		mov    [t6] , rax
+		mov    [RBP - 352] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [t5]
-		add     rax , [t6]
-		mov     [t7] , rax
+		mov     rax , [RBP - 320]
+		add     rax , [RBP - 352]
+		mov     [RBP - 384] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [b]
-		mov     rbx , [x]
+		mov     rax , [RBP - 128]
+		mov     rbx , [RBP - 0]
 		imul     rbx
-		mov     [t8] , rax
+		mov     [RBP - 416] , rax
 		pop_regs        ; restore register values
 
 
 		; Code for arithmetic
 		push_regs                    ; save values
-		mov     rax , [t7]
-		sub     rax , [t8]
-		mov     [t9] , rax
+		mov     rax , [RBP - 384]
+		sub     rax , [RBP - 416]
+		mov     [RBP - 448] , rax
 		pop_regs        ; restore register values
 
 
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
-		; Code for assigning INT
-		mov      rax , [t9]                    ; memory to register
-		mov      [z] , rax            ; register to memory
+		mov      rax , [RBP - 448]                    ; memory to register
+		mov      [RBP - 64] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
@@ -249,8 +237,8 @@ main:
 		syscall
 
 		push_regs                                         ; save values
-		mov      rdi , fmt_spec_int_out                   ; get corresponding format specifier
-		mov      rsi , [z]                               ; move source index
+		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rsi , [RBP - 64]                               ; move source index
 		xor      rax , rax
 		rsp_align                                         ; align stack pointer
 		call     printf                                   ; system call for output

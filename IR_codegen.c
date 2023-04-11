@@ -1225,10 +1225,12 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         IR_switchStmt(root,local_ST,global_ST);  //local_ST
     }    
     else if(!strcmp(root->name,"FORLOOP")||!strcmp(root->name,"WHILELOOP")){ 
-        if(!strcmp(root->name,"FORLOOP"))
+        if(!strcmp(root->name,"FORLOOP")){
             IR_iterative_for(root,local_ST,global_ST);
-        else
+        }
+        else{
             IR_iterative_while(root,local_ST,global_ST);
+        }
         if(local_ST->func_curr->r_sibiling!=NULL){
             local_ST->func_curr = local_ST->func_curr->r_sibiling;     
         }else{

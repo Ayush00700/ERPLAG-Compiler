@@ -12,6 +12,12 @@ t6 = a * 2
 t7 = t5 + t6		
 t8 = b * x		
 t9 = t7 - t8		
+
+IF 
+GOTO 
+LABEL
+
+
 z = t9		
 PRINT	z		
 RET		
