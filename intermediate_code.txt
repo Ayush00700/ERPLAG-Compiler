@@ -1,5 +1,4 @@
 FUNC	main		
-u = false		
 a = 5		
 b = 9		
 GET_VALUE	x		
@@ -14,13 +13,5 @@ t7 = t5 + t6
 t8 = b * x		
 t9 = t7 - t8		
 z = t9		
-t10 = z GT 10		
-t11 = a LE b		
-t12 = t10 OR t11		
-t13 = x LT y		
-t14 = t12 AND t13		
-t15 = t14 AND u		
-v = t15		
 PRINT	z		
-PRINT	v		
 RET		

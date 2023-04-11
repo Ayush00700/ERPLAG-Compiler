@@ -26,21 +26,13 @@ extern printf, scanf, exit
 		t3:   dq   0
 		t4:   dq   0
 		t5:   dq   0
-		u:   dq   0
 		t6:   dq   0
-		v:   dq   0
 		t7:   dq   0
 		t8:   dq   0
 		x:   dq   0
 		t9:   dq   0
 		y:   dq   0
 		z:   dq   0
-		t10:   dq   0
-		t11:   dq   0
-		t12:   dq   0
-		t13:   dq   0
-		t14:   dq   0
-		t15:   dq   0
 		a:   dq   0
 		b:   dq   0
 		c:   dq   0
@@ -97,14 +89,6 @@ main:
 		push_regs                    ; save values
 		mov      rbp , rsp               ; set base to current stack top
 		pop_regs                     ; save values
-		; Code for getting assignment statement
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		mov      rax , false                    ; immediate to register
-		mov      [u] , rax            ; register to memory
-		pop_regs                    ; restore register values
-
-
 		; Code for getting assignment statement
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
@@ -233,80 +217,6 @@ main:
 		pop_regs                    ; restore register values
 
 
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , [z]
-		mov     rbx , 10
-		cmp     rax , rbx
-		jg     L1
-		mov     qword [t10], 0
-		jmp  L2
-L1:
-		mov     qword [t10], 1
-L2:
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , [a]
-		mov     rbx , [b]
-		cmp     rax , rbx
-		jle     L3
-		mov     qword [t11], 0
-		jmp  L4
-L3:
-		mov     qword [t11], 1
-L4:
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [t10]
-		or     rax , [t11]
-		mov     [t12] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , [x]
-		mov     rbx , [y]
-		cmp     rax , rbx
-		jl     L5
-		mov     qword [t13], 0
-		jmp  L6
-L5:
-		mov     qword [t13], 1
-L6:
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [t12]
-		and     rax , [t13]
-		mov     [t14] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [t14]
-		and     rax , [u]
-		mov     [t15] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for getting assignment statement
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		movsd      xmm0 , [t15]                    ; memory to register
-		movsd     [v] , xmm0            ; register to memory
-		pop_regs                    ; restore register values
-
-
 		; Code for printing output
 		push_regs                    ; save values
 		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
@@ -316,33 +226,5 @@ L6:
 		call     printf                                   ; system call for output
 		rsp_realign                                      ; restore previous alignment of stack
 		pop_regs                    ; save values
-		; Code for printing output
-		push_regs                    ; save values
-		mov      rdi , fmt_spec_bool_out          ; get corresponding format specifier
-		mov      rax , [v]                               ; move source index
-		cmp      rax , 0
-		jnz      L7
-		cmp      rax , 0
-		; to print false
-		mov      rax , 1
-		mov      rdi , 1
-		mov      rsi , false
-		mov      rdx , false_len
-		syscall
-		pop_regs        ; restore register values
-		jmp  L8      ; restore register values
-
-
-L7:
-		; to print true
-		mov      rax , 1
-		mov      rdi , 1
-		mov      rsi , true
-		mov      rdx , true_len
-		syscall
-		pop_regs        ; restore register values
-L8:
-
-
 main_end:
 		retq
