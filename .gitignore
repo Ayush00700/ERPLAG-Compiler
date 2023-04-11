@@ -57,4 +57,3 @@ lexer
 semanticAnalyzer
 IR_codegen
 codegen
-*.txt
