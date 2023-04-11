@@ -16,6 +16,16 @@ extern printf, scanf, exit
 		fmt_spec_string: db "%s", 10, 0
 		fmt_spec_bool_in: db "%d", 0
 		fmt_spec_bool_out: db "%d", 10, 0
+		integer_in: db "Input: Enter an integer value", 10, 0
+		integer_in_len: equ $ - integer_in
+		real_in: db "Input: Enter an real value", 10, 0
+		real_in_len: equ $ - real_in
+		boolean_in: db "Input: Enter an boolean value", 10, 0
+		boolean_in_len: equ $ - boolean_in
+		print_out: db "Output: ", 0
+		print_out_len: equ $ - print_out
+		array_in: db "Input: Enter %d elements of %s type for range %d to %d", 10, 0
+		array_in_len: equ $ - array_in
 		true: db "true", 10, 0
 		true_len: equ $ - true
 		false: db "false", 10, 0
@@ -87,19 +97,21 @@ extern printf, scanf, exit
 		global main
 main:
 		push_regs                    ; save values
-		mov      rbp , rsp               ; set base to current stack top
+		mov      rbp , rsp           ; set base to current stack top
 		pop_regs                     ; save values
-		; Code for getting assignment statement
+
+
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
+		; Code for assigning immediate INT
 		mov      rax , 5                    ; immediate to register
 		mov      [a] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
-		; Code for getting assignment statement
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
+		; Code for assigning immediate INT
 		mov      rax , 9                    ; immediate to register
 		mov      [b] , rax            ; register to memory
 		pop_regs                    ; restore register values
@@ -107,29 +119,41 @@ main:
 
 		; Code for getting user input
 		push_regs                    ; save values
+		; Display prompt for integer input
+		mov      rax , 1
+		mov      rdi , 1
+		mov      rsi , integer_in
+		mov      rdx , integer_in_len
+		syscall
+
+		; Code to get integer input
 		mov      rdi , fmt_spec_int_in          ; get corresponding format specifier
-				mov RDX, RBP
-                ;sub RDX, 0     ; make RDX to point at location of variable on the stack
-                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later
-                mov RSI, x 
-                mov RAX, 0 
-                rsp_align ;align RSP to 16 byte boundary for scanf call
-                call scanf 
-                rsp_realign ;realign it to original position
+		mov      rdx , rbp
+		mov      rsi , x
+		xor      rax , rax
+		rsp_align                                ; align rsp to 16 byte boundary
+		call     scanf
+		rsp_realign                              ; realign rsp
 		pop_regs        ; restore register values
 
 
 		; Code for getting user input
 		push_regs                    ; save values
+		; Display prompt for integer input
+		mov      rax , 1
+		mov      rdi , 1
+		mov      rsi , integer_in
+		mov      rdx , integer_in_len
+		syscall
+
+		; Code to get integer input
 		mov      rdi , fmt_spec_int_in          ; get corresponding format specifier
-				mov RDX, RBP
-                ;sub RDX, 0     ; make RDX to point at location of variable on the stack
-                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later
-                mov RSI, y 
-                mov RAX, 0 
-                rsp_align ;align RSP to 16 byte boundary for scanf call
-                call scanf 
-                rsp_realign ;realign it to original position
+		mov      rdx , rbp
+		mov      rsi , y
+		xor      rax , rax
+		rsp_align                                ; align rsp to 16 byte boundary
+		call     scanf
+		rsp_realign                              ; realign rsp
 		pop_regs        ; restore register values
 
 
@@ -209,22 +233,28 @@ main:
 		pop_regs        ; restore register values
 
 
-		; Code for getting assignment statement
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
+		; Code for assigning INT
 		mov      rax , [t9]                    ; memory to register
 		mov      [z] , rax            ; register to memory
 		pop_regs                    ; restore register values
 
 
 		; Code for printing output
-		push_regs                    ; save values
-		mov      rdi , fmt_spec_int_out                  ; get corresponding format specifier
+		mov      rax , 1
+		mov      rdi , 1
+		mov      rsi , print_out
+		mov      rdx , print_out_len
+		syscall
+
+		push_regs                                         ; save values
+		mov      rdi , fmt_spec_int_out                   ; get corresponding format specifier
 		mov      rsi , [z]                               ; move source index
 		xor      rax , rax
-		rsp_align                                     ; align stack pointer
+		rsp_align                                         ; align stack pointer
 		call     printf                                   ; system call for output
-		rsp_realign                                      ; restore previous alignment of stack
-		pop_regs                    ; save values
+		rsp_realign                                       ; restore previous alignment of stack
+		pop_regs                                          ; restore values
 main_end:
 		retq

@@ -330,16 +330,40 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST)
     // Set up format specifier based on data type
     if(!strcmp(resultType, "integer"))
     {
+        fprintf(assembly, "\t\t; Display prompt for integer input\n");
+        fprintf(assembly, "\t\tmov      rax , 1\n");
+        fprintf(assembly, "\t\tmov      rdi , 1\n");
+        fprintf(assembly, "\t\tmov      rsi , integer_in\n");
+        fprintf(assembly, "\t\tmov      rdx , integer_in_len\n");
+        fprintf(assembly, "\t\tsyscall\n");
+
+        fprintf(assembly, "\n\t\t; Code to get integer input\n");
         fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_in          ; get corresponding format specifier\n");
         
     }
     else if(!strcmp(resultType, "real"))
     {
+        fprintf(assembly, "\t\t; Display prompt for real input\n");
+        fprintf(assembly, "\t\tmov      rax , 1\n");
+        fprintf(assembly, "\t\tmov      rdi , 1\n");
+        fprintf(assembly, "\t\tmov      rsi , real_in\n");
+        fprintf(assembly, "\t\tmov      rdx , real_in_len\n");
+        fprintf(assembly, "\t\tsyscall\n");
+
+        fprintf(assembly, "\n\t\t; Code to get real input\n");
         fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_in          ; get corresponding format specifier\n");
         
     }
     else if(!strcmp(resultType, "boolean"))
     {
+        fprintf(assembly, "\t\t; Display prompt for boolean input\n");
+        fprintf(assembly, "\t\tmov      rax , 1\n");
+        fprintf(assembly, "\t\tmov      rdi , 1\n");
+        fprintf(assembly, "\t\tmov      rsi , boolean_in\n");
+        fprintf(assembly, "\t\tmov      rdx , boolean_in_len\n");
+        fprintf(assembly, "\t\tsyscall\n");
+
+        fprintf(assembly, "\n\t\t; Code to get boolean input\n");
         fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_in          ; get corresponding format specifier\n");
         
     }
@@ -380,7 +404,14 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
         if(!strcmp(result, "true"))
         {
             fprintf(assembly, "\t\t; Code for printing boolean\n");
-            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , print_out\n");
+            fprintf(assembly, "\t\tmov      rdx , print_out_len\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            fprintf(assembly, "\n\t\tpush_regs                    ; save values\n");
             fprintf(assembly, "\t\tmov rax, 1                  ; system call for write\n");
             fprintf(assembly, "\t\tmov rdi, 1                  ; file handle 1 is stdout\n");
             fprintf(assembly, "\t\tmov rsi, true               ; address of string to output\n");
@@ -392,7 +423,14 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
         else if(!strcmp(result, "false"))
         {
             fprintf(assembly, "\t\t; Code for printing  boolean\n");
-            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , print_out\n");
+            fprintf(assembly, "\t\tmov      rdx , print_out_len\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            fprintf(assembly, "\n\t\tpush_regs                    ; save values\n");
             fprintf(assembly, "\t\tmov rax, 1                  ; system call for write\n");
             fprintf(assembly, "\t\tmov rdi, 1                  ; file handle 1 is stdout\n");
             fprintf(assembly, "\t\tmov rsi, false               ; address of string to output\n");
@@ -408,9 +446,17 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
             int type_left_int = (strchr(result, '.'))? -1 : 1;
             
             // INT
-            if(type_left_int==1){
+            if(type_left_int==1)
+            {
                 fprintf(assembly, "\t\t; Code for printing INT\n");
-                fprintf(assembly, "\t\tpush_regs                                     ; save values\n");
+
+                fprintf(assembly, "\t\tmov      rax , 1\n");
+                fprintf(assembly, "\t\tmov      rdi , 1\n");
+                fprintf(assembly, "\t\tmov      rsi , print_out\n");
+                fprintf(assembly, "\t\tmov      rdx , print_out_len\n");
+                fprintf(assembly, "\t\tsyscall\n");
+
+                fprintf(assembly, "\n\t\tpush_regs                                     ; save values\n");
                 fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_out           ; get corresponding format specifier\n");
                 fprintf(assembly, "\t\tmov      rsi , %s                             ; move source index\n", ir->result->name);
                 fprintf(assembly, "\t\txor      rax , rax\n");
@@ -421,9 +467,17 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
             }
 
             // REAL
-            else if(type_left_int==-1){
+            else if(type_left_int==-1)
+            {
                 fprintf(assembly, "\t\t; Code for printing REAL\n");
-                fprintf(assembly, "\t\tpush_regs                                     ; save values\n");
+
+                fprintf(assembly, "\t\tmov      rax , 1\n");
+                fprintf(assembly, "\t\tmov      rdi , 1\n");
+                fprintf(assembly, "\t\tmov      rsi , print_out\n");
+                fprintf(assembly, "\t\tmov      rdx , print_out_len\n");
+                fprintf(assembly, "\t\tsyscall\n");
+
+                fprintf(assembly, "\n\t\tpush_regs                                     ; save values\n");
                 fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_real_out          ; get corresponding format specifier\n");
                 fprintf(assembly, "\t\tmov      rsi , %s                             ; move source index\n", ir->result->name);
                 fprintf(assembly, "\t\txor      rax , rax\n");
@@ -448,7 +502,14 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
         char* resultType = temp->type.datatype;
 
         fprintf(assembly, "\t\t; Code for printing output\n");
-        fprintf(assembly, "\t\tpush_regs                                         ; save values\n");
+
+        fprintf(assembly, "\t\tmov      rax , 1\n");
+        fprintf(assembly, "\t\tmov      rdi , 1\n");
+        fprintf(assembly, "\t\tmov      rsi , print_out\n");
+        fprintf(assembly, "\t\tmov      rdx , print_out_len\n");
+        fprintf(assembly, "\t\tsyscall\n");
+
+        fprintf(assembly, "\n\t\tpush_regs                                         ; save values\n");
         
         // INT
         if(!strcmp(resultType, "integer"))
@@ -1461,7 +1522,7 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     fprintf(assembly, "%s:\n",funcName);
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
-    fprintf(assembly, "\t\tpop_regs                     ; save values\n");
+    fprintf(assembly, "\t\tpop_regs                     ; save values\n\n\n");
 
 }
 
@@ -1556,6 +1617,16 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_bool_in: db \"%%d\", 0\n");
         fprintf(assembly, "\t\tfmt_spec_bool_out: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tinteger_in: db \"Input: Enter an integer value\", 10, 0\n");
+        fprintf(assembly, "\t\tinteger_in_len: equ $ - integer_in\n");
+        fprintf(assembly, "\t\treal_in: db \"Input: Enter an real value\", 10, 0\n");
+        fprintf(assembly, "\t\treal_in_len: equ $ - real_in\n");
+        fprintf(assembly, "\t\tboolean_in: db \"Input: Enter an boolean value\", 10, 0\n");
+        fprintf(assembly, "\t\tboolean_in_len: equ $ - boolean_in\n");
+        fprintf(assembly, "\t\tprint_out: db \"Output: \", 0\n");
+        fprintf(assembly, "\t\tprint_out_len: equ $ - print_out\n");
+        fprintf(assembly, "\t\tarray_in: db \"Input: Enter %%d elements of %%s type for range %%d to %%d\", 10, 0\n");
+        fprintf(assembly, "\t\tarray_in_len: equ $ - array_in\n");
         fprintf(assembly, "\t\ttrue: db \"true\", 10, 0\n");
         fprintf(assembly, "\t\ttrue_len: equ $ - true\n");
         fprintf(assembly, "\t\tfalse: db \"false\", 10, 0\n");
