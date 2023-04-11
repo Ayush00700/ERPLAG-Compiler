@@ -6,8 +6,6 @@ This Includes
 ** Multiple level nesting using integer, real, boolean data types including static array data type**
 **Variant of test case 5**
 
-**Assignment to an array, long expression, conditional, constants in loops, output variables must be assigned value, function order, fucntion declaration and definition, The boolean long functions are fine, which constructs to ignore**
-**Long expression, conditional, constants in loops, output variables must be assigned value, shadowing, which constructs to ignore**
 
 <<module function1>>
 takes input [data: array[100..150] of boolean, weight: real, length: integer, b:array[35..50] of real, q:integer];
@@ -43,7 +41,7 @@ start
 	while(k AND x<=m[11] OR false)
 	start
 		declare p, u:integer;
-		declare bool1: boolean;
+		declare bool1: beeolean;
 		declare b: array[2..20] of integer;
 		declare b5, b6: array[35..50] of real;
 		b:= m;
@@ -106,7 +104,7 @@ start
 				 get_value(u);
 				 u:= k+12 - k*10+u;        **ERROR: Type mismatch error**  
 				 int1:= 20+32;
-				 k:= int1-3;               **ERROR: for loop conditional variable k is assigned value**
+				 k:= int1-3;               **ERROR: for loop conditional variable k is assigned value***   
 				 break;
 			default: v2:= D[15]+D[20];	      **not an error**	
 				 [v2, u]:=use module function1 with parameters Var3, c, k, Var1, k; **ERROR: Number of output parameters does not match with that of formal parameters**       

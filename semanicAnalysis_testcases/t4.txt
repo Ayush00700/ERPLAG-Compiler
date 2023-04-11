@@ -6,7 +6,7 @@
 takes input [x:integer, m:array [2..20] of integer, p:real];
 returns [ n:integer, k: boolean];
 start
-	declare a,b:integer;
+	declare a,b:integer;	
 	get_value(b);
 	declare p: array[2..20] of integer;	**Not an error as local variable can shadow the definition of input parameter**
 	a:= m[5]+3;
@@ -34,7 +34,7 @@ takes input[a: array[10..30] of integer, b:array[10..30] of integer, c:real];
 returns [m:boolean, n:integer];
 start
 	declare x,y: real;
-	declare k,n1: integer;
+	declare k: integer;
 	get_value(y);
 	get_value(x);
 	declare A,B: array[4..10] of integer;
