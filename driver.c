@@ -15,6 +15,7 @@
 
 extern func_entry* global_TABLE[TABLE_SIZE];
 extern int SEMANTIC_ERRORS;
+extern int LEXICAL_ERRORS;
 extern int PARSER_ERRORS;
 
 int main(int argc, char* args[]){ //DRIVER
@@ -26,15 +27,17 @@ int main(int argc, char* args[]){ //DRIVER
     int pflag=0;
     char* buffer = args[1];
     // strcpy(buffer,args[1]);
-    char* parseBuffer = args[2];
-    int bufferSize = atoi(args[3]);
+    // char* parseBuffer = args[2];
+    int bufferSize = atoi(args[2]);
     // printf("arg[1]:%s\n",buffer);
     // printf("arg[2]:%s\n",parseBuffer);
     // printf("arg[3]:%d\n",bufferSize);
     int run = 1;
     int third = 0; 
     int size_of_parse_tree_nodes = -1;
+    int num_of_parse_tree_nodes = -1;
     int size_of_ast_nodes = -1;
+    int num_of_ast_nodes = -1;
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
     printf("Ayush Agarwal\t\t2019B4A70652P\n");
     printf("Rajan Sahu\t\t2019B4A70572P\n");
@@ -49,7 +52,7 @@ int main(int argc, char* args[]){ //DRIVER
     printf("(d) Module handles errors efficiently and gives correct Parse Tree\n");
     printf("(e) No Segmentation Fault\n\n\n");
     while(run){
-        run=0;//COMMENT OUT LATER TODO
+        //run=0;//COMMENT OUT LATER TODO
     printf("################WELCOME TO ERPLAG COMPILER MENU######################\n\n");
     printf("OPTIONS\n");
         printf("\n1. Printing code without comments\n");
@@ -57,7 +60,7 @@ int main(int argc, char* args[]){ //DRIVER
         printf("3. Parsing and Displaying PARSE TREE by PARSER (with Errors)\n");
         printf("4. For printing total time taken by LEXER+PARSER\n");
         printf("0. EXIT\n");
-        int choice = 4;
+        int choice;
 
         // For testing purpose -->
         // int choice = 4;
@@ -65,28 +68,17 @@ int main(int argc, char* args[]){ //DRIVER
         // char parseBuffer[50] = "o1.txt";
 
       
-        // printf("Enter your choice: ");
-        // scanf("%d",&choice);
+        printf("Enter your choice: ");
+        scanf("%d",&choice);
         fputs("\033c", stdout); //CLEARS STDOUT SCREEN
         switch (choice)
-            {
-            case 0:
+        {
+            case 0:{
                 run = 0;
                 break;
-
-            /*Printing code without comments*/
-            case 1:
-                printf(" ");
-                char cleanFile[100];
-                printf("Enter name of new clean file where you want the code without comments\n");
-                scanf("%s",cleanFile);
-                removeComments(buffer,cleanFile);
-                printf("\nTask 1 done, again going to Options\n");
-                break;
-
+}
             /*Token List by LEXER with Errors*/
-            case 2:
-                l_start_time = clock();
+            case 1:{
                 FILE* fp;
                 fp = fopen(buffer,"r");
                 if(fp == NULL)
@@ -96,7 +88,7 @@ int main(int argc, char* args[]){ //DRIVER
                 }
                 printf("Running file %s\n", buffer);
                 populate_hash_table();
-                call_lexer(fp,4096);
+                call_lexer(fp,4096); //TODO VARIABLE ARG
                 int a = postProcessing();
                 if(!a){
                     printf("Found no code\n");
@@ -107,16 +99,14 @@ int main(int argc, char* args[]){ //DRIVER
                 printf("LEXICAL ERRORS ARE .... (first to last) \n");
                 pop_error_tokens();    
 
-                printf("\nTask 2 done, again going to Options\n");
+                printf("\nTask 1 done, again going to Options\n");
                 lflag=1;
-                l_end_time = clock();
-                l_total_CPU_time = (double) (l_end_time - l_start_time);
-                l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                 fclose(fp);
-                break;
-            case 3:
+                break;}
+            /*Running the parser*/
+            case 2:{
                 if(lflag==0){
-                    l_start_time = clock();
+                    //l_start_time = clock();
                     FILE* fp;
                     fp = fopen(buffer,"r");
                     if(fp == NULL)
@@ -127,7 +117,7 @@ int main(int argc, char* args[]){ //DRIVER
 
                     printf("Running file %s \n", buffer);
                     populate_hash_table();
-                    call_lexer(fp,4096);
+                    call_lexer(fp,4096);//todo variable arg
                     int a = postProcessing();
                     if(!a){
                         printf("Found no code\n");
@@ -138,9 +128,9 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("LEXICAL ERRORS ARE .... (first to last) \n");
                     pop_error_tokens();    
                     lflag=1;
-                    l_end_time = clock();
-                    l_total_CPU_time = (double) (l_end_time - l_start_time);
-                    l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
                     fclose(fp);
                 }
                 else{
@@ -149,17 +139,324 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("LEXICAL ERRORS ARE .... (first to last) \n");
                     pop_error_tokens();    
                 }
-                p_start_time = clock();
+                // p_start_time = clock();
+                if(!pflag){
                 parseCompletely(lflag);
-                p_end_time = clock();
-                p_total_CPU_time = (double) (p_end_time - p_start_time);
-                p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                pflag = 1;
+                }
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                 /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
-                size_of_parse_tree_nodes = print_parse_tree(parseBuffer);
+                if(!LEXICAL_ERRORS || !PARSER_ERRORS){
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                }
+                else{
+                    printf("there were lexical or parsing errors due to which parsetree was not printed\n");
+                }
+                printf("\nTask 2 done, again going to Options\n");
+                break;}
+            case 3:{
+                if(lflag==0){
+                    //l_start_time = clock();
+                    FILE* fp;
+                    fp = fopen(buffer,"r");
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s \n",buffer);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s \n", buffer);
+                    populate_hash_table();
+                    call_lexer(fp,4096);//todo variable arg
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                    lflag=1;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
+                // p_start_time = clock();
+                if(!pflag){
+                parseCompletely(lflag);
+                pflag = 1;
+                }
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
+                if(!LEXICAL_ERRORS || !PARSER_ERRORS){
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                }
+                else{
+                    printf("there were lexical or parsing errors due to which parsetree was not printed\n");
+                }
+                // if(!aflag)
+                {
+                    num_of_ast_nodes = create_abstract_tree();
+                    // aflag=1;
+                } //creation of abstract syntax tree 
+                size_of_ast_nodes = sizeof(ast_node)*num_of_ast_nodes;
                 printf("\nTask 3 done, again going to Options\n");
+                break;}
+            case 4:{
+                if(lflag==0){
+                    //l_start_time = clock();
+                    FILE* fp;
+                    fp = fopen(buffer,"r");
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s \n",buffer);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s \n", buffer);
+                    populate_hash_table();
+                    call_lexer(fp,4096);//todo variable arg
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                    lflag=1;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
+                // p_start_time = clock();
+                parseCompletely(lflag);
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                if(LEXICAL_ERRORS || PARSER_ERRORS){
+                    return -1;
+                }
+                num_of_ast_nodes = create_abstract_tree(); //creation of abstract syntax tree 
+                size_of_ast_nodes = sizeof(ast_node)*num_of_ast_nodes;
+                printf("Parse tree Number of nodes = %d, Allocated Memory = %d Bytes\n",num_of_parse_tree_nodes,size_of_parse_tree_nodes);
+                printf("AST Number of nodes = %d, Allocated Memory = %d Bytes",num_of_ast_nodes,size_of_ast_nodes);
+                int anse = size_of_parse_tree_nodes-size_of_ast_nodes;
+                anse = anse/(size_of_parse_tree_nodes);
+                anse = anse*100;
+                printf("Compression percentage = %d",anse);
+                printf("\nTask 4 done, again going to Options\n");
                 pflag=1;
-                break;
-            case 4:
+                break;}
+            case 5:{
+                if(lflag==0){
+                    //l_start_time = clock();
+                    FILE* fp;
+                    fp = fopen(buffer,"r");
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s \n",buffer);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s \n", buffer);
+                    populate_hash_table();
+                    call_lexer(fp,4096);//todo variable arg
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                    lflag=1;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
+                // p_start_time = clock();
+                parseCompletely(lflag);
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                if(LEXICAL_ERRORS || PARSER_ERRORS){
+                    return -1;
+                }
+                num_of_ast_nodes = create_abstract_tree(); //creation of abstract syntax tree 
+                size_of_ast_nodes = sizeof(ast_node)*num_of_ast_nodes;
+                printf("Parse tree Number of nodes = %d, Allocated Memory = %d Bytes\n",num_of_parse_tree_nodes,size_of_parse_tree_nodes);
+                printf("AST Number of nodes = %d, Allocated Memory = %d Bytes",num_of_ast_nodes,size_of_ast_nodes);
+                int anse = size_of_parse_tree_nodes-size_of_ast_nodes;
+                anse = anse/(size_of_parse_tree_nodes);
+                anse = anse*100;
+                printf("Compression percentage = %d",anse);
+                ast_node* ast_root = get_ast_root();
+                semantic();
+                get_global_symbol_table(ast_root);
+                print_symbol_table(); 
+                printf("\nTask 5 done, again going to Options\n");
+                pflag=1;
+                break;}
+            case 6:{
+                if(lflag==0){
+                    //l_start_time = clock();
+                    FILE* fp;
+                    fp = fopen(buffer,"r");
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s \n",buffer);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s \n", buffer);
+                    populate_hash_table();
+                    call_lexer(fp,4096);//todo variable arg
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                    lflag=1;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
+                // p_start_time = clock();
+                parseCompletely(lflag);
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                if(LEXICAL_ERRORS || PARSER_ERRORS){
+                    return -1;
+                }
+                num_of_ast_nodes = create_abstract_tree(); //creation of abstract syntax tree 
+                size_of_ast_nodes = sizeof(ast_node)*num_of_ast_nodes;
+                printf("Parse tree Number of nodes = %d, Allocated Memory = %d Bytes\n",num_of_parse_tree_nodes,size_of_parse_tree_nodes);
+                printf("AST Number of nodes = %d, Allocated Memory = %d Bytes",num_of_ast_nodes,size_of_ast_nodes);
+                int anse = size_of_parse_tree_nodes-size_of_ast_nodes;
+                anse = anse/(size_of_parse_tree_nodes);
+                anse = anse*100;
+                printf("Compression percentage = %d",anse);
+                ast_node* ast_root = get_ast_root();
+                semantic();
+                get_global_symbol_table(ast_root);
+                print_activation();
+                printf("\nTask 6 done, again going to Options\n");
+                pflag=1;
+                break;}
+            case 7:{
+                if(lflag==0){
+                    //l_start_time = clock();
+                    FILE* fp;
+                    fp = fopen(buffer,"r");
+                    if(fp == NULL)
+                    {
+                        printf("Error opening file:%s \n",buffer);   
+                        exit(1);             
+                    }
+
+                    printf("Running file %s \n", buffer);
+                    populate_hash_table();
+                    call_lexer(fp,4096);//todo variable arg
+                    int a = postProcessing();
+                    if(!a){
+                        printf("Found no code\n");
+                        exit(0);
+                    }
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                    lflag=1;
+                    // l_end_time = clock();
+                    // l_total_CPU_time = (double) (l_end_time - l_start_time);
+                    // l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
+                    fclose(fp);
+                }
+                else{
+                    printf("TOKENS ARE .... (first to last) \n");
+                    printtokens();
+                    printf("LEXICAL ERRORS ARE .... (first to last) \n");
+                    pop_error_tokens();    
+                }
+                // p_start_time = clock();
+                parseCompletely(lflag);
+                // p_end_time = clock();
+                // p_total_CPU_time = (double) (p_end_time - p_start_time);
+                // p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
+                /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
+                num_of_parse_tree_nodes = print_parse_tree();
+                size_of_parse_tree_nodes = num_of_parse_tree_nodes*sizeof(treeNodes);
+                if(LEXICAL_ERRORS || PARSER_ERRORS){
+                    return -1;
+                }
+                num_of_ast_nodes = create_abstract_tree(); //creation of abstract syntax tree 
+                size_of_ast_nodes = sizeof(ast_node)*num_of_ast_nodes;
+                printf("Parse tree Number of nodes = %d, Allocated Memory = %d Bytes\n",num_of_parse_tree_nodes,size_of_parse_tree_nodes);
+                printf("AST Number of nodes = %d, Allocated Memory = %d Bytes",num_of_ast_nodes,size_of_ast_nodes);
+                int anse = size_of_parse_tree_nodes-size_of_ast_nodes;
+                anse = anse/(size_of_parse_tree_nodes);
+                anse = anse*100;
+                printf("Compression percentage = %d",anse);
+                ast_node* ast_root = get_ast_root();
+                semantic();
+                get_global_symbol_table(ast_root);
+                print_static_dynamic_arrays();
+                printf("\nTask 7 done, again going to Options\n");
+                pflag=1;
+                break;}
+            case 8:{
                 /*For printing total time taken by LEXER+PARSER*/
                 if (pflag!=1){
                     if(lflag==0){
@@ -205,6 +502,7 @@ int main(int argc, char* args[]){ //DRIVER
                     size_of_ast_nodes = sizeof(ast_node)*size_of_ast_nodes;
                     ast_node* ast_root = get_ast_root();
                     semantic();
+                    printf("\n================\n\n\n\n================\n");
                     get_global_symbol_table(ast_root);
                     print_activation();
                     print_static_dynamic_arrays();
@@ -222,9 +520,6 @@ int main(int argc, char* args[]){ //DRIVER
                     starter(assembly,intermediate_code);
 
                     // fprintf(assembly,"%s", ast_root->asm_code);
-
-
-
                     /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
                     //TODO PRINT PARSE TREE
 
@@ -235,7 +530,7 @@ int main(int argc, char* args[]){ //DRIVER
                 printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds+p_total_CPU_time_in_seconds);
                 // timed();
                 printf("\nTask 4 done, again going to Options\n");
-                break;
+                break;}
             default:
                 printf("Wrong input, Enter Again\n");
         }

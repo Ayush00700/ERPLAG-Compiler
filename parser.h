@@ -64,10 +64,12 @@ extern void goToParent();
 extern void goToChild();
 // Function to add the "rule" to the parse tree
 extern void addRuleToTree(rule* rule);
+// printer function
+extern void printer(treeNodes* current);
 // Function to perform the inorder traversal of the parse tree
-extern void in_order_traversal(FILE* fp, treeNodes* current);
+extern void InOrderTraversal(treeNodes* current);
 // Function to print the parse tree using inorder traversal
-extern int print_parse_tree(char* out_file);
+extern int print_parse_tree();
 // Function to return parse tree (ptree)
 extern parse_tree* get_ptree();
 

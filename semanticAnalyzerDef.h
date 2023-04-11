@@ -45,6 +45,7 @@ typedef struct type_exp{
     arr_struct* arr_data;
     int line_defined;
     int isChanged;
+    int line_changed;
 }type_exp;
 
 typedef struct sym_tab_entry{

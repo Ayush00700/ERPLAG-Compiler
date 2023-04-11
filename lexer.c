@@ -20,7 +20,7 @@ token_node* stack_head; //STACK FOR ERRORS
 token_node* current; //LAST NODE THAT WAS ADDED
 token_node* get_next_curr;
 hash_table_contents* hash_table[TABLE_SIZE];
-int LEXER_ERRORS = 0;
+int LEXICAL_ERRORS = 0;
 // #endif
 
 
@@ -101,6 +101,7 @@ void populate(char* buffer,FILE* fp,int bufsize)
 void add_error_token(token_info* tk)
 /*This function adds a lexical error entry into the stack*/
 {
+    LEXICAL_ERRORS = 1;
     // If stack is empty then initialize
     if(stack_head==NULL){
         stack_head = (token_node*)malloc(sizeof(token_node));
