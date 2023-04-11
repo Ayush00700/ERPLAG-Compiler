@@ -5,7 +5,8 @@
 
 FILE* assembly;
 
-void macros_starter(){
+void macros_starter()
+{
     /* This function defines the required macros in the assembly file
     */
 
@@ -55,7 +56,8 @@ void macros_starter(){
     fprintf(assembly, "\t\t%%endmacro\n\n\n");
 }
 
-void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
+void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |   ASSIGN   |    lhs   |    rhs   |    NULL   |
@@ -96,6 +98,8 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
 
     // If RHS is a constant (immediate value in ASM jargon)
     if(indexRHS==-1){
+        // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+        // and hence it is an integer constant (immediate value)
         // CHECK if immediate value is int or real
         int type_right_int = (strchr(nameLHS, '.'))? 0 : 1;
 
@@ -155,7 +159,8 @@ void codegen_assgn_stmt(ir_code_node* ir, func_entry* local_ST){
    
 }
 
-void codegen_logical(ir_code_node* ir, func_entry* local_ST){
+void codegen_logical(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
@@ -288,7 +293,8 @@ void codegen_logical(ir_code_node* ir, func_entry* local_ST){
 
 }
 
-void codegen_input(ir_code_node* ir, func_entry* local_ST){
+void codegen_input(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |  GET_VALUE |    var   |   NULL   |    NULL   |
@@ -350,7 +356,8 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST){
 
 }
 
-void codegen_output(ir_code_node* ir, func_entry* local_ST){
+void codegen_output(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    PRINT   |    var   |   NULL   |    NULL   |
@@ -395,7 +402,9 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
 
         // INT or REAL
         else
-        { 
+        {
+            // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+            // and hence it is an integer constant (immediate value)
             int type_left_int = (strchr(result, '.'))? -1 : 1;
             
             // INT
@@ -506,12 +515,18 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST){
     
 }
 
-void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
+void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
     +------------+----------+----------+-----------+
     label can be one of ADD, SUB, MUL, DIv
+    Input: 
+        - IR 3AC for operation and operands
+        - Local symbol table for info regarding the local variables
+    Output:
+        - Assembly code for arithmetic statements
     */
 
     // Get offset of result
@@ -519,213 +534,233 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
-    while(temp!=NULL){
-        if(!strcmp(temp->name,result)){
+    
+    // Hashing collision
+    while(temp!=NULL)
+    {
+        if(!strcmp(temp->name,result))
+        {
             break;
         }
         temp = temp->next;
     }
     int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
+    
+    // LEFT operand
     char* nameLeft = ir->left_op->name;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
 
     // Get offset of left operand temp
     fprintf(assembly, "\t\t; Code for arithmetic\n");
-    
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     
 
-    // If left operand is a constant
+    // If left operand is an immediate operand
     if(indexLeft == -1)
     {
+        // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+        // and hence it is an integer constant (immediate value)
         int type_left_int = (strchr(nameLeft, '.'))? 0 : 1;
-        // TODO ----> identifying if immediate value is int or real
+        // INT
         if(type_left_int)
         {
             fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
-            
         }
 
+        // REAL
         else
         {
             fprintf(assembly, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
-            
         }
     }
 
     else
     {
         temp = local_ST->func_curr->entries[indexLeft];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,nameLeft)){
+        // Hashing collision
+        while(temp!=NULL)
+        {
+            if(!strcmp(temp->name,nameLeft))
+            {
                 break;
             }
             temp = temp->next;
         }
         int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
+        // INT
         if(!strcmp(resultType, "integer"))
         {
             fprintf(assembly, "\t\tmov     rax , [%s]\n", ir->left_op->name);
-            
         }
+
+        // REAL
         else
         {
             fprintf(assembly, "\t\tmovsd     xmm0 , [%s]\n", ir->left_op->name);
-            
         }
         
     }
 
+    // RIGHT operand
+    char* nameRight;
+    int indexRight;
+
     // For right operand
     switch(ir->operator)
     {
-        char* nameRight;
-        int indexRight;
         case ADD:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
+                // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+                // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
-                // CHECK ----> identifying if immediate value is int or real
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tadd     rax , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
-                    
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\taddsd     xmm0 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
 
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
                 }
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
+                // INT
                 if(!strcmp(resultType, "integer"))
                 {
                     fprintf(assembly, "\t\tadd     rax , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
-                    
                 }
+                
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\taddsd     xmm0 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
             break;
+
         case SUB:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
+                // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+                // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
-                // CHECK ----> identifying if immediate value is int or real
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tsub     rax , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
-                    
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tsubsd     xmm0 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
 
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
                 }
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
+                // INT
                 if(!strcmp(resultType, "integer"))
                 {
                     fprintf(assembly, "\t\tsub     rax , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
-                    
                 }
+
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tsubsd     xmm0 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
             break;
+
         case MUL:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
+                // If strchr(nameRight, '.') returns null then it means right operand has no '.'
+                // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.') != NULL)? 0 : 1;
 
-                // CHECK ----> identifying if immediate value is int or real
+                // INT
                 if(type_right_int)
                 {
                     
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\timul     rbx\n");
-                    
                     fprintf(assembly, "\t\tmov    [%s] , rax\n", ir->result->name);
-                    
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmovsd      xmm1 , %s\n", nameRight);
-
                     fprintf(assembly, "\t\tmulsd     xmm1\n");
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
 
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -735,41 +770,37 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 if(!strcmp(resultType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-
                     fprintf(assembly, "\t\timul     rbx\n");
-                    
                     fprintf(assembly, "\t\tmov     [%s] , rax\n", ir->result->name);
-                    
                 }
                 else
                 {
                     fprintf(assembly, "\t\tmovsd     xmm1 , [%s]\n", ir->right_op->name);
-                  
                     fprintf(assembly, "\t\tmulsd     xmm1\n");
-                    
                     fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                    
                 }
             }
             break;
+
         case DIV:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 fprintf(assembly, "\t\tdivsd     xmm0 , %s\n", nameRight);
-                
                 fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                
             }
 
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -777,39 +808,40 @@ void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
 
                 fprintf(assembly, "\t\tdivsd     xmm0 , [%s]\n", ir->right_op->name);
-                
                 fprintf(assembly, "\t\tmovsd     [%s] , xmm0\n", ir->result->name);
-                
             }
             break;
     }
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
-    
-    
+
 }
 
-void codegen_relational(ir_code_node* ir, func_entry* local_ST){
+void codegen_relational(ir_code_node* ir, func_entry* local_ST)
+{
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
     |    label   |    temp  |    op1   |    op2    |
     +------------+----------+----------+-----------+
     label can be one of LT, LTE, GT, GTE, EQ, NEQ
+    Input: 
+        - IR 3AC for operation and operands
+        - Local symbol table for info regarding the local variables
+    Output:
+        - Assembly code for relational statements
     */
-
-    
-    
-    
-    
-    
 
     // Get offset of result
     char* result = ir->result->name;
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
-    while(temp!=NULL){
-        if(!strcmp(temp->name,result)){
+    
+    // Hashing collision
+    while(temp!=NULL)
+    {
+        if(!strcmp(temp->name,result))
+        {
             break;
         }
         temp = temp->next;
@@ -821,34 +853,38 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
     char* nameLeft = ir->left_op->name;
     int indexLeft = sym_tab_entry_contains(nameLeft,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     fprintf(assembly, "\t\t; Code for relational\n");
-    
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     
 
     // If left operand is a constant
     if(indexLeft == -1)
     {
-        // If strchr(nameLeft, '.') returns null then it means left operand has no '.'
+        // If strchr(nameRight, '.') returns null then it means right operand has no '.'
         // and hence it is an integer constant (immediate value)
         int type_left_int = (strchr(nameLeft, '.'))? 0 : 1;
+
+        // INT
         if(type_left_int)
         {
             fprintf(assembly, "\t\tmov     rax , %s            ; immediate to memory\n", nameLeft);
-            
         }
 
+        // REAL
         else
         {
             fprintf(assembly, "\t\tmovsd     xmm0 , %s            ; immediate to memory\n", nameLeft);
-            
         }
     }
 
     else
     {
         temp = local_ST->func_curr->entries[indexLeft];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,nameLeft)){
+        
+        // Hashing collision
+        while(temp!=NULL)
+        {
+            if(!strcmp(temp->name,nameLeft))
+            {
                 break;
             }
             temp = temp->next;
@@ -856,15 +892,16 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
         int offsetLeft = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
         char* leftType = temp->type.datatype;
 
+        // INT
         if(!strcmp(leftType, "integer"))
         {
             fprintf(assembly, "\t\tmov     rax , [%s]\n", ir->left_op->name);
-            
         }
+        
+        // REAL
         else
         {
             fprintf(assembly, "\t\tmovsd     xmm0 , [%s]\n", ir->left_op->name);
-            
         }
         
     }
@@ -880,48 +917,38 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjl     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjb     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -930,8 +957,12 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -939,103 +970,84 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjl     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjb     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
             }
             break;
+
         case GT:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjg     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
-                    
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tja     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
-                    
                 }
             }
 
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -1043,95 +1055,73 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjg     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
                 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjg     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
             }
             break;
+
         case LE:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjle     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjb     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -1140,8 +1130,12 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -1149,97 +1143,74 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjle     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
                 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjb     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
             }
             break;
+
         case GE:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjge     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tja     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -1248,8 +1219,12 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -1257,95 +1232,73 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjge     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
                 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tja     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
             }
             break;
+
         case EQ:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -1354,8 +1307,12 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -1363,93 +1320,73 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
                 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
             }
             break;
+
         case NEQ:
             // Get offset of right operand temp
             nameRight = ir->right_op->name;
             indexRight = sym_tab_entry_contains(nameRight,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
-            // If right operand is a constant
+            
+            // If right operand is an immediate value
             if(indexRight == -1)
             {
                 // If strchr(nameRight, '.') returns null then it means right operand has no '.'
                 // and hence it is an integer constant (immediate value)
                 int type_right_int = (strchr(nameRight, '.'))? 0 : 1;
+                
+                // INT
                 if(type_right_int)
                 {
                     fprintf(assembly, "\t\tmov     rbx , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjnz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , %s\n", nameRight);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjnz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -1458,8 +1395,12 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
             else
             {
                 temp = local_ST->func_curr->entries[indexRight];
-                while(temp!=NULL){
-                    if(!strcmp(temp->name,nameRight)){
+                
+                // Hashing collision
+                while(temp!=NULL)
+                {
+                    if(!strcmp(temp->name,nameRight))
+                    {
                         break;
                     }
                     temp = temp->next;
@@ -1467,42 +1408,30 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
                 int offsetRight = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
                 char* rightType = temp->type.datatype;
 
+                // INT
                 if(!strcmp(rightType, "integer"))
                 {
                     fprintf(assembly, "\t\tmov     rbx , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcmp     rax , rbx\n");
-                    
                     fprintf(assembly, "\t\tjnz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
 
+                // REAL
                 else
                 {
                     fprintf(assembly, "\t\tmov     xmm1 , [%s]\n", ir->right_op->name);
-                    
                     fprintf(assembly, "\t\tcomiss     xmm0 , xmm1\n");
-                    
                     fprintf(assembly, "\t\tjnz     %s\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 0);
-                    
                     fprintf(assembly, "\t\tjmp  %s\n", next_label);
-                    
                     fprintf(assembly, "%s:\n", true_label);
-                    
                     fprintf(assembly, "\t\tmov     qword [%s], %d\n", ir->result->name, 1);
-
                     fprintf(assembly, "%s:\n", next_label);
                     
                 }
@@ -1511,12 +1440,8 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST){
         }
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
-    
-
-                                          
-    
+  
 }
-
 
 void codegen_func(ir_code_node* ir, func_entry* local_ST)
 {
@@ -1524,23 +1449,20 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     +------------+----------+----------+-----------+
     |    label   |  fn_name |    NULL  |    NULL   |
     +------------+----------+----------+-----------+
+    Input: 
+        - IR 3AC for operation and operands
+        - Local symbol table for info regarding the local variables
+    Output:
+        - Assembly code for function definitions
     */
-    
-    
-   
+
     char* funcName = ir->result->name;
 
     fprintf(assembly, "%s:\n",funcName);
-
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
-
-    fprintf(assembly, "\t\tmov      rbp , rsp               ; set base to current stack top\n");
+    fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
     fprintf(assembly, "\t\tpop_regs                     ; save values\n");
-    
-    // fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
 
-
-    
 }
 
 void codegen_conditional(ir_code_node* ir, func_entry* local_ST)
@@ -1599,9 +1521,12 @@ void codegen_mem_write(ir_code_node* ir, func_entry* local_ST)
 
 void starter(FILE* assembly_file,ir_code* IR)
 {
+    /* This function is the overall wrapper function and calling other functions based on the operator in the
+    ir code node received as parameter. The called functions are responsible to generate the corresponding
+    assembly code by directly writing the code into the assembly file passed as file pointer
+    */
 
     assembly = assembly_file;
-    // assembly = fopen("assembly_try.asm","w");
 
     if(!assembly)
         printf("[-] Error opening assembly_try.asm!\n");
@@ -1637,41 +1562,38 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tfalse_len: equ $ - false\n");
         fprintf(assembly, "\t\tzero: equ 0\n");
 
+        //  Data declaration of various types to be done by going thro each entry of the symbol table
         data_read(assembly);
 
-        /* Data declaration of various types to be done by going thro each entry of the symbol table*/
-
+        // Start section .text of assembly
         fprintf(assembly, "\n\n\t\tsection      .text\n");
-        macros_starter();               // Define the macros
+        // Define the macros
+        macros_starter();
         fprintf(assembly, "\t\tglobal main\n");
-        // fprintf(assembly, "main:\n");
-
-        printf("[+] ASM file updated!\n");
-
     }
+
     ir_code_node *IR_head = IR->head;
     var_record* func_curr;
     func_entry* local_ST;
 
-
-
     // Go through each entry of the IR quadruple
     while(IR_head)
     {
-        if(IR_head->operator==FUNC){ //if you reach FUNC --> then change the context
+        //if you reach FUNC --> then change the context
+        if(IR_head->operator==FUNC)
+        {
             
             //in case it is main --we have to search for DRIVER
             if (!strcmp(IR_head->result->name,"main")) local_ST = find_module_global("DRIVER");
             else local_ST = find_module_global(IR_head->result->name);
             func_curr = local_ST->func_root; //once we get the local_ST then just locate the root
         }
+
         type_exp* left_exp;
         type_exp* right_exp;
         type_exp* res_exp;
-
-
-        // int index = ;        // Checks if the symbol table contains - if yes we get the index
         
+        // Check if symbol table contains left operand label
         if(IR_head->left_op->name&& (sym_tab_entry_contains(IR_head->left_op->name,local_ST->func_curr->entries)!=-1)){
             left_exp = find_expr_codegen(IR_head->left_op->name,local_ST);
             char* temp = (char*)malloc(sizeof(char)*30);
@@ -1679,9 +1601,9 @@ void starter(FILE* assembly_file,ir_code* IR)
             strcpy(temp, IR_head->left_op->name);
             strcat(temp, left_exp->reach_defined);
             IR_head->left_op->name = temp;
-            // strcat(IR_head->left_op->name, left_exp->reach_defined);
-            // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->left_op->name,IR_head->left_op->reach));
         }
+
+        // Check if symbol table contains right operand label
         if(IR_head->right_op->name&& (sym_tab_entry_contains(IR_head->right_op->name,local_ST->func_curr->entries)!=-1)){
             right_exp = find_expr_codegen(IR_head->right_op->name,local_ST);
             char* temp = (char*)malloc(sizeof(char)*30);
@@ -1689,9 +1611,9 @@ void starter(FILE* assembly_file,ir_code* IR)
             strcpy(temp, IR_head->right_op->name);
             strcat(temp, right_exp->reach_defined);
             IR_head->right_op->name = temp;
-            // strcat(IR_head->right_op->name, right_exp->reach_defined);
-            // fprintf(assembly, "\t\t%s   dd   0\n",strcat(IR_head->right_op->name,IR_head->right_op->reach));
         }
+
+        // Check if symbol table contains result label
         if(IR_head->result->name&&strcmp(IR_head->result->name,"main")&& (sym_tab_entry_contains(IR_head->result->name,local_ST->func_curr->entries)!=-1)){
             res_exp = find_expr_codegen(IR_head->result->name,local_ST);
             char* temp = (char*)malloc(sizeof(char)*30);
@@ -1701,19 +1623,13 @@ void starter(FILE* assembly_file,ir_code* IR)
             IR_head->result->name = temp;
         }
         
+        /* REACH is the path to take from function root symbol table to the corresponding construct's
+        local symbol table (d = down, r = right). Moving down increases nesting level unlike moving right */
         char* reach = "";   
         func_curr = local_ST->func_root;
-
-        // char* reach = IR_head->result->reach; 
-        // if(reachstrcmp(reach,"")){ //if reach is not "" then find the local construct
-        //                       //in the current local_ST
-        //     func_curr = find_local_construct(local_ST->name,reach);
-        // }else {
-        //     func_curr = local_ST->func_root;
-        // }
-
         local_ST->func_curr = func_curr;
 
+        // For calling respective code gen fns
         switch (IR_head->operator)
         {
         case ASSIGN:
@@ -1792,11 +1708,13 @@ void starter(FILE* assembly_file,ir_code* IR)
     fclose(assembly);
 }
 
-
+/*-----------------------------------------------------------HELPER FUNCTIONS----------------------------------------------------------------*/
 type_exp* find_in_list_codegen(sym_tab_entry* output,char* key)
 {
-    while(output){
-        if(!strcmp(output->name,key)){
+    while(output)
+    {
+        if(!strcmp(output->name,key))
+        {
             return &output->type;
         }
         output = output->next;
@@ -1804,36 +1722,31 @@ type_exp* find_in_list_codegen(sym_tab_entry* output,char* key)
     return NULL;
 }
 
-type_exp* find_in_func_table_codegen(char* key, func_entry* curr){
-    //extract the lexeme out of ast_root
-     
-    //check if the module has any parameters or not :
-  
-    //check in the input list 
-    // sym_tab_entry* temp = curr->input_list;
-    // while(temp!=NULL){
-    //     if(!strcmp(temp->name,key)){
-    //         return &temp->type;
-    //     }
-    //     temp = temp->next;
-    // }   
+type_exp* find_in_func_table_codegen(char* key, func_entry* curr)
+{
+ 
     type_exp* input=find_in_list_codegen(curr->input_list, key);
     if(input)
-    return input;
+        return input;
+    
     type_exp* output=find_in_list_codegen(curr->ouput_list, key);
     if(output)
-    return output;
+        return output;
+    
     printf("%s: ",key);
 }
 
-type_exp* find_in_table_codegen(char* key,var_record* table){
+type_exp* find_in_table_codegen(char* key,var_record* table)
+{
     int index = sym_tab_entry_contains(key,table->entries);
     if(index==-1) return NULL;
 
     sym_tab_entry* temp = table->entries[index];
 
-    while(temp!=NULL){
-        if(!strcmp(temp->name,key)){
+    while(temp!=NULL)
+    {
+        if(!strcmp(temp->name,key))
+        {
             return &temp->type;
         }
         temp = temp->next;
@@ -1850,6 +1763,7 @@ type_exp* find_expr_codegen(char* key, func_entry* curr)
     var_record* current_rec = curr->func_curr;
     var_record* temp = current_rec;
     type_exp* type=find_in_table_codegen(key, current_rec);
+    
     if(type)
         return type;
     else
@@ -1870,6 +1784,9 @@ type_exp* find_expr_codegen(char* key, func_entry* curr)
         return type;
     }
 }
-void data_read(FILE* assembly){
+
+void data_read(FILE* assembly)
+{
     code_gen(assembly);
 }
+/*-------------------------------------------------------END OF  HELPER FUNCTIONS------------------------------------------------------------*/
