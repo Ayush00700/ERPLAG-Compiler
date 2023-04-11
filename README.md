@@ -220,8 +220,9 @@ We have used "3 Address Codes" IR. We have generated IR for the following:
     [:)] Semantic Analyzer
     [:(] Semantic checks improvement
     [:(] Free the pointers of IR
+    [:)] Symbol Table Printing, AST and Parse Tree Printing
+    [:)] No of Nodes in AST calculation
+    [:)] Activation record size printing
     [:(] Short circuit evaluation
     [:(] Code Generation
-    [:(] Symbol Table Printing, AST and Parse Tree Printing
-    [:(] No of Nodes in AST calculation
-    [:(] Activation record size printing
+    [:(] Driver
