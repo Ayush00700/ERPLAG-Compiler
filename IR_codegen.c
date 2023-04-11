@@ -508,7 +508,7 @@ void IR_iterative_for(ast_node* node,func_entry* local_ST,func_entry** global_ST
     // printf("For Loop Encountered sibiling[%d]:nesting[%d]\n",node->code->head->nestingLevel[0],node->code->head->nestingLevel[1]);
 }
 
-void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+void IR_booleanExpr_and(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFT CHILD
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//Right child
     node->tempName = newTemp();
@@ -520,12 +520,13 @@ void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
 
     ir_code_node* newNode = getNew_ir_code_node(local_ST);
-    if(!strcmp(node->name,"AND")){
+    // if(!strcmp(node->name,"AND")){
         newNode->operator = AND;
 
-    }else if(!strcmp(node->name,"OR")){
-        newNode->operator = OR;
-    }
+    // }
+    // else if(!strcmp(node->name,"OR")){
+    //     newNode->operator = OR;
+    // }
     newNode->result->name = node->tempName;
     newNode->left_op->name = node->child_pointers[0]->tempName;
     newNode->right_op->name = node->child_pointers[1]->tempName;
@@ -537,6 +538,101 @@ void IR_booleanExpr(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     node->code = add_list_end(node->child_pointers[1]->code,node->code);
     node->code = add_node_end(newNode,node->code);
 }
+
+void IR_booleanExpr_or(ast_node* node,func_entry* local_ST,func_entry** global_ST){
+    generate_IR_for_module(node->child_pointers[0],local_ST,global_ST);//LEFT CHILD
+    generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//Right child
+    node->tempName = newTemp();
+    
+    char* trueLabel = newLabel();
+    char* falseLabel = newLabel();
+    char* nextLabel = newLabel();
+    
+    type_exp temp;
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
+    sym_tab_entry_add(node->tempName,local_ST->func_curr,temp);
+
+    // ir_code_node* newNode = getNew_ir_code_node(local_ST);
+    // newNode->operator = OR;
+    // newNode->result->name = node->tempName;
+    // newNode->left_op->name = node->child_pointers[0]->tempName;
+    // newNode->right_op->name = node->child_pointers[1]->tempName;
+    // newNode->result->reach = findReach(newNode->result->name, local_ST);
+    // newNode->left_op->reach = findReach(newNode->left_op->name, local_ST);
+    // newNode->right_op->reach = findReach(newNode->right_op->name, local_ST);
+
+    node->code = add_list_end(node->child_pointers[0]->code,node->code);
+
+    ir_code_node* ifNode = getNew_ir_code_node(local_ST);
+    ifNode->operator = IF;
+    ifNode->result->name = node->child_pointers[0]->tempName;
+    ifNode->left_op->name = trueLabel;
+    ifNode->result->reach = findReach(ifNode->result->name, local_ST);
+    
+    node->code = add_node_end(ifNode,node->code);
+
+    node->code = add_list_end(node->child_pointers[1]->code,node->code);
+
+    ir_code_node* ifNode2 = getNew_ir_code_node(local_ST);
+    ifNode2->operator = IF;
+    ifNode2->result->name = node->child_pointers[1]->tempName;
+    ifNode2->left_op->name = trueLabel;
+    ifNode2->result->reach = findReach(ifNode2->result->name, local_ST);
+
+    node->code = add_node_end(ifNode2,node->code);
+
+    ir_code_node* falseGoto = getNew_ir_code_node(local_ST);
+    falseGoto->operator = GOTO;
+    falseGoto->result->name = falseLabel;
+
+    node->code = add_node_end(falseGoto,node->code);
+
+    ir_code_node* trueLabelNode = getNew_ir_code_node(local_ST);
+    trueLabelNode->operator = LABEL;
+    trueLabelNode->result->name = trueLabel;
+
+    node->code = add_node_end(trueLabelNode,node->code);
+
+    ir_code_node* assignNode = getNew_ir_code_node(local_ST);
+    assignNode->operator = ASSIGN;
+    assignNode->result->name = node->tempName;
+    assignNode->left_op->name = "true";
+    assignNode->result->reach = findReach(assignNode->result->name, local_ST);
+    assignNode->left_op->reach = findReach(assignNode->left_op->name, local_ST);
+    
+    node->code = add_node_end(assignNode,node->code);
+
+    ir_code_node* nextGotoNode = getNew_ir_code_node(local_ST);
+    nextGotoNode->operator = GOTO;
+    nextGotoNode->result->name = nextLabel;
+
+    node->code = add_node_end(nextGotoNode,node->code);
+
+    ir_code_node* falseLabelNode = getNew_ir_code_node(local_ST);
+    falseLabelNode->operator = LABEL;
+    falseLabelNode->result->name = falseLabel;
+
+    node->code = add_node_end(falseLabelNode,node->code);
+
+    ir_code_node* assignNodeFalse = getNew_ir_code_node(local_ST);
+    assignNodeFalse->operator = ASSIGN;
+    assignNodeFalse->result->name = node->tempName;
+    assignNodeFalse->left_op->name = "false";
+    assignNodeFalse->result->reach = findReach(assignNodeFalse->result->name, local_ST);
+    assignNodeFalse->left_op->reach = findReach(assignNodeFalse->left_op->name, local_ST);
+    
+    node->code = add_node_end(assignNodeFalse,node->code);
+
+    ir_code_node* nextLabelNode = getNew_ir_code_node(local_ST);
+    nextLabelNode->operator = LABEL;
+    nextLabelNode->result->name = nextLabel;
+
+    node->code = add_node_end(nextLabelNode,node->code);
+
+}
+
 
 void IR_assignmentStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     generate_IR_for_module(node->child_pointers[1],local_ST,global_ST);//RHS
@@ -1237,8 +1333,11 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         }
     }    
 
-    else if(!strcmp(root->name,"AND")||!strcmp(root->name,"OR")){
-        IR_booleanExpr(root,local_ST,global_ST);
+    else if(!strcmp(root->name,"AND")){
+        IR_booleanExpr_and(root,local_ST,global_ST);
+    }
+    else if(!!strcmp(root->name,"OR")){
+        IR_booleanExpr_or(root,local_ST,global_ST);
     }    
 
     else if(!strcmp(root->name,"LT_result")||!strcmp(root->name,"LE_result")||!strcmp(root->name,"GT_result")||!strcmp(root->name,"GE_result")||!strcmp(root->name,"NE_result")||!strcmp(root->name,"EQ_result")){
