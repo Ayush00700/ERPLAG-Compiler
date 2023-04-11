@@ -2,8 +2,6 @@
 ** Multiple level nesting using integer, real, boolean data types including static array data type**
 **Variant of test case 4**
 
-**Need to handle the case of conditional variables changing values**
-**Line 60 error not caught**
 <<module var_demo_array>>
 takes input [x:integer, m:array [-12..20] of integer, p:real];
 returns [ n:integer, k: boolean];
@@ -20,7 +18,7 @@ start
 	start
 		declare p, u:integer;
 		declare b: array[2..20] of integer;
-		b:= m;               **Should be an error??**
+		b:= m;						**Type mismatch error as the arrays b and m are not structurally equivalent**
 		b[2]:= u+m[25];			   **ERROR: element of array m is out of bound** 
 		p:= b[18]*18.56E+2;		   **ERROR: type mismatch **
 	end					   **ERROR: none of the conditional variables k, x and m is assigned any value in scope of while at lines 17-24**
@@ -65,7 +63,7 @@ start
 				 get_value(Q);		      **ERROR: Q not declared**
 				 A[7]:= k+12 - D[12]*10+u;    **ERROR: Type mismatch error**    
 				 break;
-			default: E[9]:= B[15]+Q;	      **not an error**	       
+			default: E[9]:= B[15]+Q;	      ** Variable E is not declared and  Array element B[15] is out of bound and Q is not declared**	       
 				 break;			 	
 		end
 		x:=x + u*v- u<=v;                             **ERROR: Type mismatch error**
@@ -89,8 +87,8 @@ start
 	p:= 23.56;
 	get_value(v_1_2_3);							 		
 	declare B, C: array [2..20] of integer;
-	[ v_1_2_3, u1]:=use module var_demo_array with parameters A,B,p;	 **Should this be an error?? the array bounds different**	
-	[ v_1_2_3, k]:=use module var_demo_array with parameters A,B,p;	
+	[ v_1_2_3, u1]:=use module var_demo_array with parameters A,B,p;**Input parameter B has a type mismatch**	
+	[ v_1_2_3, k]:=use module var_demo_array with parameters A,B,p;	** Input parameter B has a type mismatch**
 	declare a,b:integer;
 	a:= 5.89e-2;			        **ERROR: type mismatch error**
 	get_value(b);
