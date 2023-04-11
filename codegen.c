@@ -1504,7 +1504,7 @@ void codegen_relational(ir_code_node* ir, func_entry* local_ST)
   
 }
 
-void codegen_func(ir_code_node* ir, func_entry* local_ST)
+void codegen_fn_def(ir_code_node* ir, func_entry* local_ST)
 {
     /* The entry will be of the following form
     +------------+----------+----------+-----------+
@@ -1524,6 +1524,34 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
     fprintf(assembly, "\t\tpop_regs                     ; save values\n\n\n");
 
+}
+
+void codegen_fn_call(ir_code_node* ir, func_entry* local_ST)
+{
+    /* The entries will be of the following form
+    For input parametrs
+    +------------+----------+----------+-----------+
+    |   PARA_IN  |    var   |    NULL  |    NULL   |
+    +------------+----------+----------+-----------+
+
+    For function call
+    +------------+----------+----------+-----------+
+    |    CALL    |  fn_name |   #out   |    #in    |
+    +------------+----------+----------+-----------+
+
+    For output parametrs
+    +------------+----------+----------+-----------+
+    |  PARA_OUT  |    var   |    NULL  |    NULL   |
+    +------------+----------+----------+-----------+
+    Input: 
+        - IR 3AC for operation and operands
+        - Local symbol table for info regarding the local variables
+    Output:
+        - Assembly code for function calls
+    */
+
+//    Steps:
+//  1) 
 }
 
 void codegen_conditional(ir_code_node* ir, func_entry* local_ST)
@@ -1737,11 +1765,12 @@ void starter(FILE* assembly_file,ir_code* IR)
             break;
         
         case FUNC:
-            codegen_func(IR_head, local_ST);
+            codegen_fn_def(IR_head, local_ST);
         case CALL:
         case PARA_IN:
         case PARA_OUT:
         case RET:
+            codegen_fn_call(IR_head, local_ST);
             break;
         
         case GOTO:

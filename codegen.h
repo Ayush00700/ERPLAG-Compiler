@@ -15,7 +15,7 @@ extern void codegen_arithmetic(ir_code_node* ir, func_entry* local_ST);
 // This function generates assembly code for relational statements
 extern void codegen_relational(ir_code_node* ir, func_entry* local_ST);
 // This function generates assembly code for function definitions
-extern void codegen_func(ir_code_node* ir, func_entry* local_ST);
+extern void codegen_fn_def(ir_code_node* ir, func_entry* local_ST);
 // This function generates assembly code for conditional statements
 extern void codegen_conditional(ir_code_node* ir, func_entry* local_ST);
 // This function generates assembly code for labels for jump
