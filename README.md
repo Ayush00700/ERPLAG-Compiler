@@ -192,6 +192,7 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 ### Doubts
 
 Where to print AST and ParseTree.
+Till where do we run the code?
 
 
 ### Requirements for Intermediate Code Generation

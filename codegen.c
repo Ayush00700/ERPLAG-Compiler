@@ -1745,33 +1745,80 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
 
 void codegen_conditional(ir_code_node* ir, func_entry* local_ST)
 {
-    /* Handling the symbol table ops*/
+    char* condCheckVar = ir->result->name; 
+    char* condCheckVarReach = ir->result->reach;
+    type_exp* dataOfCondVar = find_expr_codegen(condCheckVar,local_ST);
+    int offsetResult =  dataOfCondVar->offset * 16;
 
-    // Writing the assembly for conditional
+    fprintf(assembly, "\t\tmov      rax , [RBP - %d]\n", offsetResult);
+    fprintf(assembly, "\t\tcmp      rax , 1\n");
+    fprintf(assembly, "\t\tje       %s\n",ir->left_op->name);
 
-    /* Handling the symbol table ops*/
 }
 
 void codegen_label(ir_code_node* ir, func_entry* local_ST)
 {
-    /* Handling the symbol table ops*/
-
-    // Writing the assembly for label
-
-    /* Handling the symbol table ops*/
+    char* condCheckVar = ir->result->name;
+    fprintf(assembly, "%s:\n", condCheckVar);
 }
+
+void codegen_goto(ir_code_node* ir, func_entry* local_ST)
+{
+    char* condCheck = ir->result->name;
+    fprintf(assembly, "\t\tjmp      %s\n", condCheck);
+}
+
 
 void codegen_mem_read_ST(ir_code_node* ir, func_entry* local_ST)
 {
-    /* Handling the symbol table ops*/
 
-    // Writing the assembly for label
+    
+    /* The entry will be of the following form
+    +------------+----------+----------+-----------+
+    |   ASSIGN   |    lhs   |    rhs   |    NULL   |
+    +------------+----------+----------+-----------+
+    Input: 
+        - IR 3AC for operation and operands
+        - Local symbol table for info regarding the local variables
+    Output:
+        - Assembly code for assignment statements
+    */
+    char* lhsArrayRead = ir->result->name; 
+    char* lhsArrayReadReach = ir->result->reach;
+    type_exp* lhsTypeExp = find_expr_codegen(lhsArrayRead,local_ST);
+    int offsetResultLhs =  lhsTypeExp->offset * 16;
 
-    /* Handling the symbol table ops*/
+    char* rhsArrayIndex = ir->result->name; 
+    char* rhsArrayIndexReach = ir->result->reach;
+    type_exp* rhgTypeExp = find_expr_codegen(rhsArrayIndex,local_ST);
+    int offsetResultRhs =  rhgTypeExp->offset * 16;
+
+    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    fprintf(assembly, "\t\txor      rax , rax           ; flush out the rax register\n");
+
+    if(!strcmp(lhsTypeExp->datatype, "integer")||!strcmp(lhsTypeExp->datatype, "boolean"))
+    {
+        fprintf(assembly, "\t\tmov      rax , [RBP - %d]                    ; memory to register\n",offsetResultRhs);
+        
+        fprintf(assembly, "\t\tmov      [RBP - %d] , rax            ; register to memory\n",offsetResultLhs);
+        
+    }
+
+    // REAL
+    else
+    {
+        fprintf(assembly, "\t\tmovsd      xmm0 , [RBP - %d]                    ; memory to register\n",offsetResultRhs);
+        
+        fprintf(assembly, "\t\tmovsd     [RBP - %d] , xmm0            ; register to memory\n",offsetResultLhs);   
+    }
+    
+    fprintf(assembly, "\t\tpop_regs                    ; restore register values\n\n\n");
+   
 }
 
 void codegen_mem_write_ST(ir_code_node* ir, func_entry* local_ST)
 {
+    
     /* Handling the symbol table ops*/
 
     // Writing the assembly for label
@@ -1961,7 +2008,7 @@ void starter(FILE* assembly_file,ir_code* IR)
             break;
         
         case GOTO:
-            // codegen_jump(IR_head, local_ST);
+            codegen_goto(IR_head, local_ST);
             break;
         
         case IF:
