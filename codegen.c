@@ -367,6 +367,7 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST)
 
     // Get offset of result
     char* result = ir->result->name;
+
     int indexResult = sym_tab_entry_contains(result,local_ST->func_curr->entries);        // Checks if the symbol table contains - if yes we get the index
     sym_tab_entry* temp = NULL;
     temp = local_ST->func_curr->entries[indexResult];
@@ -382,63 +383,226 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST)
     }
     int offsetResult = temp->offset*16;               // Get the memory offset for the lhs variable from the symbol
     char* resultType = temp->type.datatype;
-
-    fprintf(assembly, "\t\t; Code for getting user input\n");
-    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
-    
-    // Set up format specifier based on data type
-    if(!strcmp(resultType, "integer"))
-    {
-        fprintf(assembly, "\t\t; Display prompt for integer input\n");
-        fprintf(assembly, "\t\tmov      rax , 1\n");
-        fprintf(assembly, "\t\tmov      rdi , 1\n");
-        fprintf(assembly, "\t\tmov      rsi , integer_in\n");
-        fprintf(assembly, "\t\tmov      rdx , integer_in_len\n");
-        fprintf(assembly, "\t\tsyscall\n");
-
-        fprintf(assembly, "\n\t\t; Code to get integer input\n");
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_in          ; get corresponding format specifier\n");
         
-    }
-    else if(!strcmp(resultType, "real"))
+    // If not array
+    if(strcmp(temp->type.datatype, "array"))
     {
-        fprintf(assembly, "\t\t; Display prompt for real input\n");
-        fprintf(assembly, "\t\tmov      rax , 1\n");
-        fprintf(assembly, "\t\tmov      rdi , 1\n");
-        fprintf(assembly, "\t\tmov      rsi , real_in\n");
-        fprintf(assembly, "\t\tmov      rdx , real_in_len\n");
-        fprintf(assembly, "\t\tsyscall\n");
-
-        fprintf(assembly, "\n\t\t; Code to get real input\n");
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_in          ; get corresponding format specifier\n");
+        fprintf(assembly, "\t\t; Code for getting user input\n");
+        fprintf(assembly, "\t\tpush_regs                    ; save values\n");
         
+        // Set up format specifier based on data type
+        if(!strcmp(resultType, "integer"))
+        {
+            fprintf(assembly, "\t\t; Display prompt for integer input\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , integer_in\n");
+            fprintf(assembly, "\t\tmov      rdx , integer_in_len\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            fprintf(assembly, "\n\t\t; Code to get integer input\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_in          ; get corresponding format specifier\n");
+            
+        }
+
+        else if(!strcmp(resultType, "real"))
+        {
+            fprintf(assembly, "\t\t; Display prompt for real input\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , real_in\n");
+            fprintf(assembly, "\t\tmov      rdx , real_in_len\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            fprintf(assembly, "\n\t\t; Code to get real input\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_in          ; get corresponding format specifier\n");
+            
+        }
+
+        else if(!strcmp(resultType, "boolean"))
+        {
+            fprintf(assembly, "\t\t; Display prompt for boolean input\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , boolean_in\n");
+            fprintf(assembly, "\t\tmov      rdx , boolean_in_len\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            fprintf(assembly, "\n\t\t; Code to get boolean input\n");
+            fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_in          ; get corresponding format specifier\n");
+            
+        }
+        
+        // fprintf(assembly, "\t\tmov      rdx , rbp\n");
+        fprintf(assembly, "\t\tmov      rsi , rbp\n");
+        fprintf(assembly, "\t\tsub      rsi , %d\n",offsetResult);
+        fprintf(assembly, "\t\txor      rax , rax\n");
+        fprintf(assembly, "\t\trsp_align        ; align rsp to 16 byte offset boundary\n");
+        fprintf(assembly, "\t\tcall     scanf\n");
+        fprintf(assembly, "\t\trsp_realign      ; realign it to original position\n");
+
+        fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
     }
-    else if(!strcmp(resultType, "boolean"))
+
+    else
     {
-        fprintf(assembly, "\t\t; Display prompt for boolean input\n");
-        fprintf(assembly, "\t\tmov      rax , 1\n");
-        fprintf(assembly, "\t\tmov      rdi , 1\n");
-        fprintf(assembly, "\t\tmov      rsi , boolean_in\n");
-        fprintf(assembly, "\t\tmov      rdx , boolean_in_len\n");
-        fprintf(assembly, "\t\tsyscall\n");
+        char* arr_in = newLabel();
 
-        fprintf(assembly, "\n\t\t; Code to get boolean input\n");
-        fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_in          ; get corresponding format specifier\n");
-        
+        // Static array
+        if(temp->type.is_static)
+        {
+            int low = temp->type.arr_data->lower_bound;
+            int high = temp->type.arr_data->upper_bound;
+            int num = high - low + 1; 
+
+            // Prints "Input: Enter "
+            fprintf(assembly, "\t\t; Display prompt for array input\n");
+            fprintf(assembly, "\t\t; Prompt part 1\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , array_in1\n");
+            fprintf(assembly, "\t\tmov      rdx , array_in_len1\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            // Prints "%d"
+            fprintf(assembly, "\t\t; Prompt part 2\n");
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_arr_out                ; get corresponding format specifier\n");     // No newline after integer
+            fprintf(assembly, "\t\tmov      rsi , %d                               ; move source index\n", num);
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            fprintf(assembly, "\t\tcall     printf                               ; system call for output\n");
+            fprintf(assembly, "\t\trsp_realign                                   ; restore previous alignment of stack\n");
+
+            // Prints "elements of "
+            fprintf(assembly, "\t\t; Prompt part 3\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , array_in2\n");
+            fprintf(assembly, "\t\tmov      rdx , array_in_len2\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            // Prints "%s "
+            fprintf(assembly, "\t\t; Prompt part 4\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            if(!strcmp(temp->type.arr_data->arr_datatype,"integer"))
+            {
+                fprintf(assembly, "\t\tmov      rsi , integer\n");
+                fprintf(assembly, "\t\tmov      rdx , integer_len\n");
+            }
+
+            else if(!strcmp(temp->type.arr_data->arr_datatype,"real"))
+            {
+                fprintf(assembly, "\t\tmov      rsi , real\n");
+                fprintf(assembly, "\t\tmov      rdx , real_len\n");
+            }
+
+            else if(!strcmp(temp->type.arr_data->arr_datatype,"boolean"))
+            {
+                fprintf(assembly, "\t\tmov      rsi , boolean\n");
+                fprintf(assembly, "\t\tmov      rdx , boolean_len\n");
+            }
+            fprintf(assembly, "\t\tsyscall\n");
+
+            // Prints "type for range "
+            fprintf(assembly, "\t\t; Prompt part 5\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , array_in3\n");
+            fprintf(assembly, "\t\tmov      rdx , array_in_len3\n");
+            fprintf(assembly, "\t\tsyscall\n");
+
+            // Prints "%d "
+            fprintf(assembly, "\t\t; Prompt part 6\n");
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_arr_out                ; get corresponding format specifier\n");     // No newline after integer
+            fprintf(assembly, "\t\tmov      rsi , %d                               ; move source index\n", low);
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            fprintf(assembly, "\t\tcall     printf                               ; system call for output\n");
+            fprintf(assembly, "\t\trsp_realign                                   ; restore previous alignment of stack\n");
+
+            // Prints "to "
+            fprintf(assembly, "\t\t; Prompt part 7\n");
+            fprintf(assembly, "\t\tmov      rax , 1\n");
+            fprintf(assembly, "\t\tmov      rdi , 1\n");
+            fprintf(assembly, "\t\tmov      rsi , array_in4\n");
+            fprintf(assembly, "\t\tmov      rdx , array_in_len4\n");
+            fprintf(assembly, "\t\tsyscall\n");
+            
+            // Prints "%d\n"
+            fprintf(assembly, "\t\t; Prompt part 8\n");
+            fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+            fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_out                ; get corresponding format specifier\n");     // Newline needed
+            fprintf(assembly, "\t\tmov      rsi , %d                               ; move source index\n", high);
+            fprintf(assembly, "\t\txor      rax , rax\n");
+            fprintf(assembly, "\t\trsp_align                                     ; align stack pointer\n");
+            fprintf(assembly, "\t\tcall     printf                               ; system call for output\n");
+            fprintf(assembly, "\t\trsp_realign                                   ; restore previous alignment of stack\n");
+
+
+            // INT
+            if(!strcmp(temp->type.arr_data->arr_datatype,"integer"))
+            {
+                fprintf(assembly, "\n\t\t; Code to get integer array input\n");
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_in          ; get corresponding format specifier\n");
+
+                fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                fprintf(assembly, "\t\tmov      rsi , rbp\n");
+                fprintf(assembly, "\t\tsub      rsi , %d\n",offsetResult-16);       // offset + 16 so that sub rsi statement can be inside loop
+                fprintf(assembly, "%s:\n",arr_in);
+                fprintf(assembly, "\t\tsub      rsi , 16\n");
+                fprintf(assembly, "\t\txor      rax , rax\n");
+                fprintf(assembly, "\t\trsp_align        ; align rsp to 16 byte offset boundary\n");
+                fprintf(assembly, "\t\tcall     scanf\n");
+                fprintf(assembly, "\t\trsp_realign      ; realign it to original position\n");
+                fprintf(assembly, "\t\tsub      rcx , 1\n");
+                fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                fprintf(assembly, "\t\tjne      %s\n",arr_in);
+            }
+
+            // REAL
+            else if(!strcmp(temp->type.arr_data->arr_datatype,"real"))
+            {
+                fprintf(assembly, "\n\t\t; Code to get integer array input\n");
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_in          ; get corresponding format specifier\n");
+
+                fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                fprintf(assembly, "\t\tmov      rsi , rbp\n");
+                fprintf(assembly, "\t\tsub      rsi , %d\n",offsetResult+16);       // offset + 16 so that sub rsi statement can be inside loop
+                fprintf(assembly, "%s:\n",arr_in);
+                fprintf(assembly, "\t\tsub      rsi , 16\n");
+                fprintf(assembly, "\t\txor      rax , rax\n");
+                fprintf(assembly, "\t\trsp_align        ; align rsp to 16 byte offset boundary\n");
+                fprintf(assembly, "\t\tcall     scanf\n");
+                fprintf(assembly, "\t\trsp_realign      ; realign it to original position\n");
+                fprintf(assembly, "\t\tsub      rcx , 1\n");
+                fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                fprintf(assembly, "\t\tjne      %s\n",arr_in);
+            }
+
+            // BOOLEAN
+            if(!strcmp(temp->type.arr_data->arr_datatype,"integer"))
+            {
+                fprintf(assembly, "\n\t\t; Code to get integer array input\n");
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_in          ; get corresponding format specifier\n");
+
+                fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                fprintf(assembly, "\t\tmov      rsi , rbp\n");
+                fprintf(assembly, "\t\tsub      rsi , %d\n",offsetResult+16);       // offset + 16 so that sub rsi statement can be inside loop
+                fprintf(assembly, "%s:\n",arr_in);
+                fprintf(assembly, "\t\tsub      rsi , 16\n");
+                fprintf(assembly, "\t\txor      rax , rax\n");
+                fprintf(assembly, "\t\trsp_align        ; align rsp to 16 byte offset boundary\n");
+                fprintf(assembly, "\t\tcall     scanf\n");
+                fprintf(assembly, "\t\trsp_realign      ; realign it to original position\n");
+                fprintf(assembly, "\t\tsub      rcx , 1\n");
+                fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                fprintf(assembly, "\t\tjne      %s\n",arr_in);
+            }
+        }
     }
-
-    fprintf(assembly,"\t\t\t\tmov RDX, RBP\n\
-                ;sub RDX, 0     ; make RDX to point at location of variable on the stack\n\
-                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later\n\
-                mov RSI, RBP\n\
-                sub RSI, %d \n\
-                mov RAX, 0 \n\
-                rsp_align ;align RSP to 16 byte boundary for scanf call\n\
-                call scanf \n\
-                rsp_realign ;realign it to original position\n", offsetResult);
-
-    fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
-
 }
 
 void codegen_output(ir_code_node* ir, func_entry* local_ST)
@@ -557,8 +721,10 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
     {
         sym_tab_entry* temp = NULL;
         temp = local_ST->func_curr->entries[indexResult];
-        while(temp!=NULL){
-            if(!strcmp(temp->name,result)){
+        while(temp!=NULL)
+        {
+            if(!strcmp(temp->name,result))
+            {
                 break;
             }
             temp = temp->next;
@@ -576,76 +742,146 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
 
         fprintf(assembly, "\n\t\tpush_regs                                         ; save values\n");
         
-        // INT
-        if(!strcmp(resultType, "integer"))
+        if(strcmp(temp->type.datatype, "array"))
         {
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                  ; get corresponding format specifier\n");
-            
+            // INT
+            if(!strcmp(resultType, "integer"))
+            {
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                  ; get corresponding format specifier\n");
+                
 
-            // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-            
-            // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
-            
-            fprintf(assembly, "\t\tmov      rsi , [RBP - %d]                               ; move source index\n",offsetResult);
-            
-            fprintf(assembly, "\t\txor      rax , rax\n");
-            fprintf(assembly, "\t\trsp_align                                         ; align stack pointer\n");
-            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
-            fprintf(assembly, "\t\trsp_realign                                       ; restore previous alignment of stack\n");
-            fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
+                // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+                
+                // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+                
+                fprintf(assembly, "\t\tmov      rsi , [RBP - %d]                               ; move source index\n",offsetResult);
+                
+                fprintf(assembly, "\t\txor      rax , rax\n");
+                fprintf(assembly, "\t\trsp_align                                         ; align stack pointer\n");
+                fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+                fprintf(assembly, "\t\trsp_realign                                       ; restore previous alignment of stack\n");
+                fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
 
+            }
+
+            // REAL
+            else if(!strcmp(resultType, "real"))
+            {
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out          ; get corresponding format specifier\n");
+                
+
+                // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
+                
+                // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
+                
+                fprintf(assembly, "\t\tmovq      xmm0 ,[RBP - %d]                               ; move source index\n",offsetResult);
+                
+                fprintf(assembly, "\t\tmov      rax , 1\n");
+                fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+                fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
+                
+            }
+
+            // BOOLEAN
+            else if(!strcmp(resultType, "boolean"))
+            {
+                // Set up the format specifier based on the data type
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_out                  ; get corresponding format specifier\n");
+                
+                // Labels to the jumps based on the value
+                char* true_label = newLabel();
+                char* next_label = newLabel();
+                
+                fprintf(assembly, "\t\tmov      rax , [RBP - %d]                               ; move source index\n",offsetResult);
+                
+                fprintf(assembly, "\t\tcmp      rax , 0\n");
+                
+                fprintf(assembly, "\t\tjne      %s\n", true_label);
+                
+                fprintf(assembly, "\t\tmov      rax , 1\n");
+                fprintf(assembly, "\t\tmov      rdi , 1\n");
+                fprintf(assembly, "\t\tmov      rsi , false\n");
+                fprintf(assembly, "\t\tmov      rdx , false_len\n");
+                fprintf(assembly, "\t\tsyscall\n");
+                fprintf(assembly, "\t\tpop_regs                                          ; restore register values\n");
+                fprintf(assembly, "\t\tjmp  %s\n\n\n",next_label);
+                
+                fprintf(assembly, "%s:\n", true_label);
+                fprintf(assembly, "\t\tmov      rax , 1\n");
+                fprintf(assembly, "\t\tmov      rdi , 1\n");
+                fprintf(assembly, "\t\tmov      rsi , true\n");
+                fprintf(assembly, "\t\tmov      rdx , true_len\n");
+                fprintf(assembly, "\t\tsyscall\n");
+                fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
+                fprintf(assembly, "%s:\n\n\n", next_label);
+            }
         }
 
-        // REAL
-        else if(!strcmp(resultType, "real"))
+        else
         {
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out          ; get corresponding format specifier\n");
-            
+            char* arr_out = newLabel();      
+            if(temp->type.is_static)
+            {
+                int low = temp->type.arr_data->lower_bound;
+                int high = temp->type.arr_data->upper_bound;
+                int num = high - low + 1;
+                
+                // INT
+                if(!strcmp(temp->type.arr_data->arr_datatype,"integer"))
+                {
+                    fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                    fprintf(assembly, "\t\tmov      rsi , [RBP - %d]                               ; move source index\n",offsetResult-16);
 
-            // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
-            
-            // fprintf(assembly, "\t\tsub      rdx , %d                                ; move pointer to place from where we have to read\n", offsetResult);
-            
-            fprintf(assembly, "\t\tmovq      xmm0 ,[RBP - %d]                               ; move source index\n",offsetResult);
-            
-            fprintf(assembly, "\t\tmov      rax , 1\n");
-            fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
-            fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
-            
-        }
+                    fprintf(assembly, "%s:\n",arr_out);                    
+                    fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_arr_out                  ; get corresponding format specifier\n");
+                    fprintf(assembly, "\t\tsub      rsi , 16\n");
+                    fprintf(assembly, "\t\txor      rax , rax\n");
+                    fprintf(assembly, "\t\trsp_align                                         ; align stack pointer\n");
+                    fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+                    fprintf(assembly, "\t\trsp_realign                                       ; restore previous alignment of stack\n");
+                    fprintf(assembly, "\t\tsub      rcx , 1\n");
+                    fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                    fprintf(assembly, "\t\tjne      %s\n",arr_out);
+                    fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
+                }
 
-        // BOOLEAN
-        else if(!strcmp(resultType, "boolean"))
-        {
-            // Set up the format specifier based on the data type
-            fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_out                  ; get corresponding format specifier\n");
-            
-            // Labels to the jumps based on the value
-            char* true_label = newLabel();
-            char* next_label = newLabel();
-            
-            fprintf(assembly, "\t\tmov      rax , [RBP - %d]                               ; move source index\n",offsetResult);
-            
-            fprintf(assembly, "\t\tcmp      rax , 0\n");
-            
-            fprintf(assembly, "\t\tjne      %s\n", true_label);
-            
-            fprintf(assembly, "\t\tmov      rax , 1\n");
-            fprintf(assembly, "\t\tmov      rdi , 1\n");
-            fprintf(assembly, "\t\tmov      rsi , false\n");
-            fprintf(assembly, "\t\tmov      rdx , false_len\n");
-            fprintf(assembly, "\t\tsyscall\n");
-            fprintf(assembly, "\t\tpop_regs                                          ; restore register values\n");
-            fprintf(assembly, "\t\tjmp  %s\n\n\n",next_label);
-            
-            fprintf(assembly, "%s:\n", true_label);
-            fprintf(assembly, "\t\tmov      rax , 1\n");
-            fprintf(assembly, "\t\tmov      rdi , 1\n");
-            fprintf(assembly, "\t\tmov      rsi , true\n");
-            fprintf(assembly, "\t\tmov      rdx , true_len\n");
-            fprintf(assembly, "\t\tsyscall\n");
-            fprintf(assembly, "\t\tpop_regs        ; restore register values\n");
-            fprintf(assembly, "%s:\n\n\n", next_label);
+                // REAL
+                else if(!strcmp(temp->type.arr_data->arr_datatype, "real"))
+                {
+                    fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                    fprintf(assembly, "\t\tmov      rsi , [RBP - %d]                               ; move source index\n",offsetResult-16);
+
+                    fprintf(assembly, "%s:\n",arr_out);                    
+                    fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_arr_out                  ; get corresponding format specifier\n");
+                    fprintf(assembly, "\t\tsub      rsi , 16\n");
+                    fprintf(assembly, "\t\txor      rax , rax\n");
+                    fprintf(assembly, "\t\trsp_align                                         ; align stack pointer\n");
+                    fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+                    fprintf(assembly, "\t\trsp_realign                                       ; restore previous alignment of stack\n");
+                    fprintf(assembly, "\t\tsub      rcx , 1\n");
+                    fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                    fprintf(assembly, "\t\tjne      %s\n",arr_out);
+                    fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
+                }
+
+                else if(!strcmp(temp->type.arr_data->arr_datatype, "boolean"))
+                {
+                    fprintf(assembly, "\t\tmov      rcx , %d\n",num);
+                    fprintf(assembly, "\t\tmov      rsi , [RBP - %d]                               ; move source index\n",offsetResult-16);
+
+                    fprintf(assembly, "%s:\n",arr_out);                    
+                    fprintf(assembly, "\t\tmov      rdi , fmt_spec_bool_arr_out                  ; get corresponding format specifier\n");
+                    fprintf(assembly, "\t\tsub      rsi , 16\n");
+                    fprintf(assembly, "\t\txor      rax , rax\n");
+                    fprintf(assembly, "\t\trsp_align                                         ; align stack pointer\n");
+                    fprintf(assembly, "\t\tcall     printf                                   ; system call for output\n");
+                    fprintf(assembly, "\t\trsp_realign                                       ; restore previous alignment of stack\n");
+                    fprintf(assembly, "\t\tsub      rcx , 1\n");
+                    fprintf(assembly, "\t\tcmp      rcx , 0\n");
+                    fprintf(assembly, "\t\tjne      %s\n",arr_out);
+                    fprintf(assembly, "\t\tpop_regs                                          ; restore values\n");
+                }
+            }
         }
     }    
     
@@ -1876,25 +2112,40 @@ void starter(FILE* assembly_file,ir_code* IR)
         // Write down all the format specifiers reqd
         fprintf(assembly, "\t\tfmt_spec_int_in: db \"%%d\", 0\n");
         fprintf(assembly, "\t\tfmt_spec_int_out: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_int_arrr_out: db \"%%d\", 20, 0\n");
         fprintf(assembly, "\t\tfmt_spec_real_in: db \"%%4f\", 0\n");
         fprintf(assembly, "\t\tfmt_spec_real_out: db \"%%4f\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_real_arr_out: db \"%%4f\", 20, 0\n");
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_bool_in: db \"%%d\", 0\n");
         fprintf(assembly, "\t\tfmt_spec_bool_out: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_bool_arr_out: db \"%%d\", 20, 0\n");
         fprintf(assembly, "\t\tinteger_in: db \"Input: Enter an integer value\", 10, 0\n");
         fprintf(assembly, "\t\tinteger_in_len: equ $ - integer_in\n");
         fprintf(assembly, "\t\treal_in: db \"Input: Enter an real value\", 10, 0\n");
         fprintf(assembly, "\t\treal_in_len: equ $ - real_in\n");
-        fprintf(assembly, "\t\tboolean_in: db \"Input: Enter an boolean value\", 10, 0\n");
+        fprintf(assembly, "\t\tboolean_in: db \"Input: Enter an boolean value (1: true, 0: false)\", 10, 0\n");
         fprintf(assembly, "\t\tboolean_in_len: equ $ - boolean_in\n");
         fprintf(assembly, "\t\tprint_out: db \"Output: \", 0\n");
         fprintf(assembly, "\t\tprint_out_len: equ $ - print_out\n");
-        fprintf(assembly, "\t\tarray_in: db \"Input: Enter %%d elements of %%s type for range %%d to %%d\", 10, 0\n");
-        fprintf(assembly, "\t\tarray_in_len: equ $ - array_in\n");
+        fprintf(assembly, "\t\tarray_in1: db \"Input: Enter\", 20, 0\n");
+        fprintf(assembly, "\t\tarray_in_len1: equ $ - array_in1\n");
+        fprintf(assembly, "\t\tarray_in2: db \"elements of\", 20, 0\n");
+        fprintf(assembly, "\t\tarray_in_len2: equ $ - array_in2\n");
+        fprintf(assembly, "\t\tarray_in3: db \"type for range\", 20, 0\n");
+        fprintf(assembly, "\t\tarray_in_len3: equ $ - array_in3\n");
+        fprintf(assembly, "\t\tarray_in4: db \"to\", 20, 0\n");
+        fprintf(assembly, "\t\tarray_in_len4: equ $ - array_in4\n");
         fprintf(assembly, "\t\ttrue: db \"true\", 10, 0\n");
         fprintf(assembly, "\t\ttrue_len: equ $ - true\n");
         fprintf(assembly, "\t\tfalse: db \"false\", 10, 0\n");
         fprintf(assembly, "\t\tfalse_len: equ $ - false\n");
+        fprintf(assembly, "\t\tinteger: db \"integer\", 20, 0\n");
+        fprintf(assembly, "\t\tinteger_len: equ $ - integer\n");
+        fprintf(assembly, "\t\treal: db \"real\", 20, 0\n");
+        fprintf(assembly, "\t\treal_len: equ $ - real\n");
+        fprintf(assembly, "\t\tboolean: db \"boolean\", 20, 0\n");
+        fprintf(assembly, "\t\tboolean_len: equ $ - boolean\n");
         fprintf(assembly, "\t\tzero: equ 0\n");
 
         // data_read(assembly); //TODO Toggle if want data of variables
