@@ -1623,6 +1623,119 @@ void print_symbol_table(){
     }
 }
 
+void func_act_printer(var_record* node){
+    printf("Function name : %s  ||  Width(local variable only) : %d \n",node->construct_name,node->offset);
+}
+
+void print_activation(){
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_TABLE[i]!=NULL){
+            func_entry* temp = global_TABLE[i];
+            while(temp!=NULL){
+                func_act_printer(temp->func_root);
+                temp = temp->next;
+            }
+        }
+    }
+}
+
+
+
+void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
+    if(list == NULL){
+        return;
+    }
+    var_record* temp = record;
+    while(temp->parent!=NULL){
+        temp = temp->parent;
+    }
+    if(strcmp(list->type.datatype,"array")){
+        return;
+    }
+    else{
+        printf("variable name : %s  ||  module_name : %s  ||  scope(line_no) : [%d-%d]    ",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
+        char* stat_dy;
+        if(list->type.is_static){
+            stat_dy = "static array";
+        }
+        else{
+            stat_dy = "dynamic array";
+        }
+        printf("||  type : %s   ||  static/dynamic : %s ",list->type.arr_data->arr_datatype,stat_dy);
+        if(list->type.is_static){
+            printf("||  array_range : [%d,%d]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+        }
+        else{
+            int a;
+            int b;
+            if(list->type.arr_data->lo){
+                int lower_num = list->type.arr_data->lower_bound;
+                a = 0;
+            }
+            else{
+                char* lower_lex = list->type.arr_data->lower_bound_lex; 
+                a = 1;
+            }
+            if(list->type.arr_data->up){
+                int upper_num = list->type.arr_data->upper_bound;
+                b = 0;
+            }
+            else{
+                char* upper_lex = list->type.arr_data->upper_bound_lex;
+                b = 1;
+            }
+            if(a&&b){
+                printf("||  array_range : [%s,%s]    \n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+            }
+            else if(a && !b){
+                printf("||  array_range : [%d,%s]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+            }
+            else if(!a && b){
+                printf("||  array_range : [%s,%d]    \n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+            }
+            else{
+                printf("||  array_range : [%d,%d]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            }
+        }
+    }
+    print_ipop_list_sda(list->next,level,record);
+}
+
+void print_level_sda(var_record* node,int level){
+    if(node == NULL){
+        return;
+    }
+    for(int i=0;i<TABLE_SIZE;i++){
+        print_ipop_list_sda(node->entries[i],level,node);
+    }
+    print_level_sda(node->r_sibiling,level);
+    print_level_sda(node->child,level+1);
+}
+
+void printer_sda(func_entry* node){
+    // input and output list
+    if(node->input_list!=NULL){
+        print_ipop_list_sda(node->input_list,0,node->func_root);
+    }
+    if(node->ouput_list!=NULL){
+        print_ipop_list_sda(node->ouput_list,0,node->func_root);
+    }
+    print_level_sda(node->func_root,1);
+}
+
+void print_static_dynamic_arrays(){
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_TABLE[i] != NULL){
+            printer_sda(global_TABLE[i]);
+            func_entry* temp = global_TABLE[i];
+            while(temp->next!=NULL){
+                printer_sda(temp->next);
+                temp = temp->next;
+            }
+        }
+    }
+}
+
 void semantic(){
     ast_node* ast_root = get_ast_root();
     initialize_global_func_table();

@@ -29,10 +29,6 @@ IR_codegen.o : IR_codegen.c IR_codegen.h
 	
 codegen.o : codegen.c codegen.h
 	gcc -c codegen.c
+	
 clean:
 	rm *.o stage2exe
-assembly : assembly_try.o
-	gcc -no-pie -o assembly_try assembly_try.o	
-	./assembly_try
-ass: 
-	nasm -felf64 assembly_try.asm

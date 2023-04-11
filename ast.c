@@ -1594,12 +1594,16 @@ void change_tree(treeNodes* root)
     }
 }
 
-void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
+int recursive_print_tree(ast_node* root,int listcount,FILE* fp,int toreturn){
     int currentNodeCount = astNodeCount;
+    if(currentNodeCount>toreturn){
+        toreturn = currentNodeCount;
+    }
     if(root==NULL) {
         fprintf(fp,"//This node was made NULL and thereby does not exist!:");
-        return;}
-    
+        return 0;
+    }
+    // toreturn += sizeof(ast_node);    
     int num_of_children = root->no_of_children;
     if(root->isTerminal && root->token!=NULL){
         if(root->token->lexeme!=NULL){
@@ -1643,20 +1647,27 @@ void recursive_print_tree(ast_node* root,int listcount,FILE* fp){
     astNodeCount++;
     for(int i=0;i<num_of_children;i++){
         fprintf(fp,"\nIterating over next child of Node %d:\n",currentNodeCount);
-        recursive_print_tree(root->child_pointers[i],0,fp);
+        int tempo = recursive_print_tree(root->child_pointers[i],0,fp,toreturn);
+        if(tempo>toreturn){
+            toreturn = tempo;
+        }
     }
     if(listcount==0){
         while(temp2)
         {
             fprintf(fp,"\nIterating over next list element of node %d:\n",currentNodeCount);
-            recursive_print_tree(temp2,listcount+1,fp);
+            int tempo = recursive_print_tree(temp2,listcount+1,fp,toreturn);
+            if(tempo>toreturn){
+                toreturn = tempo;
+            }
             temp2=temp2->next;
         }
     }
+    return toreturn;
 }
 
 
-void create_abstract_tree(){
+int create_abstract_tree(){
     parse_tree* ptree = get_ptree();
     change_tree(ptree->root);
     new_root = create_ast(ptree->root);
@@ -1668,8 +1679,9 @@ void create_abstract_tree(){
         printf("Error opening file:ast.txt\n!");   
         exit(1);             
     }
-    recursive_print_tree(new_root,0,fp);   
+    int num = recursive_print_tree(new_root,0,fp,0);   
     fclose(fp);
+    return num;
 }
 
 ast_node* get_ast_root(){

@@ -33,6 +33,8 @@ int main(int argc, char* args[]){ //DRIVER
     // printf("arg[3]:%d\n",bufferSize);
     int run = 1;
     int third = 0; 
+    int size_of_parse_tree_nodes = -1;
+    int size_of_ast_nodes = -1;
     printf("GROUP MEMBERS:\nName\t\t\tID\n");
     printf("Ayush Agarwal\t\t2019B4A70652P\n");
     printf("Rajan Sahu\t\t2019B4A70572P\n");
@@ -119,11 +121,11 @@ int main(int argc, char* args[]){ //DRIVER
                     fp = fopen(buffer,"r");
                     if(fp == NULL)
                     {
-                        printf("Error opening file:%s\n!",buffer);   
+                        printf("Error opening file:%s \n",buffer);   
                         exit(1);             
                     }
 
-                    printf("Running file %s\n", buffer);
+                    printf("Running file %s \n", buffer);
                     populate_hash_table();
                     call_lexer(fp,4096);
                     int a = postProcessing();
@@ -153,7 +155,7 @@ int main(int argc, char* args[]){ //DRIVER
                 p_total_CPU_time = (double) (p_end_time - p_start_time);
                 p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
                 /*Parsing and Displaying PARSE TREE by PARSER (with Errors)*/
-                print_parse_tree(parseBuffer);
+                size_of_parse_tree_nodes = print_parse_tree(parseBuffer);
                 printf("\nTask 3 done, again going to Options\n");
                 pflag=1;
                 break;
@@ -166,7 +168,7 @@ int main(int argc, char* args[]){ //DRIVER
                         fp = fopen(buffer,"r");
                         if(fp == NULL)
                         {
-                            printf("Error opening file:%s\n!",buffer);   
+                            printf("Error opening file:%s\n",buffer);   
                             exit(1);             
                         }
                         printf("Running file %s\n", buffer);
@@ -198,15 +200,17 @@ int main(int argc, char* args[]){ //DRIVER
                     p_end_time = clock();
                     p_total_CPU_time = (double) (p_end_time - p_start_time);
                     p_total_CPU_time_in_seconds = p_total_CPU_time / CLOCKS_PER_SEC;
-                    // print_parse_tree(parseBuffer);
-                    create_abstract_tree();//creation of abstract syntax tree 
+                    // num_of_parse_tree_nodes = print_parse_tree(parseBuffer);
+                    size_of_ast_nodes = create_abstract_tree();//creation of abstract syntax tree 
+                    size_of_ast_nodes = sizeof(ast_node)*size_of_ast_nodes;
                     ast_node* ast_root = get_ast_root();
                     semantic();
                     get_global_symbol_table(ast_root);
-                 
-                    // if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
-                    // else return -1;
-                    print_symbol_table(); //isme dikkat hai....
+                    print_activation();
+                    print_static_dynamic_arrays();
+                    print_symbol_table(); 
+                    if(!SEMANTIC_ERRORS)get_global_symbol_table(ast_root);
+                    else return -1;
                     FILE* fptr = fopen("intermediate_code.txt","w+");
                     ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
                     print_ir_code(fptr,intermediate_code);

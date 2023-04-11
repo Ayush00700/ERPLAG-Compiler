@@ -22,6 +22,7 @@ entry* Terminals_table[TABLE_SIZE]; //set of terminals (hashed)
 Stack parse_stack;
 parse_tree ptree;
 int PARSER_ERRORS = 0;
+int num_nodes;
 
 // ----------------------------------------------HELPER FUNCTIONS FOR STACK OPERATIONS ----------------------------------------------//
 
@@ -876,6 +877,7 @@ void addRuleToTree(rule* rule)
 }
 
 void printer(FILE* fptr, treeNodes* current){
+    num_nodes += sizeof(treeNodes);
     if(current->symbol->isTerminal){
         if(!strcmp(current->symbol->nodeInfo,"eps")){
             fprintf(fptr, "%s----\n","<Lexeme: >");
@@ -921,9 +923,10 @@ void InOrderTraversal(FILE* fptr, treeNodes* current){
     return;
 }
 
-void print_parse_tree(char* out_file)
+int print_parse_tree(char* out_file)
 /*This function uses the inorder traversal and */
 {
+    num_nodes = 0;
     // Open file in append mode
     FILE* f = fopen(out_file,"w");
 
@@ -935,6 +938,7 @@ void print_parse_tree(char* out_file)
         // Perform inorder traversal
         InOrderTraversal(f, p);
         fclose(f);
+        return num_nodes;
 
     }
 
@@ -942,7 +946,7 @@ void print_parse_tree(char* out_file)
     else{
 
         printf("Couldn't open %s\n",out_file);
-        return;
+        return -1;
 
     }
 }
