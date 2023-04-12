@@ -34,6 +34,6 @@ extern void starter(FILE* assembly_file,ir_code* IR);
 /*-----------------------------------------------------------HELPER FUNCTIONS----------------------------------------------------------------*/
 extern type_exp* find_in_list_codegen(sym_tab_entry* output,char* key);
 extern type_exp* find_in_func_table_codegen(char* key, func_entry* curr);
-extern type_exp* find_in_table_codegen(char* key,var_record* table);
+extern type_exp* find_in_table_codegen(char* key,var_record* table,func_entry* func);
 extern type_exp* find_expr_codegen(char* key, func_entry* curr);
 extern void data_read(FILE* assembly);

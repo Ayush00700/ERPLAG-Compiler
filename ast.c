@@ -1086,7 +1086,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->next = NULL;
             parent->child_pointers[0] = root->inh;
             parent->child_pointers[1] = create_ast(root->child_pointers[1]);
-            parent->tempName = root->child_pointers[1];
+            parent->tempName = parent->child_pointers[1]->tempName;
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);

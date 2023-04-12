@@ -81,7 +81,7 @@ extern printf, scanf, exit
 
 		global main
 main:
-		ENTER    116,0
+		ENTER    1856,0
 		push_regs                    ; save values
 		mov      rbp , rsp           ; set base to current stack top
 		pop_regs                     ; save values

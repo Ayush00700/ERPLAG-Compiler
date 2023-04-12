@@ -1,4 +1,3 @@
-#include <string.h>
 #include "IR_codegen.h"
 #include <ctype.h>
 static int currentLabel = 1;

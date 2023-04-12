@@ -24,6 +24,9 @@ void print_file(char* filename){
 
 
     FILE* fp = fopen(filename, "r");
+    if(fp == NULL){
+        return;
+    }
     char c = fgetc(fp);
 
     while(c!=EOF){
@@ -100,12 +103,19 @@ int main(int argc, char* args[]){ //DRIVER
         semantic();
         ast_node* ast_root = get_ast_root();
         get_global_symbol_table(ast_root);
+        if(!LEXICAL_ERRORS && !PARSER_ERRORS && !SEMANTIC_ERRORS){
+            // code generation done
+            FILE* fptr = fopen("intermediate_code.txt","w");
+            ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
+            print_ir_code(fptr,intermediate_code);
+            fclose(fptr);
+
+            FILE* assembly = fopen("assembly.asm", "w");
+            starter(assembly,intermediate_code);
+        }
         l_end_time = clock();
         l_total_CPU_time = (double) (l_end_time - l_start_time);
         l_total_CPU_time_in_seconds = l_total_CPU_time / CLOCKS_PER_SEC;
-    }
-    if(!LEXICAL_ERRORS && !PARSER_ERRORS && !SEMANTIC_ERRORS){
-        //code gen
     }
     
     
@@ -135,6 +145,8 @@ int main(int argc, char* args[]){ //DRIVER
                 remove("Memory_consumption.txt");
                 remove("parsing_errors.txt");
                 remove("semantic_errors.txt");
+                remove("intermediate_code.txt");
+                remove("assembly.asm");
                 break;
             }
             /*Token List by LEXER with Errors*/
@@ -277,16 +289,25 @@ int main(int argc, char* args[]){ //DRIVER
             {
                 if(LEXICAL_ERRORS){
                     printf("lexical errors \n");
+                    break;
                 }
                 else if(PARSER_ERRORS){
                     printf("syntax errors \n");
+                    break;
                 }
                 else if(SEMANTIC_ERRORS){
                     printf("semantic errors \n");
+                    break;
                 }
                 else{
-                    // print the code;
-
+                    printf("Codegen successfull \n");
+                    printf("FOLLOWING IS THE IR CODE \n");
+                    print_file("intermediate_code.txt");
+                    printf("FOLLOWING IS THE ASSEMBLY CODE \n");
+                    print_file("assembly.asm");
+                    printf("Total CPU Time:%f\n",l_total_CPU_time);
+                    printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds);
+                    printf("\nTask 9 done, again going to Options\n");
                 }
                 break;
             }

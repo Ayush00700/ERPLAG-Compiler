@@ -1864,6 +1864,7 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
     char* funcName = ir->result->name;
 
     fprintf(assembly, "%s:\n",funcName);
+    fprintf(assembly, "\t\tENTER    %d,0\n",local_ST->func_root->offset*16);
     fprintf(assembly, "\t\tpush_regs                    ; save values\n");
     fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
     fprintf(assembly, "\t\tpop_regs                     ; save values\n\n\n");
@@ -2190,6 +2191,7 @@ void starter(FILE* assembly_file,ir_code* IR)
         IR_head = IR_head->next;
     }
     fprintf(assembly, "main_end:\n");
+    fprintf(assembly, "LEAVE\n");
     fprintf(assembly, "\t\tretq");
     fclose(assembly);
 }
@@ -2222,7 +2224,7 @@ type_exp* find_in_func_table_codegen(char* key, func_entry* curr)
     return NULL;
 }
 
-type_exp* find_in_table_codegen(char* key,var_record* table)
+type_exp* find_in_table_codegen(char* key,var_record* table,func_entry* func)
 {
     int index = sym_tab_entry_contains(key,table->entries);
     if(index==-1) return NULL;
@@ -2233,6 +2235,16 @@ type_exp* find_in_table_codegen(char* key,var_record* table)
     {
         if(!strcmp(temp->name,key))
         {
+            temp->offset = func->func_root->offset;
+            if(!strcmp(temp->type.datatype,"integer")){
+                func->func_root->offset +=  INT_OFFSET;
+            }
+            else if(!strcmp(temp->type.datatype,"boolean")){
+                func->func_root->offset +=  BOOL_OFFSET;
+                
+            }else if(!strcmp(temp->type.datatype,"real")){
+                func->func_root->offset +=  REAL_OFFSET;
+            }
             return &temp->type;
         }
         temp = temp->next;
@@ -2248,7 +2260,7 @@ type_exp* find_expr_codegen(char* key, func_entry* curr)
     }
     var_record* current_rec = curr->func_curr;
     var_record* temp = current_rec;
-    type_exp* type=find_in_table_codegen(key, current_rec);
+    type_exp* type=find_in_table_codegen(key, current_rec,curr);
     
     if(type)
         return type;
