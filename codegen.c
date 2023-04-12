@@ -19,11 +19,15 @@ void macros_starter()
     fprintf(assembly, "\t\tpush      rdx\n");
     fprintf(assembly, "\t\tpush      rsi\n");
     fprintf(assembly, "\t\tpush      rdi\n");
+    // fprintf(assembly, "\t\tpush      rbp\n");
+    // fprintf(assembly, "\t\tpush      rsp\n");
     fprintf(assembly, "\t\t%%endmacro\n\n\n");
 
     // Macro to restore context
     fprintf(assembly, "\t\t;macro to restore all registers\n");
     fprintf(assembly, "\t\t%%macro  pop_regs    0\n");
+    // fprintf(assembly, "\t\tpop      rsp\n");
+    // fprintf(assembly, "\t\tpop      rbp\n");
     fprintf(assembly, "\t\tpop      rdi\n");
     fprintf(assembly, "\t\tpop      rsi\n");
     fprintf(assembly, "\t\tpop      rdx\n");
@@ -472,14 +476,16 @@ void codegen_input(ir_code_node* ir, func_entry* local_ST)
     }
 
     fprintf(assembly,"\t\t\t\tmov RDX, RBP\n\
-                ;sub RDX, 0     ; make RDX to point at location of variable on the stack\n\
-                ;So, we are firstly clearing upper 32 bits of memory so as to access data properly later\n\
+                sub RDX, %d     ; make RDX to point at location of variable on the stack\n\
+                mov RAX, 0x0000_0000_0000_0000 ;machine has sizeof(int) to be 2, for uniformity, We are taking\n\
+                mov [RDX] , RAX ;our sizeof(int) to be 4, now scanf will just enter values in lower 32 bits\n\
                 mov RSI, RBP\n\
                 sub RSI, %d \n\
                 mov RAX, 0 \n\
                 rsp_align ;align RSP to 16 byte boundary for scanf call\n\
                 call scanf \n\
-                rsp_realign ;realign it to original position\n", offsetResult);
+                rsp_realign ;realign it to original position\n\
+                ", offsetResult,offsetResult);
 
     fprintf(assembly, "\t\tpop_regs        ; restore register values\n\n\n");
 
@@ -616,6 +622,9 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
         {
             fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                  ; get corresponding format specifier\n");
             
+            // fprintf(assembly, "\t\tmov RAX, 0x0000_0000_0000_ffff ;machine has sizeof(int) to be 2, for uniformity, We are taking\n");
+
+            // fprintf(assembly, "\t\tmov [RBP-%d] , RAX ;our sizeof(int) to be 4, now scanf will just enter values in lower 32 bits\n                  ; get corresponding format specifier\n",offsetResult);
 
             // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
@@ -636,6 +645,9 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
         {
             fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out          ; get corresponding format specifier\n");
             
+            // fprintf(assembly, "\t\tmov RAX, 0x0000_0000_ffff_ffff ;machine has sizeof(int) to be 2, for uniformity, We are taking\n");
+
+            // fprintf(assembly, "\t\tmov [RBP-%d] , RAX ;our sizeof(int) to be 4, now scanf will just enter values in lower 32 bits\n                  ; get corresponding format specifier\n",offsetResult);
 
             // fprintf(assembly, "\t\tmov      rdx , rbp                               ; take base pointer in rdx\n");
             
@@ -2011,8 +2023,8 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tsection      .data\n");
 
         // Write down all the format specifiers reqd
-        fprintf(assembly, "\t\tfmt_spec_int_in: db \"%%d\", 0\n");
-        fprintf(assembly, "\t\tfmt_spec_int_out: db \"%%d\", 10, 0\n");
+        fprintf(assembly, "\t\tfmt_spec_int_in: db \"%%hd\", 0\n");
+        fprintf(assembly, "\t\tfmt_spec_int_out: db \"%%hd\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_real_in: db \"%%4f\", 0\n");
         fprintf(assembly, "\t\tfmt_spec_real_out: db \"%%4f\", 10, 0\n");
         fprintf(assembly, "\t\tfmt_spec_string: db \"%%s\", 10, 0\n");
