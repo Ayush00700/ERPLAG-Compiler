@@ -1774,7 +1774,6 @@ void semantic(){
     perform_type_checking(ast_root,NULL);
     fclose(fp_sem);
     //perform bound checking
-
 }
 
 

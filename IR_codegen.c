@@ -2,6 +2,7 @@
 #include <ctype.h>
 static int currentLabel = 1;
 static int currentTempVar = 1;
+char* exitJumpLabel;
 
 
 // static int currentChildLabel = 0;
@@ -667,7 +668,13 @@ void IR_arrayAssign(ast_node* node,func_entry* local_ST,func_entry** global_ST,a
     sym_tab_entry_add(orNode->result->name,local_ST->func_curr,temp);
 
     ifNode->operator = IF;
-    ifNode->left_op->name = newLabel();
+    if(exitJumpLabel){
+        ifNode->left_op->name = exitJumpLabel;
+    }
+    else{
+        ifNode->left_op->name = newLabel();
+        exitJumpLabel = ifNode->left_op->name;
+    }
     ifNode->result->name = orNode->result->name;
     ifNode->result->reach = findReach(ifNode->result->name, local_ST);
 

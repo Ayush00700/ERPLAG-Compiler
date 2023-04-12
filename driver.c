@@ -136,7 +136,7 @@ int main(int argc, char* args[]){ //DRIVER
         printf("6. Activation Record Printing\n");
         printf("7. Static and Dynamic Array Printing\n");
         printf("8. Errors reporting and total compiling time\n");
-        printf("9. print the assembly code\n");
+        printf("9. Generate Assembly Code and print Intermediate Code\n");
         printf("0. EXIT\n");
         int choice;
         printf("Enter your choice: ");
@@ -310,7 +310,7 @@ int main(int argc, char* args[]){ //DRIVER
                 else{
                     printf("CODEGEN IS SUCCESSFULL\n");
                     printf("FOLLOWING IS THE IR CODE \n");
-                    print_file("intermediate_code.txt\n");
+                    print_file("intermediate_code.txt");
                     printf("\nAssembly code is saved in file ((assembly.asm))\n");
                     printf("Total CPU Time:%f\n",l_total_CPU_time);
                     printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds);

@@ -4,7 +4,7 @@
 #include "codegen.h"
 
 FILE* assembly;
-
+extern char* exitJumpLabel;
 void macros_starter()
 {
     /* This function defines the required macros in the assembly file
@@ -572,7 +572,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
                 fprintf(assembly, "\t\tpush_regs                    ; save values\n");
                 
 
-                fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_int_out                ; get corresponding format specifier\n");
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_int_out                ; get corresponding format specifier\n");
                 
 
                 fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
@@ -591,7 +591,7 @@ void codegen_output(ir_code_node* ir, func_entry* local_ST)
                 fprintf(assembly, "\t\tpush_regs                    ; save values\n");
                 
 
-                fprintf(assembly, "\t\tmov      rdi , rel fmt_spec_real_out                ; get corresponding format specifier\n");
+                fprintf(assembly, "\t\tmov      rdi , fmt_spec_real_out                ; get corresponding format specifier\n");
                 
 
                 fprintf(assembly, "\t\tmov      rsi , %s                               ; move source index\n", result);
@@ -1865,9 +1865,9 @@ void codegen_func(ir_code_node* ir, func_entry* local_ST)
 
     fprintf(assembly, "%s:\n",funcName);
     fprintf(assembly, "\t\tENTER    %d,0\n",local_ST->func_root->offset*16);
-    fprintf(assembly, "\t\tpush_regs                    ; save values\n");
-    fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
-    fprintf(assembly, "\t\tpop_regs                     ; save values\n\n\n");
+    // fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+    // fprintf(assembly, "\t\tmov      rbp , rsp           ; set base to current stack top\n");
+    // fprintf(assembly, "\t\tpop_regs                     ; save values\n\n\n");
 
 }
 
@@ -2039,6 +2039,8 @@ void starter(FILE* assembly_file,ir_code* IR)
         fprintf(assembly, "\t\tboolean_in_len: equ $ - boolean_in\n");
         fprintf(assembly, "\t\tprint_out: db \"Output: \", 0\n");
         fprintf(assembly, "\t\tprint_out_len: equ $ - print_out\n");
+        fprintf(assembly, "\t\tprintError: db \"Out of Bound Exception in Array\", 10, 0\n");
+        fprintf(assembly, "\t\tprintError_len: db \"Out of Bound Exception in Array\", 10, 0\n");
         fprintf(assembly, "\t\tarray_in: db \"Input: Enter %%d elements of %%s type for range %%d to %%d\", 10, 0\n");
         fprintf(assembly, "\t\tarray_in_len: equ $ - array_in\n");
         fprintf(assembly, "\t\ttrue: db \"true\", 10, 0\n");
@@ -2190,6 +2192,20 @@ void starter(FILE* assembly_file,ir_code* IR)
         }
         IR_head = IR_head->next;
     }
+    if(exitJumpLabel!=NULL){
+        // fprintf(assembly, "\t\tpush_regs                    ; save values\n");
+
+        fprintf(assembly, "\t\t; Display prompt for integer input\n");
+        fprintf(assembly, "\t\tmov      rax , 1\n");
+        fprintf(assembly, "\t\tmov      rdi , 1\n");
+        fprintf(assembly, "\t\tmov      rsi , printError\n");
+        fprintf(assembly, "\t\tmov      rdx , printError_len\n");
+        fprintf(assembly, "\t\tsyscall\n");
+
+        // fprintf(assembly, "\t\tpop_regs                    ; save values\n");
+
+    }
+
     fprintf(assembly, "main_end:\n");
     fprintf(assembly, "LEAVE\n");
     fprintf(assembly, "\t\tretq");
