@@ -10,6 +10,9 @@ int func_index = 0;
 int SEMANTIC_ERRORS = 0;
 int SWITCH_CASE_ERRORS = 0;
 FILE* fp_sem;
+FILE* fp_sym_t;
+FILE* fp_act;
+FILE* fp_sda;
 int printFlag=1;
 void initialize_global_func_table(){
 
@@ -1524,9 +1527,9 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
     while(temp->parent!=NULL){
         temp = temp->parent;
     }
-    printf("variable name : %s\t\tscope(module name) : %s\t\tscope(line numbers) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
+    fprintf(fp_sym_t,"variable name : %s\t\tscope(module name) : %s\t\tscope(line numbers) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
     if(strcmp(list->type.datatype,"array")){
-        printf("type of element : %s\t\tis_array : %s\t\tstatic/dynamic : **\t\tarray_range : **\t\t",list->type.datatype,"no");
+        fprintf(fp_sym_t,"type of element : %s\t\tis_array : %s\t\tstatic/dynamic : **\t\tarray_range : **\t\t",list->type.datatype,"no");
         int width;
         if(!strcmp(list->type.datatype,"real")){
             width = REAL_OFFSET;
@@ -1537,7 +1540,7 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
         if(!strcmp(list->type.datatype,"integer")){
             width = INT_OFFSET;
         }
-        printf("\t\twidth : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
+        fprintf(fp_sym_t,"\t\twidth : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
     }
     else{
         char* stat_dy;
@@ -1547,9 +1550,9 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
         else{
             stat_dy = "dynamic";
         }
-        printf("type of element : %s\t\tis_array : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,"yes",stat_dy);
+        fprintf(fp_sym_t,"type of element : %s\t\tis_array : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,"yes",stat_dy);
         if(list->type.is_static){
-            printf("array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            fprintf(fp_sym_t,"array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
         }
         else{
             int a;
@@ -1571,16 +1574,16 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
                 b = 1;
             }
             if(a&&b){
-                printf("array_range : [%s,%s]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+                fprintf(fp_sym_t,"array_range : [%s,%s]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
             }
             else if(a && !b){
-                printf("array_range : [%d,%s]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+                fprintf(fp_sym_t,"array_range : [%d,%s]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
             }
             else if(!a && b){
-                printf("array_range : [%s,%d]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+                fprintf(fp_sym_t,"array_range : [%s,%d]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
             }
             else{
-                printf("array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+                fprintf(fp_sym_t,"array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
             }
         }
         int width = 0;
@@ -1594,10 +1597,10 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
             width = INT_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
         }
         if(list->type.is_static){
-            printf("width : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
+            fprintf(fp_sym_t,"width : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
         }
         else{
-            printf("width : %s\t\toffset : %d\t\tnesting level : %d\n","**",list->offset,level);
+            fprintf(fp_sym_t,"width : %s\t\toffset : %d\t\tnesting level : %d\n","**",list->offset,level);
         }
     }
     print_ipop_list(list->next,level,record);
@@ -1627,6 +1630,7 @@ void printer_(func_entry* node){
 
 void print_symbol_table(){
     // variable_name    scope_name_(start line to end line)   type    is_array    static/dynamic  range   width   offset  nesting_level
+    fp_sym_t = fopen("symbol_table.txt","w");
     for(int i=0;i<TABLE_SIZE;i++){
         if(global_TABLE[i] != NULL){
             printer_(global_TABLE[i]);
@@ -1637,13 +1641,15 @@ void print_symbol_table(){
             }
         }
     }
+    fclose(fp_sym_t);
 }
 
 void func_act_printer(var_record* node){
-    printf("Function name : %s\t\tWidth(local variable only) : %d \n",node->construct_name,node->offset);
+    fprintf(fp_act,"Function name : %s\t\tWidth(local variable only) : %d \n",node->construct_name,node->offset);
 }
 
 void print_activation(){
+    fp_act = fopen("activation.txt","w");
     for(int i=0;i<TABLE_SIZE;i++){
         if(global_TABLE[i]!=NULL){
             func_entry* temp = global_TABLE[i];
@@ -1653,6 +1659,7 @@ void print_activation(){
             }
         }
     }
+    fclose(fp_act);
 }
 
 
@@ -1669,7 +1676,7 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
         return;
     }
     else{
-        printf("variable name : %s \t\tmodule_name : %s\t\tscope(line_no) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
+        fprintf(fp_sda,"variable name : %s \t\tmodule_name : %s\t\tscope(line_no) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
         char* stat_dy;
         if(list->type.is_static){
             stat_dy = "static array";
@@ -1677,9 +1684,9 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
         else{
             stat_dy = "dynamic array";
         }
-        printf("type : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,stat_dy);
+        fprintf(fp_sda,"type : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,stat_dy);
         if(list->type.is_static){
-            printf("array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            fprintf(fp_sda,"array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
         }
         else{
             int a;
@@ -1701,16 +1708,16 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
                 b = 1;
             }
             if(a&&b){
-                printf("array_range : [%s,%s]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+                fprintf(fp_sda,"array_range : [%s,%s]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
             }
             else if(a && !b){
-                printf("array_range : [%d,%s]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+                fprintf(fp_sda,"array_range : [%d,%s]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
             }
             else if(!a && b){
-                printf("array_range : [%s,%d]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+                fprintf(fp_sda,"array_range : [%s,%d]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
             }
             else{
-                printf("array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+                fprintf(fp_sda,"array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
             }
         }
     }
@@ -1740,6 +1747,7 @@ void printer_sda(func_entry* node){
 }
 
 void print_static_dynamic_arrays(){
+    fp_sda = fopen("static_dynamic_array.txt","w");
     for(int i=0;i<TABLE_SIZE;i++){
         if(global_TABLE[i] != NULL){
             printer_sda(global_TABLE[i]);
@@ -1750,6 +1758,7 @@ void print_static_dynamic_arrays(){
             }
         }
     }
+    fclose(fp_sda);
 }
 
 void semantic(){

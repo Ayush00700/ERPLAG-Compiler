@@ -103,7 +103,13 @@ int main(int argc, char* args[]){ //DRIVER
         semantic();
         ast_node* ast_root = get_ast_root();
         get_global_symbol_table(ast_root);
-        if(!LEXICAL_ERRORS && !PARSER_ERRORS && !SEMANTIC_ERRORS){
+        if(!SEMANTIC_ERRORS){
+            print_symbol_table();
+            // symbol_table.txt
+            print_activation();
+            // activation.txt
+            print_static_dynamic_arrays();
+            // static_dynamic_array.txt
             // code generation done
             FILE* fptr = fopen("intermediate_code.txt","w");
             ir_code* intermediate_code =  getIRList(ast_root,global_TABLE);
@@ -146,7 +152,9 @@ int main(int argc, char* args[]){ //DRIVER
                 remove("parsing_errors.txt");
                 remove("semantic_errors.txt");
                 remove("intermediate_code.txt");
-                remove("assembly.asm");
+                remove("symbol_table.txt");
+                remove("activation.txt");
+                remove("static_dynamic_array.txt");
                 break;
             }
             /*Token List by LEXER with Errors*/
@@ -223,7 +231,7 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("\nTask 5 done, again going to Options\n");
                     break;
                 }
-                print_symbol_table();
+                print_file("symbol_table.txt");
                 printf("\nTask 5 done, again going to Options\n");
                 break;
             }
@@ -244,7 +252,7 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("\nTask 6 done, again going to Options\n");
                     break;
                 }
-                print_activation();
+                print_file("activation.txt");
                 printf("\nTask 6 done, again going to Options\n");
                 break;
             }
@@ -265,7 +273,7 @@ int main(int argc, char* args[]){ //DRIVER
                     printf("\nTask 7 done, again going to Options\n");
                     break;
                 }
-                print_static_dynamic_arrays();
+                print_file("static_dynamic_array.txt");
                 printf("\nTask 7 done, again going to Options\n");
                 break;
             }
@@ -300,11 +308,10 @@ int main(int argc, char* args[]){ //DRIVER
                     break;
                 }
                 else{
-                    printf("Codegen successfull \n");
+                    printf("CODEGEN IS SUCCESSFULL\n");
                     printf("FOLLOWING IS THE IR CODE \n");
-                    print_file("intermediate_code.txt");
-                    printf("FOLLOWING IS THE ASSEMBLY CODE \n");
-                    print_file("assembly.asm");
+                    print_file("intermediate_code.txt\n");
+                    printf("\nAssembly code is saved in file ((assembly.asm))\n");
                     printf("Total CPU Time:%f\n",l_total_CPU_time);
                     printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds);
                     printf("\nTask 9 done, again going to Options\n");
