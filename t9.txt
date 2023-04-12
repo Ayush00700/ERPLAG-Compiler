@@ -166,12 +166,12 @@ start
 				 B:=C;           	      **not an error**
 				 E:= Q;                       **ERROR: variables E and Q are of different types	**	 
 				 break;
-			case 20: A:= 12.90 + u*y - c; 
+			case 20: A:= 12.90 + u*y - c;    **ERROR : type mismatch**
 				 [A, Q, u, y1]:=use module function1 with parameters Var3, c, k, Var1, int1; **ERROR: Output parameter type of u does not match with formal parameter type**      
-				 get_value(Q);
+				 get_value(Q);              **ERROR : out of scope**
 				 E[7]:= k+12 - Q*10+u;        **ERROR: Type mismatch error**    
 				 break;
-			default: E[9]:= B[15]+Q;	      **not an error**	
+			default: E[9]:= B[15]+Q;	      **ERROR: not declared. and out of bound**	
 				 [A, Q]:=use module function1 with parameters Var3, c, k, Var1, int1; **ERROR: Number of output parametters does not match with that of formal parameters**       
 				 break;			 	
 		end
@@ -205,7 +205,7 @@ end
 takes input [a: real, b:boolean, e:integer];
 returns [c:boolean, d: integer];
 start
-	d:= 5*43+e;
+	d:= 5*43+e;       ** shows ERROR because function 3 was overloaded hence these were not populate but statements were still checked **
 	c:= a<15.50 AND b;	
 end
 
