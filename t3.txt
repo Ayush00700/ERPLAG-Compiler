@@ -10,7 +10,7 @@ start
 	declare a,b:integer; 
 	m:= 56;
         n:= 20;
-	declare m,n: boolean;
+	declare m,n: boolean;   		**ERROR: Line 13: Output parameters m and n cannot be redeclared**
 	get_value(b);
 	declare value, q, r: real;
 	get_value(q);
@@ -21,19 +21,19 @@ start
 		declare r: boolean;		
 		get_value(b);
 		q:= 18;
-		r:= b+q*a+x < 100 AND w OR m;   	**not an error as r, w, m, a and x are found in the static parent scope**   
+		r:= b+q*a+x < 100 AND w OR m;   	**ERROR : Line 24: type mismatch**   
 		print(a);
 		declare q,r: real;			** ERROR: variables q and r are re-declared**
 		print(r);
 		q:= b-a*x+y*20;                 	** ERROR: variable y is not declared**
 	end
 	value:= p+q*r; 
-	m:=a <= x AND true;
+	m:=a <= x AND true;				** ERROR : Line 31: type mismatch**
 	u:= true AND false OR v;			** ERROR: variable v is not declared**
 	u:= a<=b;
 	declare w: integer;				** Not an error as a local variable can shadow the input parameter**
 	w:= 23;                                 	** not an error as type of w is integer now**
-	n:= a*25+100<w;
+	n:= a*25+100<w;					** Line 36: type mismatch**
 	declare b, c: real;				**ERROR: variable b is re-declared**
 	c:= value-q+r;
 	w:= w + 5;					**No type error as well as type of w is now taken as integer;**
@@ -42,7 +42,7 @@ end
 
 <<module compute>>
 takes input[a:integer, b:integer, s: real, c:integer];
-returns [res_1:boolean, res_2_a:integer, res_2__b:real];
+returns [res_1:boolean, res_2_a:integer, res_2_b:real];  ** ERROR : res_2_b doesn't change in the function **
 start
 	declare new:boolean;
 	declare abc_1, pqr_2: integer;
@@ -51,7 +51,7 @@ start
 	res_2_a:= -(a*b-c/pqr_2);				**ERROR: Type mismatch error**
 	declare s: integer;					**Not an error as a local variable can shadow the input parameter**
 	declare q4, q5: real;
-	res_2__b:= (res_2_b + p)*12+22.34E-2*q5;		**ERROR variable p is not declared**
+	res_2_b:= (res_2_b + p)*12+22.34E-2*q5;		**ERROR variable p is not declared**
 	declare m,n: boolean;
 	s:= 12;
 	res_1 := a <=  b AND c >= a OR  a<0 AND false;
@@ -78,7 +78,7 @@ start
 		m:= abc_1<=pqr_2 OR res_1;
 		w1:= w2*a-s*k*c-pqr_2;                  	**ERROR: variable k is not declared**
 	end
-	m:= m OR (a <= b) AND (res_2 >= 30.65);
+	m:= m OR (a <= b) AND (res_2 >= 30.65);                **ERROR : res_2 is not declared **
 	res_1:= (true AND c==b)OR(b>p AND (a<=d));		**ERROR: variable d and p  not declared**
 	declare new: integer;					**ERROR: variable new is re-declared**
 	new:= a<b;
