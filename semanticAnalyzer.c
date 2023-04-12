@@ -949,7 +949,7 @@ type_exp* array_access(ast_node* node, type_exp* var_id, type_exp* arr_expr)
                         //write a case for handling negative numbers
                         if((val>var_id->arr_data->upper_bound||val<var_id->arr_data->lower_bound))
                         {
-                            printf("%s: ",node->child_pointers[0]->token->lexeme);
+                            fprintf(fp_sem,"%s: ",node->child_pointers[0]->token->lexeme);
                             throw_error(INDEX_OUT_OF_BOUNDS, line); //Check if it will be equal or less. Language specification allows what?
                         }
                     }
@@ -958,7 +958,7 @@ type_exp* array_access(ast_node* node, type_exp* var_id, type_exp* arr_expr)
             }
             else 
             {
-                printf("ID is not of array datatype "); throw_error(UNSUPPORTED_DTYPE, line);
+                fprintf(fp_sem,"ID is not of array datatype "); throw_error(UNSUPPORTED_DTYPE, line);
             }
         }
         else if(!var_id)
@@ -967,7 +967,7 @@ type_exp* array_access(ast_node* node, type_exp* var_id, type_exp* arr_expr)
         }
         else
         {
-            printf("Array index expression only supports integer type "); throw_error(UNSUPPORTED_DTYPE, line);
+            fprintf(fp_sem,"Array index expression only supports integer type "); throw_error(UNSUPPORTED_DTYPE, line);
         }
         //num or integer
         // int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
