@@ -57,7 +57,7 @@ start
 			 start
 				n:= n+m;
 			 end
-			 E[7]:= k+12 - Q*10;       
+			 E[7]:= k+12 - Q*10;      **ERROR : out of scope **   
 			 break;
 		case true: m:=m-n;
 			 print(m);			
@@ -95,7 +95,7 @@ start
 			break;
 		case 3: a:= a*b;
 			break;
-		case 4: a:= a/b;
+		case 4: a:= a/b;    ** ERROR : division not supported **
 			break;
 	end					**ERROR: default statement is missing- the type of switch variable is integer**
 end
