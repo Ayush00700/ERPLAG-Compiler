@@ -2065,34 +2065,34 @@ void starter(FILE* assembly_file,ir_code* IR)
         type_exp* res_exp;
         
         // Check if symbol table contains left operand label
-        if(IR_head->left_op->name&& (sym_tab_entry_contains(IR_head->left_op->name,local_ST->func_curr->entries)!=-1)){
-            left_exp = find_expr_codegen(IR_head->left_op->name,local_ST);
-            char* temp = (char*)malloc(sizeof(char)*30);
-            memset(temp,'\0',sizeof(temp));
-            strcpy(temp, IR_head->left_op->name);
-            strcat(temp, left_exp->reach_defined);
-            IR_head->left_op->name = temp;
-        }
+        // if(IR_head->left_op->name&& (sym_tab_entry_contains(IR_head->left_op->name,local_ST->func_curr->entries)!=-1)){
+        //     left_exp = find_expr_codegen(IR_head->left_op->name,local_ST);
+        //     char* temp = (char*)malloc(sizeof(char)*30);
+        //     memset(temp,'\0',sizeof(temp));
+        //     strcpy(temp, IR_head->left_op->name);
+        //     strcat(temp, left_exp->reach_defined);
+        //     IR_head->left_op->name = temp;
+        // }
 
-        // Check if symbol table contains right operand label
-        if(IR_head->right_op->name&& (sym_tab_entry_contains(IR_head->right_op->name,local_ST->func_curr->entries)!=-1)){
-            right_exp = find_expr_codegen(IR_head->right_op->name,local_ST);
-            char* temp = (char*)malloc(sizeof(char)*30);
-            memset(temp,'\0',sizeof(temp));
-            strcpy(temp, IR_head->right_op->name);
-            strcat(temp, right_exp->reach_defined);
-            IR_head->right_op->name = temp;
-        }
+        // // Check if symbol table contains right operand label
+        // if(IR_head->right_op->name&& (sym_tab_entry_contains(IR_head->right_op->name,local_ST->func_curr->entries)!=-1)){
+        //     right_exp = find_expr_codegen(IR_head->right_op->name,local_ST);
+        //     char* temp = (char*)malloc(sizeof(char)*30);
+        //     memset(temp,'\0',sizeof(temp));
+        //     strcpy(temp, IR_head->right_op->name);
+        //     strcat(temp, right_exp->reach_defined);
+        //     IR_head->right_op->name = temp;
+        // }
 
-        // Check if symbol table contains result label
-        if(IR_head->result->name&&strcmp(IR_head->result->name,"main")&& (sym_tab_entry_contains(IR_head->result->name,local_ST->func_curr->entries)!=-1)){
-            res_exp = find_expr_codegen(IR_head->result->name,local_ST);
-            char* temp = (char*)malloc(sizeof(char)*30);
-            memset(temp,'\0',sizeof(temp));
-            strcpy(temp, IR_head->result->name);
-            strcat(temp, res_exp->reach_defined);
-            IR_head->result->name = temp;
-        }
+        // // Check if symbol table contains result label
+        // if(IR_head->result->name&&strcmp(IR_head->result->name,"main")&& (sym_tab_entry_contains(IR_head->result->name,local_ST->func_curr->entries)!=-1)){
+        //     res_exp = find_expr_codegen(IR_head->result->name,local_ST);
+        //     char* temp = (char*)malloc(sizeof(char)*30);
+        //     memset(temp,'\0',sizeof(temp));
+        //     strcpy(temp, IR_head->result->name);
+        //     strcat(temp, res_exp->reach_defined);
+        //     IR_head->result->name = temp;
+        // }
         
         /* REACH is the path to take from function root symbol table to the corresponding construct's
         local symbol table (d = down, r = right). Moving down increases nesting level unlike moving right */

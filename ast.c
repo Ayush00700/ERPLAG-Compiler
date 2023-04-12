@@ -665,6 +665,14 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->next = NULL;
             parent->child_pointers[0] = create_ast(root->child_pointers[0]);
             parent->child_pointers[1] = create_ast(root->child_pointers[1]);
+            char* name = (char*) malloc(sizeof(char)*30);
+            if(parent->child_pointers[0]&&!strcmp(parent->child_pointers[0]->name,"MINUS")){
+                sprintf(name,"-%s",parent->child_pointers[1]->token->lexeme);
+            }
+            else{
+                sprintf(name,"%s",parent->child_pointers[1]->token->lexeme);
+            }
+            parent->tempName = name;
             // Collapsing unnecessary non-terminals
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
@@ -1078,6 +1086,7 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->next = NULL;
             parent->child_pointers[0] = root->inh;
             parent->child_pointers[1] = create_ast(root->child_pointers[1]);
+            parent->tempName = root->child_pointers[1];
             free(root->child_pointers[0]);
             free(root->child_pointers[1]);
             free(root->child_pointers[2]);
@@ -1112,6 +1121,14 @@ ast_node* create_ast(treeNodes* root /*,treeNodes* root_parent*/)
             parent->next = NULL;
             parent->child_pointers[0] = root->inh;
             parent->child_pointers[1] = create_ast(root->child_pointers[0]);
+            char* name = (char*) malloc(sizeof(char)*30);
+            if(parent->child_pointers[0]&&!strcmp(parent->child_pointers[0]->name,"MINUS")){
+                sprintf(name,"-%s",parent->child_pointers[1]->token->lexeme);
+            }
+            else{
+                sprintf(name,"%s",parent->child_pointers[1]->token->lexeme);
+            }
+            parent->tempName = name;
             free(root->child_pointers[0]);
             return parent;}
         case 103:

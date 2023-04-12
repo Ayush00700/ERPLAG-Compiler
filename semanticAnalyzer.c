@@ -1092,12 +1092,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else if(!strcmp(node->name, "OUTPUT")){
         type_exp* var = type_checking(node->child_pointers[0],curr);
         int line = line_number_finder(node);
-        if(var){
-            if(!strcmp(var->datatype,"array")){
-                printf("Array ID variable can't be printed ::");
-                return throw_error(UNSUPPORTED_DTYPE,line);
-            }
-        }
+        // if(var){
+        //     if(!strcmp(var->datatype,"array")){
+        //         printf("Array ID variable can't be printed ::");
+        //         return throw_error(UNSUPPORTED_DTYPE,line);
+        //     }
+        // }
     }
     else if(!strcmp(node->name,"ARRAY_ASSIGN")){
         type_exp* arr_data = type_checking(node->child_pointers[0],curr);
@@ -1249,6 +1249,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                     {
                         int val=index->token?index->token->values.num:index->child_pointers[1]->token->values.num;
                         //write a case for handling negative numbers
+                        if(!index->token && !strcmp(index->child_pointers[0]->name,"MINUS"))val = -1*val;
                         if((val>var_id->arr_data->upper_bound||val<var_id->arr_data->lower_bound))
                         {
                             return throw_error(INDEX_OUT_OF_BOUNDS, line); //Check if it will be equal or less. Language specification allows what?
