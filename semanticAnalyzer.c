@@ -945,7 +945,7 @@ type_exp* array_access(ast_node* node, type_exp* var_id, type_exp* arr_expr)
                     if(index)
                     {
                         int val=index->token?index->token->values.num:index->child_pointers[1]->token->values.num;
-                        //write a case for handling negative numbers
+                        if(!index->token && !strcmp(index->child_pointers[0]->name,"MINUS"))val = -1*val;
                         if((val>var_id->arr_data->upper_bound||val<var_id->arr_data->lower_bound))
                         {
                             fprintf(fp_sem,"%s: ",node->child_pointers[0]->token->lexeme);
@@ -1126,12 +1126,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
     else if(!strcmp(node->name, "OUTPUT")){
         type_exp* var = type_checking(node->child_pointers[0],curr);
         int line = line_number_finder(node);
-        if(var){
-            if(!strcmp(var->datatype,"array")){ //still need to check few things : language supports this or not
-                fprintf(fp_sem,"--Array ID variable can't be printed ::");
-                return throw_error(UNSUPPORTED_DTYPE,line);
-            }
-        }
+        // if(var){
+        //     if(!strcmp(var->datatype,"array")){
+        //         printf("Array ID variable can't be printed ::");
+        //         return throw_error(UNSUPPORTED_DTYPE,line);
+        //     }
+        // }
     }
     else if(!strcmp(node->name,"ARRAY_ASSIGN")){
         type_exp* var_id = type_checking(node->child_pointers[0],curr);
@@ -1876,7 +1876,54 @@ module
 stmts
 
 */
+void print_ipop_list_codegen(sym_tab_entry* list,int level,FILE* assembly){
+    if(list == NULL){
+        return;
+    }
+    strcat(list->name,list->type.reach_defined);
+    fprintf(assembly, "\t\t%s:   dq   0\n",list->name);
+    printf("variable name : %s  ",list->name);
+    print_ipop_list_codegen(list->next,level,assembly);
+}
 
 
+
+void print_level_codegen(var_record* node,int level,FILE* assembly){
+    if(node == NULL){
+        return;
+    }
+    for(int i=0;i<TABLE_SIZE;i++){
+        print_ipop_list_codegen(node->entries[i],level,assembly);
+    }
+    print_level_codegen(node->r_sibiling,level,assembly);
+    print_level_codegen(node->child,level+1,assembly);
+}
+
+void code_gen(FILE* assembly){
+    for(int i=0;i<TABLE_SIZE;i++){
+        if(global_TABLE[i] != NULL){
+                if(global_TABLE[i]->input_list!=NULL){
+                    print_ipop_list_codegen(global_TABLE[i]->input_list,0,assembly);
+                }
+                if(global_TABLE[i]->ouput_list!=NULL){
+                    print_ipop_list_codegen(global_TABLE[i]->ouput_list,0,assembly);
+                }
+                print_level_codegen(global_TABLE[i]->func_root,1,assembly);
+
+            func_entry* temp = global_TABLE[i];
+            while(temp->next!=NULL){
+                    if(temp->next->input_list!=NULL){
+                        print_ipop_list_codegen(temp->next->input_list,0,assembly);
+                    }
+                    if(temp->next->ouput_list!=NULL){
+                        print_ipop_list_codegen(temp->next->ouput_list,0,assembly);
+                    }
+                    print_level_codegen(temp->next->func_root,1,assembly);
+
+                temp = temp->next;
+            }
+        }
+    }
+}
 
 

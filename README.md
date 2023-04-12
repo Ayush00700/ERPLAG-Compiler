@@ -191,6 +191,14 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 
 ### Doubts
 
+Where to print AST and ParseTree.
+Till where do we run the code?
+
+
+Where to print AST and ParseTree.
+Till where do we run the code?
+
+
 Semantic check
     Test Case 1
         Line 36: The r asssignemnt has errors, do we need to consider it as output not changed
@@ -231,10 +239,16 @@ We have used "3 Address Codes" IR. We have generated IR for the following:
 [:(] Stage 2 Submission
     [:)] AST (Abstract Syntax Tree) creation
     [:)] Semantic Analyzer
-    [:(] Semantic checks improvement
-    [:(] Free the pointers of IR
+    [:)] Semantic checks improvement
+    <!-- [:(] Free the pointers of IR -->
+    [:)] Symbol Table Printing, AST and Parse Tree Printing
+    [:)] No of Nodes in AST calculation
+    [:)] Activation record size printing
     [:(] Short circuit evaluation
     [:(] Code Generation
-    [:(] Symbol Table Printing, AST and Parse Tree Printing
-    [:(] No of Nodes in AST calculation
-    [:(] Activation record size printing
+    [:)] Driver
+    [:(] Print and getvalue of whole array
+    [:(] Floating point arithmetic debug (also check for arithmetic)
+    [:(] BoundCheck Error Label in codegen 
+    [:(] Functon codegen 
+    [:(] Dynamic array codegen 

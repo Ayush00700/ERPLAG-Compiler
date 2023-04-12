@@ -99,7 +99,7 @@ typedef struct ir_code_node
     char_offset* result;
     char_offset* left_op;
     char_offset* right_op;
-    // char* reach;
+    char* reach;
     struct ir_code_node* next;
 }ir_code_node;
 

@@ -50,3 +50,4 @@ extern int line_number_finder(ast_node* ast_root);
 // traverse functions
 extern var_record* find_local_construct(char* func_name, char* arr);
 extern func_entry* find_module_global(char* key);
+extern void code_gen(FILE* assembly);
