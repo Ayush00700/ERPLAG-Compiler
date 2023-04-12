@@ -369,7 +369,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             local_case->end_line_no = ast_root->next->end_line_no;
         }
         initialize_entries(local_case);
-        //local_table->offset = local_case->offset;
+        local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
     }
@@ -386,7 +386,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             local_case->end_line_no = ast_root->next->end_line_no;
         }
         initialize_entries(local_case);
-        //local_table->offset = local_case->offset;
+        local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_populate(local_case,ast_root->next);
         // local_table->offset = local_case->offset;
         if(ast_root->next!=NULL)local_table->r_sibiling = local_case;
@@ -413,7 +413,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         }
         for_populate(local_for,ast_root->child_pointers[0]);
         local_populate(local_for,ast_root->child_pointers[2]);
-        //local_table->offset = local_for->offset;
+        local_table->offset = local_for->offset;
         local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"WHILELOOP")){
@@ -437,7 +437,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_while;
         }
         local_populate(local_while,ast_root->child_pointers[1]);
-        //local_table->offset = local_while->offset; 
+        local_table->offset = local_while->offset; 
         local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"SWITCH")){
@@ -445,7 +445,6 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch->parent = local_table;
         local_switch->child = NULL;
         local_switch->r_sibiling = NULL;
-        int temp = local_table->offset;
         local_switch->offset = local_table->offset;
         local_switch->construct_name = "CASE_HEAD";
         local_switch->start_line_no = ast_root->child_pointers[1]->start_line_no;
@@ -462,7 +461,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_switch;
         }
         local_populate(local_switch,ast_root->child_pointers[1]);
-        //local_table->offset = temp;
+        local_table->offset = local_switch->offset;
         //naya for default
         if(ast_root->child_pointers[2] == NULL){
             local_populate(local_table,ast_root->next);
@@ -477,7 +476,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
         local_switch_default->start_line_no = ast_root->child_pointers[2]->start_line_no;
         local_switch_default->end_line_no = ast_root->child_pointers[2]->end_line_no;
         initialize_entries(local_switch_default);
-         if(local_table->child == NULL){
+        if(local_table->child == NULL){
             local_table->child = local_switch_default;
         }
         else{
@@ -488,7 +487,7 @@ void local_populate(var_record* local_table,ast_node* ast_root){
             temp->r_sibiling = local_switch_default;
         }
         local_populate(local_switch_default,ast_root->child_pointers[2]);
-        //local_table->offset = local_switch_default->offset; 
+        local_table->offset = local_switch_default->offset; 
         local_populate(local_table,ast_root->next);
     }
     else if(!strcmp(ast_root->name,"DECLARE")){
@@ -1760,9 +1759,9 @@ void semantic(){
     for(int i=0;i<100;i++){
         function_declare_name[i] =  NULL;
     }
+    fp_sem = fopen("semantic_errors.txt","w"); 
     populate_(ast_root);
      //isme dikkat hai....
-    fp_sem = fopen("semantic_errors.txt","w"); 
     perform_type_checking(ast_root,NULL);
     fclose(fp_sem);
     //perform bound checking
