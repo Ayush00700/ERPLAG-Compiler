@@ -65,9 +65,9 @@ extern void goToChild();
 // Function to add the "rule" to the parse tree
 extern void addRuleToTree(rule* rule);
 // printer function
-extern void printer(treeNodes* current);
+extern void printer(treeNodes* current,FILE* fp);
 // Function to perform the inorder traversal of the parse tree
-extern void InOrderTraversal(treeNodes* current);
+extern void InOrderTraversal(treeNodes* current,FILE* fp);
 // Function to print the parse tree using inorder traversal
 extern int print_parse_tree();
 // Function to return parse tree (ptree)
@@ -128,6 +128,6 @@ extern void free_parser_data(NonT* non_terminals, rule* rules);
 // Function to start the Syntax Analyzer
 extern void call_parser(rule* rules, NonT* nont);
 
-extern void parseCompletely(int lflag);
+extern int parseCompletely(int lflag);
 
 #endif

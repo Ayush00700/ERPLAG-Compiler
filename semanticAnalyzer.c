@@ -9,6 +9,7 @@ func_entry* global_TABLE[TABLE_SIZE];
 int func_index = 0;
 int SEMANTIC_ERRORS = 0;
 int SWITCH_CASE_ERRORS = 0;
+FILE* fp_sem;
 // List output_list;
 // List iter_list;
 
@@ -653,35 +654,35 @@ type_exp* throw_error(semErrors error, int line)
     switch(error)
     {
         case TYPE_NOT_MATCHED: {
-        printf("Error found at line no %d : Type Mismatch \n", line);break;}
+        fprintf(fp_sem,"Error found at line no %d : Type Mismatch \n", line);break;}
         case OUT_OF_SCOPE_VARIABLE: {
-        printf("Error found at line no %d : Out of scope \n", line);break;}
+        fprintf(fp_sem,"Error found at line no %d : Out of scope \n", line);break;}
         case UNSUPPORTED_DTYPE: {
-        printf("Error found at line no %d : Unsupported Datatype \n", line);break;}
+        fprintf(fp_sem,"Error found at line no %d : Unsupported Datatype \n", line);break;}
         case FUNC_NOT_DEFINED:{
-        printf("Error found at line no %d : Function Not Defined \n", line);break;}
+        fprintf(fp_sem,"Error found at line no %d : Function Not Defined \n", line);break;}
         case OUT_OF_ORDER_INDEX:
-        {printf("Error found at line no %d : Index Out of Order \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Index Out of Order \n", line);break;}
         case RECURSION_NOT_ALLOWED:
-        {printf("Error found at line no %d : Recursion not allowed \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Recursion not allowed \n", line);break;}
         case PARAMETER_LIST_MISMATCH:
-        {printf("Error found at line no %d : Parameter list mismatch \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n", line);break;}
         case DEFAULT_NOT_FOUND:
-        {printf("Error found at line no %d : Default not found \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Default not found \n", line);break;}
         case DEFAULT_FOUND:
-        {printf("Error found at line no %d : Unexpected default found \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Unexpected default found \n", line);break;}
          case INDEX_OUT_OF_BOUNDS:
-        {printf("Error found at line no %d : Index out of bounds\n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Index out of bounds\n", line);break;}
         case VAR_REDECLARED:
-        {printf("Error found at line no %d : Variable redeclared\n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Variable redeclared\n", line);break;}
         case VALUE_MODIFIED:
-        {printf("Value was modified for the construct %d", line);break;}
+        {fprintf(fp_sem,"Value was modified for the construct %d", line);break;}
         case VALUE_NOT_MODIFIED:
-        {printf("Value was not modified for the construct %d", line);break;}
+        {fprintf(fp_sem,"Value was not modified for the construct %d", line);break;}
         case FUNCTION_NOT_DEFINED:
-        {printf("Error found at line no %d : Function not defined \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Function not defined \n", line);break;}
         case FUNCTION_OVERLOADING:
-        {printf("Error found at line no %d : Function overloading \n", line);break;}
+        {fprintf(fp_sem,"Error found at line no %d : Function overloading \n", line);break;}
         
     }
     return NULL;
@@ -700,20 +701,20 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right, int line)
                     {
                         return left;
                     }
-                  else {printf("--\"%d\"left side width \"%d\"right side width\n\t",
+                  else {fprintf(fp_sem,"--\"%d\"left side width \"%d\"right side width\n\t",
                     left->arr_data->upper_bound-left->arr_data->lower_bound,
                     right->arr_data->upper_bound-right->arr_data->lower_bound);
                     return throw_error(TYPE_NOT_MATCHED,line);
                     }
                 }
-                else {printf("--\"%s\" left side datatype \"%s\" right side datatype\n\t",
+                else {fprintf(fp_sem,"--\"%s\" left side datatype \"%s\" right side datatype\n\t",
                 left->arr_data->arr_datatype,right->arr_data->arr_datatype);
                 return throw_error(TYPE_NOT_MATCHED,line); 
                     }
             }
             else return left;
         }
-        else {printf("--\"%s\" left side datatype \"%s\" right side datatype\n\t",
+        else {fprintf(fp_sem,"--\"%s\" left side datatype \"%s\" right side datatype\n\t",
             left->datatype,right->datatype);
             return throw_error(TYPE_NOT_MATCHED,line); 
             }
@@ -758,7 +759,7 @@ type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr,int line){
     //     }
     //     temp = temp->next;
     // }
-    printf("%s: ",key);
+    fprintf(fp_sem,"%s: ",key);
 
     return throw_error(OUT_OF_SCOPE_VARIABLE,line);
 }
@@ -783,7 +784,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
 {
     if(!curr)
     {
-        printf("%s ",node->token->lexeme);
+        fprintf(fp_sem,"%s ",node->token->lexeme);
         return throw_error(OUT_OF_SCOPE_VARIABLE,line);
     }
     var_record* current_rec = curr->func_curr;
@@ -797,7 +798,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
             return input;
         else
         {
-            printf("--%s Variable used before decalaration\n\t",key);
+            fprintf(fp_sem,"--%s Variable used before decalaration\n\t",key);
             throw_error(OUT_OF_SCOPE_VARIABLE, line);
             return NULL;
         }
@@ -842,7 +843,7 @@ void check_cases(ast_node* node, func_entry* curr, type_exp* switch_dtype){
     type_exp* comparison_result ;
     if(SWITCH_CASE_ERRORS==0){
     comparison_result = compare_dTypes(case_id,switch_dtype,line);
-    if(!comparison_result)printf("--Case \"%s\" type mismatch with Switch type\n",node->child_pointers[0]->token->lexeme);
+    if(!comparison_result){fprintf(fp_sem,"--Case \"%s\" type mismatch with Switch type\n",node->child_pointers[0]->token->lexeme);}
     }
 
     if(!comparison_result) SWITCH_CASE_ERRORS = 1;
@@ -902,9 +903,9 @@ void is_value_changed(func_entry* curr, char* func_name)
     {
         if(!node->type.isChanged)
        {
-        printf("Output %s, for function %s:" ,node->name, func_name);
+        fprintf(fp_sem,"Output %s, for function %s:" ,node->name, func_name);
         throw_error(VALUE_NOT_MODIFIED, curr->start_line_no);
-        printf("-%d \n", curr->end_line_no);
+        fprintf(fp_sem,"-%d \n", curr->end_line_no);
        }
        node=node->next;
     }
@@ -1082,7 +1083,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 }
             }
             if(!flag){
-                printf("function: %s not declared or defined yet.... line no. is %d\n",
+                fprintf(fp_sem,"function: %s not declared or defined yet.... line no. is %d\n",
                 node->child_pointers[0]->token->lexeme,line);
             }
         }
@@ -1094,13 +1095,13 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
         if(var_id&& index){
             if(strcmp(var_id->datatype,"array")||strcmp(index->datatype,"integer")){
-                printf("--Array expression needs array variable\
+                fprintf(fp_sem,"--Array expression needs array variable\
                 to be declared and index expression to consist of integer type\n\t");
                 return throw_error(UNSUPPORTED_DTYPE,line);
             }
         }else if(var_id){
             //Convert this into throw_error()
-            printf("--R value expression/index type error:");
+            fprintf(fp_sem,"--R value expression/index type error:");
             throw_error(OUT_OF_SCOPE_VARIABLE, line);
         }
         return NULL;
@@ -1111,7 +1112,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int line = line_number_finder(node);
         if(var){
             if(!strcmp(var->datatype,"array")){ //still need to check few things : language supports this or not
-                printf("--Array ID variable can't be printed ::");
+                fprintf(fp_sem,"--Array ID variable can't be printed ::");
                 return throw_error(UNSUPPORTED_DTYPE,line);
             }
         }
@@ -1274,13 +1275,13 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                     }
                 }
                 return temp;
-            }else {printf("ID is not of array datatype"); throw_error(UNSUPPORTED_DTYPE, line);}
+            }else {fprintf(fp_sem,"ID is not of array datatype"); throw_error(UNSUPPORTED_DTYPE, line);}
         }else if(!var_id)
         {
             return NULL;
         }
         else
-        {printf("Array index expression only supports integer type"); throw_error(UNSUPPORTED_DTYPE, line);}
+        {fprintf(fp_sem,"Array index expression only supports integer type"); throw_error(UNSUPPORTED_DTYPE, line);}
         //num or integer
         // int line=node->child_pointers[0]->token->line_no;//Might need to check child's line number
 
@@ -1349,7 +1350,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int val1 = node->child_pointers[0]->child_pointers[1]->token->values.num;
         int val2 = node->child_pointers[1]->child_pointers[1]->token->values.num;
         if(val1>val2){
-        printf("--%d lower bound and %d upper bound",val1,val2);
+        fprintf(fp_sem,"--%d lower bound and %d upper bound",val1,val2);
         return throw_error(OUT_OF_ORDER_INDEX,line);
         }
         else return NULL;
@@ -1366,9 +1367,9 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         perform_type_checking(node->child_pointers[2],curr);
         if(id_type->isChanged==1) //A little error here. How to chekc for isChanged garbage value
         {
-            printf("FOR: variable changed at line_no: %d ",id_type->line_changed);
+            fprintf(fp_sem,"FOR: variable changed at line_no: %d ",id_type->line_changed);
             throw_error(VALUE_MODIFIED, node->start_line_no);
-            printf("%d \n", node->end_line_no);
+            fprintf(fp_sem,"%d \n", node->end_line_no);
             
         }
         //pop the for node, free the memory space
@@ -1385,15 +1386,15 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         if(!strcmp(node->child_pointers[0]->name,"ID")
            && strcmp(condition->datatype,"boolean")){
             // printf("Error found at line no: %d expected boolean expression",);
-            printf("The conditional variable of while: ");
+            fprintf(fp_sem,"The conditional variable of while: ");
             throw_error(TYPE_NOT_MATCHED, line);
            }
         perform_type_checking(node->child_pointers[1],curr);
         if(!condition||!condition->isChanged) //!condition is the edge case
         {
-            printf("While: ");
+            fprintf(fp_sem,"While: ");
             throw_error(VALUE_NOT_MODIFIED, node->start_line_no);
-            printf("-%d \n", node->end_line_no);
+            fprintf(fp_sem,"-%d \n", node->end_line_no);
         }
         curr->func_curr=temp;
         curr->func_curr->child = curr->func_curr->child->r_sibiling;
@@ -1411,7 +1412,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             if(!node->child_pointers[2])
             {
                 //need to add check for children's line number
-                printf("Switch variable of type integer");
+                fprintf(fp_sem,"Switch variable of type integer");
                 throw_error(DEFAULT_NOT_FOUND,line);
             }
             //if default doesnt exist then error
@@ -1420,7 +1421,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         {
             if(node->child_pointers[2])
             {
-                printf("Switch variable of type boolean. ");
+                fprintf(fp_sem,"Switch variable of type boolean. ");
                 throw_error(DEFAULT_FOUND,node->child_pointers[2]->end_line_no);
             }
         }
@@ -1476,7 +1477,6 @@ func_entry* find_module(char* key){
 
 
 void perform_type_checking(ast_node* ast_root,func_entry* func){
-
     if(ast_root==NULL) {return ;}
     
     else if(!strcmp(ast_root->name,"DRIVER")){
@@ -1532,9 +1532,9 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
     while(temp->parent!=NULL){
         temp = temp->parent;
     }
-    printf("variable name : %s  ||  scope : %s  ||  scope(line_no) : [%d-%d]    ",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
+    printf("variable name : %s\t\tscope(module name) : %s\t\tscope(line numbers) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
     if(strcmp(list->type.datatype,"array")){
-        printf("||  type : %s   ||  is_array : %s   ||  static/dynamic : ** ||  array_range : **    ",list->type.datatype,"no");
+        printf("type of element : %s\t\tis_array : %s\t\tstatic/dynamic : **\t\tarray_range : **\t\t",list->type.datatype,"no");
         int width;
         if(!strcmp(list->type.datatype,"real")){
             width = REAL_OFFSET;
@@ -1545,7 +1545,7 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
         if(!strcmp(list->type.datatype,"integer")){
             width = INT_OFFSET;
         }
-        printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+        printf("\t\twidth : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
     }
     else{
         char* stat_dy;
@@ -1555,9 +1555,9 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
         else{
             stat_dy = "dynamic";
         }
-        printf("||  type : %s   ||  is_array : %s   ||  static/dynamic : %s ",list->type.arr_data->arr_datatype,"yes",stat_dy);
+        printf("type of element : %s\t\tis_array : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,"yes",stat_dy);
         if(list->type.is_static){
-            printf("||  array_range : [%d,%d]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            printf("array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
         }
         else{
             int a;
@@ -1579,16 +1579,16 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
                 b = 1;
             }
             if(a&&b){
-                printf("||  array_range : [%s,%s]    ",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+                printf("array_range : [%s,%s]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
             }
             else if(a && !b){
-                printf("||  array_range : [%d,%s]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+                printf("array_range : [%d,%s]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
             }
             else if(!a && b){
-                printf("||  array_range : [%s,%d]    ",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+                printf("array_range : [%s,%d]\t\t",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
             }
             else{
-                printf("||  array_range : [%d,%d]    ",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+                printf("array_range : [%d,%d]\t\t",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
             }
         }
         int width = 0;
@@ -1602,10 +1602,10 @@ void print_ipop_list(sym_tab_entry* list,int level,var_record* record){
             width = INT_OFFSET*(list->type.arr_data->upper_bound-list->type.arr_data->lower_bound + 1) + 1;
         }
         if(list->type.is_static){
-            printf("||  width : %d  ||  offset : %d ||  nesting_level : %d\n",width,list->offset,level);
+            printf("width : %d\t\toffset : %d\t\tnesting level : %d\n",width,list->offset,level);
         }
         else{
-            printf("||  width : %s  ||  offset : %d ||  nesting_level : %d\n","**",list->offset,level);
+            printf("width : %s\t\toffset : %d\t\tnesting level : %d\n","**",list->offset,level);
         }
     }
     print_ipop_list(list->next,level,record);
@@ -1648,7 +1648,7 @@ void print_symbol_table(){
 }
 
 void func_act_printer(var_record* node){
-    printf("Function name : %s  ||  Width(local variable only) : %d \n",node->construct_name,node->offset);
+    printf("Function name : %s\t\tWidth(local variable only) : %d \n",node->construct_name,node->offset);
 }
 
 void print_activation(){
@@ -1677,7 +1677,7 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
         return;
     }
     else{
-        printf("variable name : %s  ||  module_name : %s  ||  scope(line_no) : [%d-%d]    ",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
+        printf("variable name : %s \t\tmodule_name : %s\t\tscope(line_no) : [%d-%d]\t\t",list->name,temp->construct_name,record->start_line_no,record->end_line_no);
         char* stat_dy;
         if(list->type.is_static){
             stat_dy = "static array";
@@ -1685,9 +1685,9 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
         else{
             stat_dy = "dynamic array";
         }
-        printf("||  type : %s   ||  static/dynamic : %s ",list->type.arr_data->arr_datatype,stat_dy);
+        printf("type : %s\t\tstatic/dynamic : %s\t\t",list->type.arr_data->arr_datatype,stat_dy);
         if(list->type.is_static){
-            printf("||  array_range : [%d,%d]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+            printf("array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
         }
         else{
             int a;
@@ -1709,16 +1709,16 @@ void print_ipop_list_sda(sym_tab_entry* list,int level,var_record* record){
                 b = 1;
             }
             if(a&&b){
-                printf("||  array_range : [%s,%s]    \n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
+                printf("array_range : [%s,%s]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound_lex);
             }
             else if(a && !b){
-                printf("||  array_range : [%d,%s]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
+                printf("array_range : [%d,%s]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound_lex);
             }
             else if(!a && b){
-                printf("||  array_range : [%s,%d]    \n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
+                printf("array_range : [%s,%d]\n",list->type.arr_data->lower_bound_lex,list->type.arr_data->upper_bound);
             }
             else{
-                printf("||  array_range : [%d,%d]    \n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
+                printf("array_range : [%d,%d]\n",list->type.arr_data->lower_bound,list->type.arr_data->upper_bound);
             }
         }
     }
@@ -1769,7 +1769,9 @@ void semantic(){
     }
     populate_(ast_root);
      //isme dikkat hai....
+    fp_sem = fopen("semantic_errors.txt","w"); 
     perform_type_checking(ast_root,NULL);
+    fclose(fp_sem);
     //perform bound checking
 
 }

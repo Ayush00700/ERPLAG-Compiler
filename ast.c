@@ -1594,60 +1594,64 @@ void change_tree(treeNodes* root)
     }
 }
 
-int recursive_print_tree(ast_node* root,int listcount,int toreturn){
+int recursive_print_tree(ast_node* root,int listcount,int toreturn,FILE* fp){
     int currentNodeCount = astNodeCount;
+    char* current_node_name; 
+    if(root){
+        current_node_name = root->name;
+    }
     if(currentNodeCount>toreturn){
         toreturn = currentNodeCount;
     }
     if(root==NULL) {
-        printf("//This node was made NULL and thereby does not exist!:");
+        fprintf(fp,"//This node was made NULL and thereby does not exist!:");
         return 0;
     }
     // toreturn += sizeof(ast_node);    
     int num_of_children = root->no_of_children;
     if(root->isTerminal && root->token!=NULL){
         if(root->token->lexeme!=NULL){
-           printf("\n\t%s\n",root->token->lexeme);
+           fprintf(fp,"\n\t%s\n",root->token->lexeme);
         }
         if(!strcmp(root->token->type,"RNUM")){//TODO add
-            printf("\n\t%f\n",root->token->values.rnum);
+            fprintf(fp,"\n\t%f\n",root->token->values.rnum);
         }
         if(!strcmp(root->token->type,"NUM")){
-            printf("\n\t%d\n",root->token->values.num);
+            fprintf(fp,"\n\t%d\n",root->token->values.num);
         }
     }
     
     
-    printf("\n%d\t%s\n",astNodeCount,root->name);
-    printf("No of children: %d \n",root->no_of_children);
-    printf("Childrens:");
+    fprintf(fp,"\n%d\t%s\n",astNodeCount,root->name);
+    fprintf(fp,"No of children: %d \n",root->no_of_children);
+    fprintf(fp,"Childrens:");
 
     for(int i=0;i<num_of_children;i++){
         if(root->child_pointers[i]!=NULL)
-        printf("%s ,",root->child_pointers[i]->name);
+        fprintf(fp,"%s ,",root->child_pointers[i]->name);
     } 
-    printf("\n");
+    fprintf(fp,"\n");
 
-    printf("Next pointers:");
+    fprintf(fp,"Next pointers:");
     ast_node * temp=root->next;
     Boolean emptyList = 1;
     while(temp)
     {
         if(emptyList)
             emptyList=0;
-        printf("%s ,",temp->name);
+        fprintf(fp,"%s ,",temp->name);
         temp=temp->next;
     }
     if(emptyList)
-        printf("NULL");    
-    printf("\n");
+        fprintf(fp,"NULL");    
+    fprintf(fp,"\n");
     
     
     ast_node * temp2=root->next;
     astNodeCount++;
     for(int i=0;i<num_of_children;i++){
-        printf("\nIterating over next child of Node %d:\n",currentNodeCount);
-        int tempo = recursive_print_tree(root->child_pointers[i],0,toreturn);
+        fprintf(fp,"\nIterating over next child of Node %d: which is %s\n",currentNodeCount,current_node_name);
+        int tempo = recursive_print_tree(root->child_pointers[i],0,toreturn,fp);
         if(tempo>toreturn){
             toreturn = tempo;
         }
@@ -1655,8 +1659,8 @@ int recursive_print_tree(ast_node* root,int listcount,int toreturn){
     if(listcount==0){
         while(temp2)
         {
-            printf("\nIterating over next list element of node %d:\n",currentNodeCount);
-            int tempo = recursive_print_tree(temp2,listcount+1,toreturn);
+            fprintf(fp,"\nIterating over next list element of node %d: which is %s\n",currentNodeCount,current_node_name);
+            int tempo = recursive_print_tree(temp2,listcount+1,toreturn,fp);
             if(tempo>toreturn){
                 toreturn = tempo;
             }
@@ -1671,16 +1675,16 @@ int create_abstract_tree(){
     parse_tree* ptree = get_ptree();
     change_tree(ptree->root);
     new_root = create_ast(ptree->root);
-    printf("\nPRINTING AST RULES With InorderTraversal\n");
-    // FILE* fp;
-    // fp = fopen("ast_t10.txt","w+");
-    // if(fp == NULL)
-    // {
-    //     printf("Error opening file:ast.txt\n!");   
-    //     exit(1);             
-    // }
-    int num = recursive_print_tree(new_root,0,0);   
-    // fclose(fp);
+    FILE* fp;
+    fp = fopen("ast.txt","w");
+    if(fp == NULL)
+    {
+        printf("Error opening file:ast.txt\n!");   
+        exit(1);             
+    }
+    fprintf(fp,"\nPRINTING AST RULES With InorderTraversal\n");
+    int num = recursive_print_tree(new_root,0,0,fp);   
+    fclose(fp);
     return num;
 }
 
