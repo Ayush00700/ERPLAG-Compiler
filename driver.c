@@ -288,7 +288,7 @@ int main(int argc, char* args[]){ //DRIVER
                     print_file("semantic_errors.txt");
                 }
                 //print the total print time
-                printf("Total CPU Time:%f\n",l_total_CPU_time);
+                printf("Total CPU Time (in micro-seconds):%f\n",l_total_CPU_time);
                 printf("Total CPU Time (in seconds):%f\n",l_total_CPU_time_in_seconds);
                 printf("\nTask 8 done, again going to Options\n");
                 break;

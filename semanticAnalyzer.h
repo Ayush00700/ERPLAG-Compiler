@@ -46,6 +46,8 @@ extern type_exp* find_expr(ast_node* node, func_entry* curr,int line);
 extern type_exp* compare_dTypes(type_exp* left, type_exp* right, int line);
 extern type_exp* throw_error(semErrors error, int line);
 extern int line_number_finder(ast_node* ast_root);
+extern type_exp* find_in_list(sym_tab_entry* output,char* key);
+
 
 // traverse functions
 extern var_record* find_local_construct(char* func_name, char* arr);
