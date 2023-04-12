@@ -1879,6 +1879,7 @@ void codegen_conditional(ir_code_node* ir, func_entry* local_ST)
     int offsetResult =  dataOfCondVar->offset * 16;
 
     fprintf(assembly, "\t\tmov      rax , [RBP - %d]\n", offsetResult);
+    // fprintf(assembly, "\t\tand      rax , 0x0000_0000_0000_0001\n", offsetResult);
     fprintf(assembly, "\t\tcmp      rax , 1\n");
     fprintf(assembly, "\t\tje       %s\n",ir->left_op->name);
 

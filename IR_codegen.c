@@ -255,18 +255,20 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ir_code* ifConds = NULL;
     ir_code* caseStmts = NULL;
 
-    char* boolCheckTemp = newTemp();
-    type_exp temp;
-    temp.is_static = 1;
-    temp.datatype = "boolean";
-    temp.reach_defined = local_ST->func_curr->reach;
-    sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
-
+    
     char* exitLabelString = newLabel();
 
 
     while(curr){
         char* currLabel = newLabel();
+
+        char* boolCheckTemp = newTemp();
+        type_exp temp;
+        temp.is_static = 1;
+        temp.datatype = "boolean";
+        temp.reach_defined = local_ST->func_curr->reach;
+        sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
+
         char* caseId = curr->child_pointers[0]->tempName;
         ir_code_node* eqCheck = getNew_ir_code_node(local_ST);
         eqCheck->operator = EQ;
