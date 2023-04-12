@@ -191,6 +191,19 @@ Also print the lexical errors with lexemes and line numbers appropriately.
 
 ### Doubts
 
+Semantic check
+    Test Case 1
+        Line 36: The r asssignemnt has errors, do we need to consider it as output not changed
+    Test Case 3
+        Line 13 and 24: The shadowing thing
+        Line 13 and 31: Same as above
+        Line 13 and 36: Same as above
+        Lines: res2_b was wrong in some cases
+    Test Case 4
+        while case, array_acess value cahnges?
+    Test Case 5
+        Line 5 The r asssignemnt has errors, do we need to consider it as output not changed
+    Test Vase 
 ### Requirements for Intermediate Code Generation
 Intermediate Representation is required to make the compilation process platform independent and avoid the hassle of repeating all steps of compilation in all machines. These can be language dependent or language independent. The language independent ones are various IRs:
 - Postfix Notation
