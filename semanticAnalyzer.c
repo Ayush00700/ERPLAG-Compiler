@@ -14,6 +14,7 @@ FILE* fp_sym_t;
 FILE* fp_act;
 FILE* fp_sda;
 int printFlag=1;
+func_entry* currentGlobalFunc=NULL; 
 void initialize_global_func_table(){
 
     for(int i=0;i<TABLE_SIZE;i++){
@@ -251,10 +252,11 @@ int index_finder(ast_node* node){
 void populate_symbol_table(ast_node* temp_node,type_exp temp,var_record* local_table){
     int line=temp_node->token->line_no;
     temp.line_defined=line;
+
     int a = sym_tab_entry_add(temp_node->token->lexeme,local_table,temp);
 
     if(a == -1){ // to change as the abstraction is increased
-        printf("%s: ",temp_node->token->lexeme);
+        fprintf(fp_sem,"%s: ",temp_node->token->lexeme);
         throw_error(VAR_REDECLARED,line);
     }
 }
@@ -320,7 +322,14 @@ void compute_expression(ast_node* ast_root,var_record* local_table){
     ast_node* temp_node = ast_root;
     temp_node = temp_node->child_pointers[0];
     while(temp_node!=NULL){
+        type_exp* inOutput=NULL;
+        if(currentGlobalFunc)
+        inOutput= find_in_list(currentGlobalFunc->ouput_list, temp_node->token->lexeme);
+
+        if(!inOutput)
         populate_symbol_table(temp_node,temp,local_table);
+        else
+        throw_error(OUT_OF_SCOPE_VARIABLE, temp_node->token->line_no);
         temp_node = temp_node->next;
     }
     return;
@@ -514,8 +523,14 @@ void local_populate(var_record* local_table,ast_node* ast_root){
 void func_def_(ast_node* ast_root,func_entry* global[]){
      int offset = 0;
     sym_tab_entry* ip_list = NULL; sym_tab_entry* op_list = NULL;
-    if(!strcmp(ast_root->name,"MODULE")){ip_list = getlist(ast_root->child_pointers[1],&offset);}
-    if(!strcmp(ast_root->name,"MODULE")){op_list = getlist(ast_root->child_pointers[2],&offset);}
+    if(!strcmp(ast_root->name,"MODULE"))
+    {
+        ip_list = getlist(ast_root->child_pointers[1],&offset);
+    }
+    if(!strcmp(ast_root->name,"MODULE"))
+    {
+        op_list = getlist(ast_root->child_pointers[2],&offset);
+    }
     func_entry* local = NULL;
     if(!strcmp(ast_root->name,"DRIVER")){
         local = func_tab_entry_add("DRIVER",global_TABLE,ip_list,op_list,&offset);
@@ -523,6 +538,7 @@ void func_def_(ast_node* ast_root,func_entry* global[]){
         local->start_line_no = ast_root->start_line_no;
         local->func_root->start_line_no = ast_root->start_line_no;
         local->func_root->end_line_no  = ast_root->end_line_no;
+        currentGlobalFunc=NULL;
         local_populate(local->func_root,ast_root->child_pointers[0]);
     }else{
         local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_TABLE,ip_list,op_list,&offset);
@@ -532,11 +548,11 @@ void func_def_(ast_node* ast_root,func_entry* global[]){
         local->start_line_no = ast_root->start_line_no;
         local->func_root->start_line_no = ast_root->start_line_no;
         local->func_root->end_line_no  = ast_root->end_line_no;
+        currentGlobalFunc=local;
         local_populate(local->func_root,ast_root->child_pointers[3]);
-        
         }
         else{
-        printf("%s: ",ast_root->child_pointers[0]->token->lexeme);
+        fprintf(fp_sem,"%s: ",ast_root->child_pointers[0]->token->lexeme);
         throw_error(FUNCTION_OVERLOADING, ast_root->child_pointers[0]->token->line_no);}
     }
 }
@@ -553,6 +569,7 @@ void func_def(ast_node* ast_root){
         local->start_line_no = ast_root->start_line_no;
         local->func_root->start_line_no = ast_root->start_line_no;
         local->func_root->end_line_no  = ast_root->end_line_no;
+        currentGlobalFunc=NULL;
         local_populate(local->func_root,ast_root->child_pointers[0]);
     }else{
         local = func_tab_entry_add(ast_root->child_pointers[0]->token->lexeme,global_func_table,ip_list,op_list,&offset);
@@ -562,10 +579,11 @@ void func_def(ast_node* ast_root){
         local->start_line_no = ast_root->start_line_no;
         local->func_root->start_line_no = ast_root->start_line_no;
         local->func_root->end_line_no  = ast_root->end_line_no;
+        currentGlobalFunc=local;
         local_populate(local->func_root,ast_root->child_pointers[3]);
         }
         else{
-        printf("%s: ",ast_root->child_pointers[0]->token->lexeme);
+        fprintf(fp_sem,"%s: ",ast_root->child_pointers[0]->token->lexeme);
         throw_error(FUNCTION_OVERLOADING, ast_root->child_pointers[0]->token->line_no);}
     }
 }
@@ -622,39 +640,39 @@ type_exp* throw_error(semErrors error, int line)
         switch(error)
         {
             case TYPE_NOT_MATCHED: {
-            fprintf(fp_sem,"Error found at line no %d : Type Mismatch \n", line);break;}
+            fprintf(fp_sem,"Error found at line no %d : Type Mismatch \n\n", line);break;}
             case OUT_OF_SCOPE_VARIABLE: {
-            fprintf(fp_sem,"Error found at line no %d : Out of scope \n", line);break;}
+            fprintf(fp_sem,"Error found at line no %d : Out of scope \n\n", line);break;}
             case UNSUPPORTED_DTYPE: {
-            fprintf(fp_sem,"Error found at line no %d : Unsupported Datatype \n", line);break;}
+            fprintf(fp_sem,"Error found at line no %d : Unsupported Datatype \n\n", line);break;}
             case FUNC_NOT_DEFINED:{
-            fprintf(fp_sem,"Error found at line no %d : Function Not Defined \n", line);break;}
+            fprintf(fp_sem,"Error found at line no %d : Function Not Defined \n\n", line);break;}
             case OUT_OF_ORDER_INDEX:
-            {fprintf(fp_sem,"Error found at line no %d : Index Out of Order \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Index Out of Order \n\n", line);break;}
             case RECURSION_NOT_ALLOWED:
-            {fprintf(fp_sem,"Error found at line no %d : Recursion not allowed \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Recursion not allowed \n\n", line);break;}
             case PARAMETER_LIST_MISMATCH:
-            {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n\n", line);break;}
             case DEFAULT_NOT_FOUND:
-            {fprintf(fp_sem,"Error found at line no %d : Default not found \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Default not found \n\n", line);break;}
             case DEFAULT_FOUND:
-            {fprintf(fp_sem,"Error found at line no %d : Unexpected default found \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Unexpected default found \n\n", line);break;}
             case INDEX_OUT_OF_BOUNDS:
-            {fprintf(fp_sem,"Error found at line no %d : Index out of bounds\n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Index out of bounds\n\n", line);break;}
             case VAR_REDECLARED:
-            {fprintf(fp_sem,"Error found at line no %d : Variable redeclared\n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Variable redeclared\n\n", line);break;}
             case VALUE_MODIFIED:
             {fprintf(fp_sem,"Value was modified for the construct %d", line);break;}
             case VALUE_NOT_MODIFIED:
             {fprintf(fp_sem,"Value was not modified for the construct %d", line);break;}
             case FUNCTION_NOT_DEFINED:
-            {fprintf(fp_sem,"Error found at line no %d : Function not defined \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Function not defined \n\n", line);break;}
             case FUNCTION_OVERLOADING:
-            {fprintf(fp_sem,"Error found at line no %d : Function overloading \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Function overloading \n\n", line);break;}
             case PARAMETER_LIST_MISMATCH_LEN:
-            {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n\n", line);break;}
             case OUTPUT_REDECLARED:
-            {fprintf(fp_sem,"Error found at line no %d : Output \n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Output \n\n", line);break;}
         }
     }
     return NULL;
@@ -689,20 +707,20 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right, int line)
                        
                         return copyExpr(left);
                     }
-                  else {fprintf(fp_sem,"--\"%d\"left side width \"%d\"right side width\n\t",
+                  else {fprintf(fp_sem,"\n\"%d\"left side width \"%d\"right side width\n",
                     left->arr_data->upper_bound-left->arr_data->lower_bound,
                     right->arr_data->upper_bound-right->arr_data->lower_bound);
                     return throw_error(TYPE_NOT_MATCHED,line);
                     }
                 }
-                else {fprintf(fp_sem,"--\"%s\" left side datatype \"%s\" right side datatype\n\t",
+                else {fprintf(fp_sem,"\n\"%s\" left side datatype \"%s\" right side datatype\n",
                 left->arr_data->arr_datatype,right->arr_data->arr_datatype);
                 return throw_error(TYPE_NOT_MATCHED,line); 
                     }
             }
             else return copyExpr(left);
         }
-        else {fprintf(fp_sem,"--\"%s\" left side datatype \"%s\" right side datatype\n\t",
+        else {fprintf(fp_sem,"\n\"%s\" left side datatype \"%s\" right side datatype\n",
             left->datatype,right->datatype);
             return throw_error(TYPE_NOT_MATCHED,line); 
             }
@@ -720,16 +738,18 @@ type_exp* find_in_list(sym_tab_entry* output,char* key)
     return NULL;
 }
 
-type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr,int line){
+type_exp* find_in_func_table(ast_node* ast_root, func_entry* curr,int line, Boolean checkOutput){
     //extract the lexeme out of ast_root
     char* key = ast_root->token->lexeme;
     type_exp* input=find_in_list(curr->input_list, key);
     if(input)
     return input;
-
-    type_exp* output=find_in_list(curr->ouput_list, key);
-    if(output)
-    return output;
+    if(checkOutput)
+    {
+        type_exp* output=find_in_list(curr->ouput_list, key);
+        if(output)
+        return output;
+    }
     //check in the output list 
     // temp = curr->ouput_list;
     // while(temp!=NULL){
@@ -772,12 +792,12 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
     type_exp* type=find_in_table(key, current_rec,line);
     if(type&&line<type->line_defined)
     {
-        type_exp* input=find_in_func_table(node, curr, line);
+        type_exp* input=find_in_func_table(node, curr, line, True);
         if(input)
             return input;
         else
         {
-            fprintf(fp_sem,"--%s Variable used before decalaration\n\t",key);
+            fprintf(fp_sem,"\n%s Variable used before decalaration\n",key);
             throw_error(OUT_OF_SCOPE_VARIABLE, line);
             return NULL;
         }
@@ -791,7 +811,7 @@ type_exp* find_expr(ast_node* node, func_entry* curr,int line)
         if(curr->func_curr==NULL)
         {
             // just check in the function parameter list
-            type = find_in_func_table(node,curr,line);
+            type = find_in_func_table(node,curr,line, True);
             curr->func_curr = temp;
             //return from here only
         }
@@ -823,7 +843,7 @@ void check_cases(ast_node* node, func_entry* curr, type_exp* switch_dtype){
     type_exp* comparison_result ;
     if(SWITCH_CASE_ERRORS==0){
     comparison_result = compare_dTypes(case_id,switch_dtype,line);
-    if(!comparison_result){fprintf(fp_sem,"--Case \"%s\" type mismatch with Switch type\n",node->child_pointers[0]->token->lexeme);}
+    if(!comparison_result){fprintf(fp_sem,"\nCase \"%s\" type mismatch with Switch type\n",node->child_pointers[0]->token->lexeme);}
     }
 
     if(!comparison_result) SWITCH_CASE_ERRORS = 1;
@@ -865,7 +885,7 @@ void perform_type_matching_out(ast_node* actual, sym_tab_entry* formal, func_ent
     }
     if(actual||formal)
     {
-        printf("Output Parameter: ");
+        fprintf(fp_sem,"Output Parameter: ");
         throw_error(PARAMETER_LIST_MISMATCH_LEN,line);
     }
 }
@@ -879,7 +899,7 @@ void is_value_changed(func_entry* curr, char* func_name)
        {
         fprintf(fp_sem,"Output %s, for function %s:" ,node->name, func_name);
         throw_error(VALUE_NOT_MODIFIED, curr->start_line_no);
-        fprintf(fp_sem,"-%d \n", curr->end_line_no);
+        fprintf(fp_sem,"-%d \n\n", curr->end_line_no);
        }
        node=node->next;
     }
@@ -927,7 +947,7 @@ void perform_type_matching_in(ast_node* actual, sym_tab_entry* formal, func_entr
     }
     if(actual||formal)
     {
-        printf("Input Parameter: ");
+        fprintf(fp_sem,"Input Parameter: ");
         throw_error(PARAMETER_LIST_MISMATCH_LEN,line);
     }
 }
@@ -1114,13 +1134,13 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
         if(var_id&& index){
             if(strcmp(var_id->datatype,"array")||strcmp(index->datatype,"integer")){
-                fprintf(fp_sem,"--Array expression needs array variable\
-                to be declared and index expression to consist of integer type\n\t");
+                fprintf(fp_sem,"\nArray expression needs array variable\
+                to be declared and index expression to consist of integer type\n");
                 return throw_error(UNSUPPORTED_DTYPE,line);
             }
         }else if(var_id){
             //Convert this into throw_error()
-            fprintf(fp_sem,"--R value expression/index type error:");
+            fprintf(fp_sem,"\nR value expression/index type error:");
             throw_error(OUT_OF_SCOPE_VARIABLE, line);
         }
         return NULL;
@@ -1312,7 +1332,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 // real->datatype="error";
                 // if(real&&left->isChanged=||right->isChanged)
                 // real->isChanged=1;
-                printf("Divison of unsupported datatypes ");
+                fprintf(fp_sem,"Divison of unsupported datatypes ");
                 throw_error(UNSUPPORTED_DTYPE, line);
                 return ret;
             }
@@ -1345,7 +1365,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         int val1 = node->child_pointers[0]->child_pointers[1]->token->values.num;
         int val2 = node->child_pointers[1]->child_pointers[1]->token->values.num;
         if(val1>val2){
-        fprintf(fp_sem,"--%d lower bound and %d upper bound",val1,val2);
+        fprintf(fp_sem,"\n%d lower bound and %d upper bound",val1,val2);
         return throw_error(OUT_OF_ORDER_INDEX,line);
         }
         else return NULL;
@@ -1364,7 +1384,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         {
             fprintf(fp_sem,"FOR: variable changed at line_no: %d ",id_type->line_changed);
             throw_error(VALUE_MODIFIED, node->start_line_no);
-            fprintf(fp_sem,"%d \n", node->end_line_no);
+            fprintf(fp_sem,"-%d \n\n", node->end_line_no);
             
         }
         //pop the for node, free the memory space
@@ -1890,7 +1910,7 @@ void print_ipop_list_codegen(sym_tab_entry* list,int level,FILE* assembly){
     }
     strcat(list->name,list->type.reach_defined);
     fprintf(assembly, "\t\t%s:   dq   0\n",list->name);
-    printf("variable name : %s  ",list->name);
+    fprintf(fp_sem,"variable name : %s  ",list->name);
     print_ipop_list_codegen(list->next,level,assembly);
 }
 
