@@ -329,7 +329,9 @@ void compute_expression(ast_node* ast_root,var_record* local_table){
         if(!inOutput)
         populate_symbol_table(temp_node,temp,local_table);
         else
-        throw_error(OUT_OF_SCOPE_VARIABLE, temp_node->token->line_no);
+        {
+            fprintf(fp_sem,"%s: ",temp_node->token->lexeme);
+            throw_error(OUT_OF_SCOPE_VARIABLE, temp_node->token->line_no);}
         temp_node = temp_node->next;
     }
     return;
@@ -672,13 +674,17 @@ type_exp* throw_error(semErrors error, int line)
             case PARAMETER_LIST_MISMATCH_LEN:
             {fprintf(fp_sem,"Error found at line no %d : Parameter list mismatch \n\n", line);break;}
             case OUTPUT_REDECLARED:
-            {fprintf(fp_sem,"Error found at line no %d : Output \n\n", line);break;}
+            {fprintf(fp_sem,"Error found at line no %d : Output redeclared\n\n", line);break;}
+            case INVALID_MODULE_ASSIGNMENT:
+            {fprintf(fp_sem,"Error found at line no %d : Invalid module assignment \n\n", line);break;}
+
+            
         }
     }
     return NULL;
 }
 
-type_exp* copyExpr(type_exp* data)
+type_exp* copyExpr(type_exp* data, type_exp* other)
 {
     type_exp* temp= (type_exp*)malloc(sizeof(type_exp));
     if(data->arr_data)
@@ -686,7 +692,7 @@ type_exp* copyExpr(type_exp* data)
     temp->datatype=data->datatype;
     temp->is_static=data->is_static;
     temp->isChanged=data->isChanged;
-    temp->line_changed=data->line_changed;
+    temp->line_changed=data->line_changed>other->line_changed?data->line_changed:other->line_changed;
     temp->line_defined=data->line_defined;
     temp->offset=data->line_defined;
     temp->reach_defined=data->reach_defined;
@@ -704,8 +710,7 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right, int line)
                     if(left->arr_data->lower_bound-left->arr_data->upper_bound
                     ==right->arr_data->lower_bound-right->arr_data->upper_bound)
                     {
-                       
-                        return copyExpr(left);
+                        return copyExpr(left, right);
                     }
                   else {fprintf(fp_sem,"\n\"%d\"left side width \"%d\"right side width\n",
                     left->arr_data->upper_bound-left->arr_data->lower_bound,
@@ -718,7 +723,7 @@ type_exp* compare_dTypes(type_exp* left, type_exp* right, int line)
                 return throw_error(TYPE_NOT_MATCHED,line); 
                     }
             }
-            else return copyExpr(left);
+            else return copyExpr(left, right);
         }
         else {fprintf(fp_sem,"\n\"%s\" left side datatype \"%s\" right side datatype\n",
             left->datatype,right->datatype);
@@ -996,9 +1001,21 @@ type_exp* array_access(ast_node* node, type_exp* var_id, type_exp* arr_expr)
 
         return throw_error(UNSUPPORTED_DTYPE,line);
 }
+
+int count_in_list(sym_tab_entry* list)
+{
+    sym_tab_entry* temp=list;
+    int count=0;
+    while(temp)
+    {
+        count++;
+        temp=temp->next;
+    }
+    return count;
+}
+
 type_exp* type_checking(ast_node* node, func_entry* curr)
 {
-
     if(!node)
     return NULL;
     else if(!strcmp(node->name,"INPUT_ID"))
@@ -1014,6 +1031,12 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
         line=line_number_finder(node);
         ret=compare_dTypes(left, right,line);
+        if(!strcmp(node->child_pointers[1]->name,"MODULEREUSE"))
+        {
+            int count= count_in_list(find_module(node->child_pointers[1]->child_pointers[0]->token->lexeme)->ouput_list);
+            if(count!=1)
+            throw_error(INVALID_MODULE_ASSIGNMENT, line);
+        }
         if(right)
         {
             ast_node* temp_node=node->child_pointers[0]->isTerminal==1?node->child_pointers[0]:node->child_pointers[0]->child_pointers[0];
@@ -1186,6 +1209,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             temp->datatype = "boolean";
             if(op1->isChanged==1||op2->isChanged==1)
             temp->isChanged=1;
+            temp->line_changed=line;
             return temp;
         }else if(compare){
         
@@ -1205,6 +1229,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             temp->datatype = "boolean";
             if(op1->isChanged==1||op2->isChanged==1)
             temp->isChanged=1;
+            temp->line_changed=line;
             return temp;
         }else if(compare){
               
@@ -1223,6 +1248,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             temp->datatype = "boolean";
             if(op1->isChanged==1||op2->isChanged==1)
             temp->isChanged=1;
+            temp->line_changed=line;
             return temp;
         }else if(compare){
              
@@ -1236,12 +1262,19 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
 
         type_exp* compare = compare_dTypes(op1,op2,line);
 
-        if(compare&&op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")        ){
+        if(compare&&((op1&&op1->isChanged==1)||(op2&&op2->isChanged==1)))
+                {compare->isChanged=1;
+                compare->line_changed=op1->line_changed>op2->line_changed?op1->line_changed:op2->line_changed;}
+            
+
+        if(compare&&op1&&op2&&strcmp(op1->datatype,"array")&& strcmp(op2->datatype,"array")){
+
             type_exp* temp = (type_exp*) malloc(sizeof(type_exp));
             temp->datatype = "boolean";
             node->type = temp->datatype;
             if(op1->isChanged==1||op2->isChanged==1)
             temp->isChanged=1;
+            temp->line_changed=op1->line_changed>op2->line_changed?op1->line_changed:op2->line_changed;
             return temp;
         }else{
             return compare;
@@ -1288,6 +1321,7 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
                 do we need to add other datatypes ?*/)
                 {
                     temp->isChanged=1;
+                    temp->line_changed=line;
                     return temp;
                 }
         return throw_error(UNSUPPORTED_DTYPE,line);
@@ -1320,21 +1354,21 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             //for PLUS operator need not be always line number tractable
             type_exp* ret=compare_dTypes(left, right,line);
             if(ret&&((left&&left->isChanged==1)||(right&&right->isChanged==1)))
-                ret->isChanged=1;
+                {ret->isChanged=1;
+                ret->line_changed=left->line_changed>right->line_changed?left->line_changed:right->line_changed;}
             if(ret&&(!strcmp(ret->datatype,"boolean")||!strcmp(ret->datatype,"array")))
             {
+                fprintf(fp_sem,"Divison of unsupported datatypes ");
                 throw_error(UNSUPPORTED_DTYPE, line);
                 return NULL;
             }
             if(!strcmp(node->name, "DIV")&&strcmp(ret->datatype,"real"))//Check this case. Added later
             {
-                // type_exp* real=(type_exp*)malloc(sizeof(type_exp));
-                // real->datatype="error";
-                // if(real&&left->isChanged=||right->isChanged)
-                // real->isChanged=1;
-                fprintf(fp_sem,"Divison of unsupported datatypes ");
-                throw_error(UNSUPPORTED_DTYPE, line);
-                return ret;
+                type_exp* real=(type_exp*)malloc(sizeof(type_exp));
+                real->datatype="real";
+                if(real&&(left->isChanged==1||right->isChanged==1))
+                real->isChanged=1;
+                return real;
             }
         if(ret)node->type = ret->datatype;
         return ret;
@@ -1378,14 +1412,13 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
         //TO CALL PERFORM TYPE CHECKING ON THEIR STATEMENTS CHILD
         type_exp* id_type = type_checking(node->child_pointers[0],curr);
         type_exp* range_type = type_checking(node->child_pointers[1],curr);
-        
+        int line_chng=line_number_finder(node);
         perform_type_checking(node->child_pointers[2],curr);
-        if(id_type->isChanged==1) //A little error here. How to chekc for isChanged garbage value
+        if(id_type->line_changed>line_chng) //A little error here. How to chekc for isChanged garbage value
         {
             fprintf(fp_sem,"FOR: variable changed at line_no: %d ",id_type->line_changed);
             throw_error(VALUE_MODIFIED, node->start_line_no);
             fprintf(fp_sem,"-%d \n\n", node->end_line_no);
-            
         }
         //pop the for node, free the memory space
         curr->func_curr=temp;
@@ -1405,7 +1438,8 @@ type_exp* type_checking(ast_node* node, func_entry* curr)
             fprintf(fp_sem,"The conditional variable of while: ");
             throw_error(TYPE_NOT_MATCHED, line);
            }
-        if(!condition||!condition->isChanged==1) //!condition is the edge case
+           int line_chng=line_number_finder(node);
+        if(condition&&condition->line_changed<=line_chng) //!condition is the edge case
         {
             fprintf(fp_sem,"While: ");
             throw_error(VALUE_NOT_MODIFIED, node->start_line_no);

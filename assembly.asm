@@ -24,6 +24,8 @@ extern printf, scanf, exit
 		boolean_in_len: equ $ - boolean_in
 		print_out: db "Output: ", 0
 		print_out_len: equ $ - print_out
+		printError: db "Out of Bound Exception in Array", 10, 0
+		printError_len: db "Out of Bound Exception in Array", 10, 0
 		array_in: db "Input: Enter %d elements of %s type for range %d to %d", 10, 0
 		array_in_len: equ $ - array_in
 		true: db "true", 10, 0
@@ -81,12 +83,7 @@ extern printf, scanf, exit
 
 		global main
 main:
-		ENTER    1856,0
-		push_regs                    ; save values
-		mov      rbp , rsp           ; set base to current stack top
-		pop_regs                     ; save values
-
-
+		ENTER    1232,0
 		push_regs                    ; save values
 		xor      rax , rax           ; flush out the rax register
 		mov      rax , 1                    ; immediate to register
@@ -267,12 +264,12 @@ L1:
 		mov     rax , [RBP - 464]
 		mov     rbx , 15
 		cmp     rax , rbx
-		jle     L7
+		jle     L4
 		mov     qword [RBP - 560], 0
-		jmp  L8
-L7:
+		jmp  L5
+L4:
 		mov     qword [RBP - 560], 1
-L8:
+L5:
 		pop_regs        ; restore register values
 
 
@@ -487,12 +484,12 @@ L3:
 		mov     rax , [RBP - 64]
 		mov     rbx , 10
 		cmp     rax , rbx
-		jg     L9
+		jg     L6
 		mov     qword [RBP - 1136], 0
-		jmp  L10
-L9:
+		jmp  L7
+L6:
 		mov     qword [RBP - 1136], 1
-L10:
+L7:
 		pop_regs        ; restore register values
 
 
@@ -501,12 +498,12 @@ L10:
 		mov     rax , [RBP - 128]
 		mov     rbx , [RBP - 160]
 		cmp     rax , rbx
-		jle     L11
+		jle     L8
 		mov     qword [RBP - 1152], 0
-		jmp  L12
-L11:
+		jmp  L9
+L8:
 		mov     qword [RBP - 1152], 1
-L12:
+L9:
 		pop_regs        ; restore register values
 
 
@@ -523,12 +520,12 @@ L12:
 		mov     rax , [RBP - 0]
 		mov     rbx , [RBP - 32]
 		cmp     rax , rbx
-		jl     L13
+		jl     L10
 		mov     qword [RBP - 1184], 0
-		jmp  L14
-L13:
+		jmp  L11
+L10:
 		mov     qword [RBP - 1184], 1
-L14:
+L11:
 		pop_regs        ; restore register values
 
 
@@ -581,285 +578,24 @@ L14:
 		mov      rdi , fmt_spec_bool_out                  ; get corresponding format specifier
 		mov      rax , [RBP - 224]                               ; move source index
 		cmp      rax , 0
-		jne      L15
+		jne      L12
 		mov      rax , 1
 		mov      rdi , 1
 		mov      rsi , false
 		mov      rdx , false_len
 		syscall
 		pop_regs                                          ; restore register values
-		jmp  L16
+		jmp  L13
 
 
-L15:
+L12:
 		mov      rax , 1
 		mov      rdi , 1
 		mov      rsi , true
 		mov      rdx , true_len
 		syscall
 		pop_regs        ; restore register values
-L16:
-
-
-		; Code for getting user input
-		push_regs                    ; save values
-				mov RDX, RBP
-                sub RDX, 256     ; make RDX to point at location of variable on the stack
-                mov RAX, 0x0000_0000_0000_0000 ;machine has sizeof(int) to be 2, for uniformity, We are taking
-                mov [RDX] , RAX ;our sizeof(int) to be 4, now scanf will just enter values in lower 32 bits
-                mov RSI, RBP
-                sub RSI, 256 
-                mov RAX, 0 
-                rsp_align ;align RSP to 16 byte boundary for scanf call
-                call scanf 
-                rsp_realign ;realign it to original position
-                		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 128]
-		add     rax , [RBP - 0]
-		mov     [RBP - 1232] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 13            ; immediate to memory
-		mov     rbx , 10
-		cmp     rax , rbx
-		jl     L17
-		mov     qword [RBP - 1264], 0
-		jmp  L18
-L17:
-		mov     qword [RBP - 1264], 1
-L18:
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 13            ; immediate to memory
-		mov     rbx , 15
-		cmp     rax , rbx
-		jg     L19
-		mov     qword [RBP - 1280], 0
-		jmp  L20
-L19:
-		mov     qword [RBP - 1280], 1
-L20:
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [RBP - 1264]
-		or     rax , [RBP - 1280]
-		mov     [RBP - 1296] , rax
-		pop_regs        ; restore register values
-
-
-		mov      rax , [RBP - 1296]
-		cmp      rax , 1
-		je       L4
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , 13            ; immediate to memory
-		mov     rbx , 2
-		imul     rbx
-		mov    [RBP - 1312] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , -4            ; immediate to memory
-		add     rax , [RBP - 1312]
-		mov     [RBP - 1344] , rax
-		pop_regs        ; restore register values
-
-
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		mov      rax , [RBP - 1344]                    ; memory to register
-		mov      [RBP - 1376] , rax            ; register to memory
-		pop_regs                    ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 1376]
-		mov     rbx , 2
-		imul     rbx
-		mov    [RBP - 1408] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 1232]
-		add     rax , [RBP - 1408]
-		mov     [RBP - 1440] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 14            ; immediate to memory
-		mov     rbx , 10
-		cmp     rax , rbx
-		jl     L21
-		mov     qword [RBP - 1472], 0
-		jmp  L22
-L21:
-		mov     qword [RBP - 1472], 1
-L22:
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 14            ; immediate to memory
-		mov     rbx , 15
-		cmp     rax , rbx
-		jg     L23
-		mov     qword [RBP - 1488], 0
-		jmp  L24
-L23:
-		mov     qword [RBP - 1488], 1
-L24:
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [RBP - 1472]
-		or     rax , [RBP - 1488]
-		mov     [RBP - 1504] , rax
-		pop_regs        ; restore register values
-
-
-		mov      rax , [RBP - 1504]
-		cmp      rax , 1
-		je       L5
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , 14            ; immediate to memory
-		mov     rbx , 2
-		imul     rbx
-		mov    [RBP - 1520] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , -4            ; immediate to memory
-		add     rax , [RBP - 1520]
-		mov     [RBP - 1552] , rax
-		pop_regs        ; restore register values
-
-
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		mov      rax , [RBP - 1552]                    ; memory to register
-		mov      [RBP - 1584] , rax            ; register to memory
-		pop_regs                    ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 1584]
-		mov     rbx , 3
-		imul     rbx
-		mov    [RBP - 1616] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 1440]
-		add     rax , [RBP - 1616]
-		mov     [RBP - 1648] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 15            ; immediate to memory
-		mov     rbx , 10
-		cmp     rax , rbx
-		jl     L25
-		mov     qword [RBP - 1680], 0
-		jmp  L26
-L25:
-		mov     qword [RBP - 1680], 1
-L26:
-		pop_regs        ; restore register values
-
-
-		; Code for relational
-		push_regs                    ; save values
-		mov     rax , 15            ; immediate to memory
-		mov     rbx , 15
-		cmp     rax , rbx
-		jg     L27
-		mov     qword [RBP - 1696], 0
-		jmp  L28
-L27:
-		mov     qword [RBP - 1696], 1
-L28:
-		pop_regs        ; restore register values
-
-
-		; Code for logical op
-		push_regs                    ; save values
-		mov     rax , [RBP - 1680]
-		or     rax , [RBP - 1696]
-		mov     [RBP - 1712] , rax
-		pop_regs        ; restore register values
-
-
-		mov      rax , [RBP - 1712]
-		cmp      rax , 1
-		je       L6
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , 15            ; immediate to memory
-		mov     rbx , 2
-		imul     rbx
-		mov    [RBP - 1728] , rax
-		pop_regs        ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , -4            ; immediate to memory
-		add     rax , [RBP - 1728]
-		mov     [RBP - 1760] , rax
-		pop_regs        ; restore register values
-
-
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		mov      rax , [RBP - 1760]                    ; memory to register
-		mov      [RBP - 1792] , rax            ; register to memory
-		pop_regs                    ; restore register values
-
-
-		; Code for arithmetic
-		push_regs                    ; save values
-		mov     rax , [RBP - 1648]
-		add     rax , [RBP - 1792]
-		mov     [RBP - 1824] , rax
-		pop_regs        ; restore register values
-
-
-		push_regs                    ; save values
-		xor      rax , rax           ; flush out the rax register
-		mov      rax , [RBP - 1824]                    ; memory to register
-		mov      [RBP - 32] , rax            ; register to memory
-		pop_regs                    ; restore register values
+L13:
 
 
 		; Code for printing output
@@ -877,14 +613,6 @@ L28:
 		call     printf                                   ; system call for output
 		rsp_realign                                       ; restore previous alignment of stack
 		pop_regs                                          ; restore values
-		; Code for printing output
-		mov      rax , 1
-		mov      rdi , 1
-		mov      rsi , print_out
-		mov      rdx , print_out_len
-		syscall
-
-		push_regs                                         ; save values
 main_end:
 LEAVE
 		retq
