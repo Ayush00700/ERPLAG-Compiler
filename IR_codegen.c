@@ -255,20 +255,18 @@ void IR_switchStmt(ast_node* node,func_entry* local_ST,func_entry** global_ST){
     ir_code* ifConds = NULL;
     ir_code* caseStmts = NULL;
 
-    
+    char* boolCheckTemp = newTemp();
+    type_exp temp;
+    temp.is_static = 1;
+    temp.datatype = "boolean";
+    temp.reach_defined = local_ST->func_curr->reach;
+    sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
+
     char* exitLabelString = newLabel();
 
 
     while(curr){
         char* currLabel = newLabel();
-
-        char* boolCheckTemp = newTemp();
-        type_exp temp;
-        temp.is_static = 1;
-        temp.datatype = "boolean";
-        temp.reach_defined = local_ST->func_curr->reach;
-        sym_tab_entry_add(boolCheckTemp,local_ST->func_curr,temp);
-
         char* caseId = curr->child_pointers[0]->tempName;
         ir_code_node* eqCheck = getNew_ir_code_node(local_ST);
         eqCheck->operator = EQ;
@@ -1207,6 +1205,7 @@ void print_ir_code(FILE* fptr,ir_code* intermediate_code){
 
 
 ir_code* getIRList(ast_node* root, func_entry** global_ST){
+    exitJumpLabel = newLabel();
     return IR_prog(root,global_ST);
 }
 void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** global_ST){
@@ -1241,6 +1240,43 @@ void generate_IR_for_module(ast_node* root,func_entry* local_ST,func_entry** glo
         }
         if(local_ST->func_curr->r_sibiling!=NULL){
             local_ST->func_curr = local_ST->func_curr->r_sibiling;     
+        }else{
+            local_ST->func_curr = local_ST->func_curr->parent;  
+            // currentChildLabel--;
+        }
+    }    
+
+    else if(!strcmp(root->name,"AND")||!strcmp(root->name,"OR")){
+        IR_booleanExpr(root,local_ST,global_ST);
+    }    
+
+    else if(!strcmp(root->name,"LT_result")||!strcmp(root->name,"LE_result")||!strcmp(root->name,"GT_result")||!strcmp(root->name,"GE_result")||!strcmp(root->name,"NE_result")||!strcmp(root->name,"EQ_result")){
+        IR_relational(root,local_ST,global_ST);
+    }    
+
+    else if(!strcmp(root->name,"PLUS")||!strcmp(root->name,"MINUS")||!strcmp(root->name,"MUL")||!strcmp(root->name,"DIV")){
+        IR_arithmeticExpr(root,local_ST,global_ST);
+    }    
+
+    else if(!strcmp(root->name,"MODULEREUSE")){
+        IR_functionCall(root,local_ST,global_ST);
+    }    
+
+    else if(!strcmp(root->name,"MODULE")){
+        IR_functionCreation(root,local_ST,global_ST,False);
+    }    
+    else if(!strcmp(root->name,"DRIVER")){
+        IR_driverCreation(root,local_ST,global_ST);
+    }
+    else if(!strcmp(root->name,"STATEMENTS")){
+        IR_stmts(root,local_ST,global_ST);
+    } 
+    else{
+        root->code=NULL;
+    }
+}
+
+al_ST->func_curr = local_ST->func_curr->r_sibiling;     
         }else{
             local_ST->func_curr = local_ST->func_curr->parent;  
             // currentChildLabel--;
