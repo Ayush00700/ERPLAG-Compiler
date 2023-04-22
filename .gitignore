@@ -53,6 +53,5 @@ dkms.conf
 .vscode/
 stage1exe
 ast
-grammar.txt
 ast.txt
 parsetree.txt
